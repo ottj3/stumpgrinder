@@ -7,7 +7,7 @@ import java.util.Collection;
  * A vertex in a graph.
  *
  * @author  Andrew Miller <millea18@tcnj.edu>
- * @version 0.1
+ * @version 1.0
  **************************************************************************/
 public class
 Vertex<T> 

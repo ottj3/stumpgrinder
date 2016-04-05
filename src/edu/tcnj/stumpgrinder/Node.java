@@ -3,6 +3,12 @@ package edu.tcnj.stumpgrinder;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**************************************************************************
+ * A node in a tree.
+ *
+ * @author  Andrew Miller <millea18@tcnj.edu>
+ * @version 1.0
+ **************************************************************************/
 public class
 Node<T> extends Vertex<T>
 {
@@ -119,6 +125,18 @@ Node<T> extends Vertex<T>
         return children;
     }
 
+    
+    /**************************************************************************
+     * Returns the child at the specified position in the list of children. 
+     * @param index Index of the child to return.
+     * @return The child at the specified position in the list of children.
+     **************************************************************************/
+    public Node<T>
+    getChild(int index)
+    {
+        return children.get(index);
+    }
+
     /**************************************************************************
      * Replaces the parent of this node.
      * @param parent The new parent for this node.
@@ -130,6 +148,17 @@ Node<T> extends Vertex<T>
     }
 
     /**************************************************************************
+     * Replaces the child at the specified position in the list of children.
+     * @param index Index of the child to return.
+     * @param child The child to be stored at the specified position.
+     **************************************************************************/
+    public void
+    setChild(int index, Node<T> child)
+    {
+        this.children.set(index, child);
+    }
+
+    /**************************************************************************
      * Replaces the list of children for this node.
      * @param children The new list of children for this node.
      **************************************************************************/
@@ -138,6 +167,7 @@ Node<T> extends Vertex<T>
     {
         this.children = children; 
     }
+
 
     /**************************************************************************
      * Checks if a node is this node's child.
