@@ -16,7 +16,7 @@ public class Dirty
     {
         getInput();
         makeNodes();
-        testTrees();
+        testEnumeration();
     }
 
     public static void getInput() throws IOException
@@ -57,11 +57,11 @@ public class Dirty
             ArrayList<SetList<Character>> sets = new ArrayList<SetList<Character>>();
             sets.add(species.get(index - 1).getData());
             sets.add(species.get(index).getData());
-            System.out.println(PhylogeneticAlgorithms.fitch(sets).first);
-            System.out.println(PhylogeneticAlgorithms.hartigan(sets).first);
+            System.out.println(Fitch.fitch(sets).fst());
+            System.out.println(Hartigan.hartigan(sets).fst());
 
-            String one = PhylogeneticAlgorithms.fitch(sets).second.toString();
-            String two = PhylogeneticAlgorithms.hartigan(sets).second.toString();
+            String one = Fitch.fitch(sets).snd().toString();
+            String two = Hartigan.hartigan(sets).snd().toString();
             
             System.out.println(one.compareTo(two));
         }
@@ -86,5 +86,13 @@ public class Dirty
 
         Tree<Integer> tree = new Tree<Integer>(list, list.get(0));
         System.out.println(tree);
+    }
+
+    public static void testEnumeration()
+    {
+        Tree<SetList<Character>> tree = new Tree<SetList<Character>>(species);
+        System.out.println(TreeEnumeration.enumerate(tree).size());
+        System.out.println(TreeEnumeration.fitchScoredEnumerate(tree).size());
+        System.out.println(TreeEnumeration.fitchScoredEnumerate(tree).size());
     }
 }

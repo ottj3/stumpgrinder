@@ -8,24 +8,85 @@ import java.util.List;
 public class
 PhylogeneticAlgorithms
 {
+    // ASSUMPTION: The tree has no root and is a collection of Nodes
     public static HashSet<String>
     enumerate(Tree<SetList<Character>> tree)
     {
-        int parsimonyScore = -1;
+        /** int parsimonyScore = -1; */
         HashSet<String> trees = new HashSet<String>();
         
         if (tree.size() == 1) {
-
+            tree.setRoot(tree.getNodes().get(0));
+            trees.add(tree.toString());
         } else if (tree.size() == 2) {
-
+            tree.setRoot(tree.getNodes().get(0));
+            tree.getRoot().makeChild(tree.getNodes().get(1));
+            trees.add(tree.toString());
         } else if (tree.size() >= 3) {
+            // Reconsider
             Node<SetList<Character>> internal = new Node<SetList<Character>>();
+            tree.setRoot(internal);
 
+            for (int index = 0; index < 3; index++) {
+                internal.makeChild(tree.getNodes().get(index));
+            }
+
+            if (tree.size() > 3) {
+                trees = enumerateRecursive(tree, tree.getRoot(), 3);
+            } else {
+                trees.add(tree.toString());
+            }
         }
-
 
         return trees;
     }
+
+    public static HashSet<String>
+    enumerateRecursive(Tree<SetList<Character>> tree, 
+                       Node<SetList<Character>> current,
+                       int size)
+    {
+        HashSet<String> trees = new HashSet<String>();
+
+        if (size == tree.size()) {
+            trees.add(tree.toString());
+            System.out.println(tree.toString());
+        } else {
+            for (int index = 0; index < current.getChildren().size(); index++) {
+                trees.addAll(enumerateRecursive(tree,
+                                                current.getChildren().get(0),
+                                                size));
+            }
+            if (current != tree.getRoot()) {
+                Node<SetList<Character>> newLeaf = 
+                    tree.getNodes().get(size);
+
+                Node<SetList<Character>> internal = 
+                    new Node<SetList<Character>>();
+
+                Node<SetList<Character>> parent =
+                    current.getParent();
+
+                parent.makeNotChild(current);
+                parent.makeChild(internal);
+
+                internal.makeChild(current);
+                internal.makeChild(newLeaf);
+
+                trees.addAll(enumerateRecursive(tree, 
+                                                tree.getRoot(),
+                                                size + 1));
+
+                newLeaf.makeNotParent(newLeaf.getParent());
+
+                parent.makeNotChild(internal);
+                parent.makeChild(current);
+            }
+        }
+        
+        return trees;
+    }
+
 
     /**************************************************************************
      * @param sets A list of sets 
@@ -176,7 +237,7 @@ PhylogeneticAlgorithms
                 new ArrayList<SetList<Character>>(2);
 
             for (Node<SetList<Character>> child : current.getChildren()) {
-                sets.add(child.getData());
+               sets.add(child.getData());
             }
 
             Pair<Integer, SetList<Character>> fitchResults = hartigan(sets);

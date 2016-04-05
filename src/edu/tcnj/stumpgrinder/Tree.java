@@ -38,10 +38,6 @@ public class Tree<T>
     public Tree(Collection<Node<T>> nodes, Node<T> root)
     {
         this.nodes = new ArrayList<Node<T>>(nodes);
-
-        if (! nodes.contains(root)) {
-            nodes.add(root);
-        }
         this.root = root;
     }
 
@@ -148,7 +144,6 @@ public class Tree<T>
      **************************************************************************/
     public String toStringRecursive(Node<T> current)
     {
-        System.out.println("At node: " + current.getLabel());
         String string = "";
 
         if (current.getChildren().size() > 0) {
