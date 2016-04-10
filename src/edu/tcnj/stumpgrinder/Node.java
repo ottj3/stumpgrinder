@@ -235,48 +235,46 @@ Node<T> extends Vertex<T>
             return false;
         }
     }
-}
 
-
-   /**************************************************************************
-    * Returns a node's child at a certain index.
-    * @param index of ArrayList where child is contained.
-    **************************************************************************/
+    /**************************************************************************
+     * Returns a node's child at a certain index.
+     * @param index of ArrayList where child is contained.
+     **************************************************************************/
    public Node getChild(int index) {
         return (Node) children.get(index);
    }
    
-  /**************************************************************************
-   * Returns the number of children a node has.
-   **************************************************************************/
+   /**************************************************************************
+    * Returns the number of children a node has.
+    **************************************************************************/
    public int numChildren() {
        return children.size();
   }
-   
-   /**************************************************************************
-    *Returns a string representation of the subtree from a specified node.
-    *Implemented for testing purposes.
-    **************************************************************************/
-    public static void toString(Node n, StringBuffer sb) {
-    final int cost = 1;
-        if (n.numChildren() == 0) {
-             sb.append(n.getLabel());
-             sb.append(":");
-             sb.append(cost);
-        }
-        else {
-             sb.append("(");
-             toString(n.getChild(0), sb);
-             for (int i = 1; i < n.numChildren(); i++) {
-                  sb.append(",");
-                  toString(n.getChild(i), sb);
-             }
-             sb.append("):");
-             sb.append(cost);
-        }
+
+  /**************************************************************************
+   * Checks whether a child has a parent.
+   **************************************************************************/
+  public boolean hasParent() {
+	   return (parent != null);
+  }
+ 
+  /**************************************************************************
+   * Returns the cost of a child node to its parent.
+   **************************************************************************/
+   public int getCost() {
+	   int cost = 0;
+	   if (this.hasParent()){
+		   if (this.getLabel()==this.getParent().getLabel()){
+			   cost = 0;
+		   }
+		   else {
+			   cost = 1;
+		   }
+	   }
+	   else{
+		   cost = 0;
+	   }
+	   return cost;
    }
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        toString(this, sb);
-        return sb.toString();
-   }
+  
+}
