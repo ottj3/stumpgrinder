@@ -17,6 +17,7 @@ public class Dirty
         getInput();
         makeNodes();
         testEnumeration();
+        //testTreefromString();
     }
 
     public static void getInput() throws IOException
@@ -95,4 +96,13 @@ public class Dirty
         System.out.println(TreeEnumeration.fitchScoredEnumerate(tree).size());
         System.out.println(TreeEnumeration.fitchScoredEnumerate(tree).size());
     }
+    
+    public static void testTreefromString()
+    {
+    	Tree<SetList<Character>> tree = new Tree<SetList<Character>>(species.subList(1, species.size()), species.get(0));
+    	
+    	System.out.println(tree);
+        
+        System.out.println(new Tree(tree.fromString("(E:1,(D:1,B:1):1,C:1)A:0").getChildren(), tree.fromString("(E:1,(D:1,B:1):1,C:1)A:0")));
+    }    
 }
