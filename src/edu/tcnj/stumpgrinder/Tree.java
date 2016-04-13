@@ -3,7 +3,6 @@ package edu.tcnj.stumpgrinder;
 import java.util.ArrayList;
 import java.util.Collection;
 
-<<<<<<< HEAD
 public class Tree<T>
 {
     /** A list of the nodes in the tree **/
@@ -171,12 +170,12 @@ public class Tree<T>
     public Node getNode(String label)
     {
         for (Node node : this.nodes) {
-            if (node.label == label) {
+            if (node.getLabel() == label) {
                 return node;
             }
         }
 
-        if (this.getRoot().label == label) {
+        if (this.getRoot().getLabel() == label) {
             //TODO: Should be some sort of special indicator
             return this.getRoot();
         }
@@ -188,7 +187,7 @@ public class Tree<T>
 	 * Returns the root Node of the reconstructed tree.
 	 * @param A string representation of the tree.
 	 **************************************************************************/
-	public Node fromString(String treeString) {
+	public Node<T> fromString(String treeString) {
 		/* Find the root node and make it the parent */
 		int last = treeString.lastIndexOf(':');
 		
@@ -205,7 +204,7 @@ public class Tree<T>
 	 * @param end index of the string
 	 * 
 	 **************************************************************************/
-	public Node fromStringRecursive(String s, Node parent, int start, int end) {
+	public Node<T> fromStringRecursive(String s, Node parent, int start, int end) {
 		/*Check if the substring contains a single label.
 		 * If so, return the node. Else, continue parsing the string*/
 		if (s.charAt(start) != '(') {
