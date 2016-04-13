@@ -41,6 +41,12 @@ SetList<E>
         }
     }
 
+    public 
+    SetList(SetList<E> c)
+    {
+        this.list = new ArrayList<HashSet<E>>(c.list);
+    }
+
     /**************************************************************************
      * Constructs an empty list with the specified initial capacity.
      * @param initialCapacity The initial capacity of the list.
@@ -77,6 +83,17 @@ SetList<E>
         this.list.add(index, s);
     }
 
+    public boolean
+    addAll(SetList<E> c)
+    {
+        return this.list.addAll(c.list);
+    }
+
+    public boolean
+    containsAll(SetList<E> c)
+    {
+        return this.list.containsAll(c.list);
+    }
 
     public HashSet<E>
     get(int index)
@@ -88,6 +105,12 @@ SetList<E>
     isEmpty()
     {
         return list.isEmpty();
+    }
+
+    public boolean
+    retainAll(SetList<E> c)
+    {
+        return this.list.retainAll(c.list);
     }
 
     public void

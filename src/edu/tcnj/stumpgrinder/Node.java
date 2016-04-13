@@ -16,9 +16,14 @@ Node<T> extends Vertex<T>
     private 
     Node<T> parent;
 
+    /** The distance between this node and it's parent **/
+    private
+    Integer distanceToParent;
+
     /** A list containing nodes that are children of this node */
     private 
     ArrayList<Node<T>> children;
+
 
     /**************************************************************************
      * Constructs a node with no label, no data, no children and no parent.
@@ -28,6 +33,7 @@ Node<T> extends Vertex<T>
     {
         super();
         parent = null;
+        distanceToParent = null;
         children = new ArrayList<Node<T>>();
     }
 
@@ -40,6 +46,7 @@ Node<T> extends Vertex<T>
     {
         super(label);
         parent = null;
+        distanceToParent = null;
         children = new ArrayList<Node<T>>();
     }
 
@@ -53,6 +60,7 @@ Node<T> extends Vertex<T>
     {
         super(label, data);
         parent = null;
+        distanceToParent = null;
         children = new ArrayList<Node<T>>();
     }
 
@@ -67,6 +75,7 @@ Node<T> extends Vertex<T>
     {
         super(label, data);
         makeParent(parent);
+        distanceToParent = null;
         children = new ArrayList<Node<T>>();
     }
 
@@ -81,6 +90,7 @@ Node<T> extends Vertex<T>
     {
         super(label, data);
         parent = null;
+        distanceToParent = null;
         children = new ArrayList<Node<T>>();
         for (Node<T> child : children) {
             makeChild(child);
@@ -99,6 +109,7 @@ Node<T> extends Vertex<T>
     {
         super(label, data);
         makeParent(parent);
+        distanceToParent = null;
         children = new ArrayList<Node<T>>();
         for (Node<T> child : children) {
             makeChild(child);
@@ -113,6 +124,16 @@ Node<T> extends Vertex<T>
     getParent()
     {
         return parent;
+    }
+
+    /**************************************************************************
+     * Returns the distance from this node to it's parent.
+     * @return The distance from this node to it's parent.
+     **************************************************************************/
+    public Integer
+    getDistanceToParent()
+    {
+        return distanceToParent;
     }
 
     /**************************************************************************
@@ -145,6 +166,16 @@ Node<T> extends Vertex<T>
     setParent(Node<T> parent)
     {
         this.parent = parent; 
+    }
+
+    /**************************************************************************
+     * Changes the distance to this node's parent.
+     * @param distanceToParent The new distance to this nodes parent.
+     **************************************************************************/
+    public void
+    setDistanceToParent(Integer distanceToParent)
+    {
+        this.distanceToParent = distanceToParent;
     }
 
     /**************************************************************************

@@ -151,7 +151,12 @@ public class Tree<T>
         }
 
         for (Node<T> child: current.getChildren()) {
-            string = child.getLabel() + "," + string;
+            if (child.getDistanceToParent() != null) {
+                string = child.getLabel() + ":" + child.getDistanceToParent() +
+                        "," + string;
+            } else {
+                string = child.getLabel() + "," + string;
+            }
             string = toStringRecursive(child) + string;
         }
 
@@ -160,5 +165,16 @@ public class Tree<T>
         }
 
         return string;
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public void fromString(String string)
+    {
+        StringBuilder reverser = new StringBuilder(string);
+        reverser.reverse();
+        string = reverser.toString();
+
+
     }
 }

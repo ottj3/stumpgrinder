@@ -8,8 +8,9 @@ import java.util.List;
 public class
 Hartigan
 {
-    public static <T> Pair<Integer, SetList<T>>
-    hartigan(List<SetList<T>> sets)
+    public static <T> Pair<Integer, List<SetList<T>>>
+    hartigan(List<SetList<T>> sets,
+             SetList<T> worldSet)
     {
         int score = 0, length = sets.get(0).size();
         SetList<T> vh = new SetList<T>(length),
@@ -38,17 +39,34 @@ Hartigan
         int occurences, kOccurences, kMinusOneOccurences;
 
         for (int index = 0; index < length; index++) {
-            k = new HashSet<T>(); kMinusOne = new HashSet<T>();
+            k = new HashSet<T>(); kMinusOne = new HashSet<T>(worldSet.get(index));
             kOccurences = 1; kMinusOneOccurences = 0;
 
+            //TODO: Fix this
+            //Currently not accounting for possibilities not present in sets
             for (T state : count.get(index).keySet()) {
                 occurences = count.get(index).get(state);
                 if (occurences > kOccurences) {
-                    k.clear();
-                    k.add(state);
+                    if (kOccurences == occurences - 1) {
+                        kMinusOne = k;
+                        kMinusOneOccurences = kOccurences;
+                        k = new HashSet<T>();
+                        k.add(state);
+                    } else {
+                        k.clear();
+                        k.add(state);
+                    }
+
+                    if (kMinusOne.contains(state)) {
+                        kMinusOne.remove(state);
+                    }
+
                     kOccurences = occurences;
                 } else if (occurences == kOccurences) {
                     k.add(state);
+                    if (kMinusOne.contains(state)) {
+                        kMinusOne.remove(state);
+                    }
                 } else if (occurences == kMinusOneOccurences) {
                     kMinusOne.add(state);
                 }
@@ -59,40 +77,44 @@ Hartigan
             vl.set(index,kMinusOne);
         }
 
-        Pair<Integer, SetList<T>> results =
-            new Pair<Integer, SetList<T>>(score, vh);
+        List<SetList<T>> setResult = new ArrayList<SetList<T>>(2);
+        setResult.add(vh);
+        setResult.add(vl);
+
+        Pair<Integer, List<SetList<T>>> results =
+            new Pair<Integer, List<SetList<T>>>(score, setResult);
         return results;
     }
 
     public static <T> int
-    bottomUp(Tree<SetList<T>> tree)
+    bottomUp(Tree<List<SetList<T>>> tree,
+             SetList<T> worldSet)
     {
-        int score = 0;
-
-        score += bottomUpRecursive(tree.getRoot());
-
-        return score;
+        return bottomUpRecursive(tree.getRoot(), worldSet);
     }
 
     public static<T>  int
-    bottomUpRecursive(Node<SetList<T>> current)
+    bottomUpRecursive(Node<List<SetList<T>>> current,
+                      SetList<T> worldSet)
     {
         int score = 0;
 
-        for (Node<SetList<T>> child : current.getChildren()) {
-            score += bottomUpRecursive(child);
+        for (Node<List<SetList<T>>> child : current.getChildren()) {
+            score += bottomUpRecursive(child,
+                                       worldSet);
         }
 
         /** TODO: As long as all the children have sets **/
         if (current.getChildren().size() == 2) {
-            ArrayList<SetList<T>> sets = 
+            List<SetList<T>> sets = 
                 new ArrayList<SetList<T>>(2);
 
-            for (Node<SetList<T>> child : current.getChildren()) {
-                sets.add(child.getData());
+            for (Node<List<SetList<T>>> child : current.getChildren()) {
+                sets.add(child.getData().get(0));
             }
 
-            Pair<Integer, SetList<T>> fitchResults = hartigan(sets);
+            Pair<Integer, List<SetList<T>>> fitchResults = hartigan(sets,
+                                                                    worldSet);
             score += fitchResults.fst();
             current.setData(fitchResults.snd());
         }
@@ -101,31 +123,36 @@ Hartigan
     }
 
     public static <T> void
-    topDown(Tree<SetList<T>> tree)
+    topDown(Tree<List<SetList<T>>> tree)
     {
-        Node<SetList<T>> root = tree.getRoot();
+        Node<List<SetList<T>>> root = tree.getRoot();
         
         /** For the root perform a union between VH and VL **/
-        root.getData().get(0).addAll(root.getData().get(1));
-        root.getData().remove(1);
+        SetList<T> vv = new SetList<T>(root.getData().get(0));
+        vv.addAll(root.getData().get(1));
+        root.getData().add(vv);
 
         topDownRecursive(root);
         return;
     }
 
     public static <T> void
-    topDownRecursive(Node<SetList<T>> current)
+    topDownRecursive(Node<List<SetList<T>>> current)
     {
-        Node<SetList<T>> parent = current.getParent();
+        Node<List<SetList<T>>> parent = current.getParent();
 
         if (parent != null) {
-            SetList<T> vv = parent.getData().get(0), 
-                       vh = current.getData().get(0),
-                       vl = current.getData().get(1);
+            SetList<T> vh = current.getData().get(0),
+                       vl = current.getData().get(1),
+                       vv = parent.getData().get(2);
             if (vh.containsAll(vv)) {
-                current.setData(vv);
+                current.getData().add(vv);
             } else {
-                current.setData(vh.addAll(vl.retainAll(vv)));
+                SetList<T> newVH = new SetList<T>(vh),
+                           newVL = new SetList<T>(vl);
+                newVL.retainAll(vv);
+                newVH.addAll(newVL);
+                current.getData().add(newVH);
             }
         }
 

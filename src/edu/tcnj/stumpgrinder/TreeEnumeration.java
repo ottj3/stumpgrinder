@@ -1,5 +1,6 @@
 package edu.tcnj.stumpgrinder;
 
+import java.util.List;
 import java.util.HashSet;
 
 public class
@@ -9,7 +10,7 @@ TreeEnumeration
     private static int bestParsimonyScore = -1;
 
     public static <T> HashSet<String>
-    enumerate(Tree<SetList<T>> tree)
+    enumerate(Tree<List<SetList<T>>> tree)
     {
         HashSet<String> trees = new HashSet<String>();
         bestParsimonyScore = -1;
@@ -23,7 +24,9 @@ TreeEnumeration
             trees.add(tree.toString());
         } else if (tree.size() >= 3) {
             // Reconsider
-            Node<SetList<T>> internal = new Node<SetList<T>>();
+            Node<List<SetList<T>>> internal = 
+                new Node<List<SetList<T>>>();
+
             tree.setRoot(internal);
 
             for (int index = 0; index < 3; index++) {
@@ -41,8 +44,8 @@ TreeEnumeration
     }
 
     public static <T> HashSet<String>
-    enumerateRecursive(Tree<SetList<T>> tree, 
-                       Node<SetList<T>> current,
+    enumerateRecursive(Tree<List<SetList<T>>> tree, 
+                       Node<List<SetList<T>>> current,
                        int size)
     {
         HashSet<String> trees = new HashSet<String>();
@@ -56,13 +59,13 @@ TreeEnumeration
                                                 size));
             }
             if (current != tree.getRoot()) {
-                Node<SetList<T>> newLeaf = 
+                Node<List<SetList<T>>> newLeaf = 
                     tree.getNodes().get(size);
 
-                Node<SetList<T>> internal = 
-                    new Node<SetList<T>>();
+                Node<List<SetList<T>>> internal = 
+                    new Node<List<SetList<T>>>();
 
-                Node<SetList<T>> parent =
+                Node<List<SetList<T>>> parent =
                     current.getParent();
 
                 parent.makeNotChild(current);
@@ -86,7 +89,7 @@ TreeEnumeration
     }
 
     public static <T> HashSet<String>
-    fitchScoredEnumerate(Tree<SetList<T>> tree)
+    fitchScoredEnumerate(Tree<List<SetList<T>>> tree)
     {
         HashSet<String> trees = new HashSet<String>();
         bestParsimonyScore = -1;
@@ -100,7 +103,8 @@ TreeEnumeration
             trees.add(tree.toString());
         } else if (tree.size() >= 3) {
             // Reconsider
-            Node<SetList<T>> internal = new Node<SetList<T>>();
+            Node<List<SetList<T>>> internal = 
+                new Node<List<SetList<T>>>();
             tree.setRoot(internal);
 
             for (int index = 0; index < 3; index++) {
@@ -118,8 +122,8 @@ TreeEnumeration
     }
 
     public static <T> HashSet<String>
-    fitchScoredEnumerateRecursive(Tree<SetList<T>> tree,
-                                  Node<SetList<T>> current,
+    fitchScoredEnumerateRecursive(Tree<List<SetList<T>>> tree,
+                                  Node<List<SetList<T>>> current,
                                   int size)
     {
         HashSet<String> trees = new HashSet<String>();
@@ -147,13 +151,13 @@ TreeEnumeration
                 if (Fitch.bottomUp(tree) <= bestParsimonyScore || 
                     bestParsimonyScore == -1) {
 
-                    Node<SetList<T>> newLeaf = 
+                    Node<List<SetList<T>>> newLeaf = 
                         tree.getNodes().get(size);
 
-                    Node<SetList<T>> internal = 
-                        new Node<SetList<T>>();
+                    Node<List<SetList<T>>> internal = 
+                        new Node<List<SetList<T>>>();
 
-                    Node<SetList<T>> parent =
+                    Node<List<SetList<T>>> parent =
                         current.getParent();
 
                     parent.makeNotChild(current);
@@ -178,7 +182,8 @@ TreeEnumeration
     }
 
     public static <T> HashSet<String>
-    hartiganScoredEnumerate(Tree<SetList<T>> tree)
+    hartiganScoredEnumerate(Tree<List<SetList<T>>> tree,
+                            SetList<T> worldSet)
     {
         HashSet<String> trees = new HashSet<String>();
         bestParsimonyScore = -1;
@@ -192,7 +197,7 @@ TreeEnumeration
             trees.add(tree.toString());
         } else if (tree.size() >= 3) {
             // Reconsider
-            Node<SetList<T>> internal = new Node<SetList<T>>();
+            Node<List<SetList<T>>> internal = new Node<List<SetList<T>>>();
             tree.setRoot(internal);
 
             for (int index = 0; index < 3; index++) {
@@ -200,7 +205,8 @@ TreeEnumeration
             }
 
             if (tree.size() > 3) {
-                trees = hartiganScoredEnumerateRecursive(tree, tree.getRoot(), 3);
+                trees = hartiganScoredEnumerateRecursive(tree, worldSet, 
+                                                         tree.getRoot(), 3);
             } else {
                 trees.add(tree.toString());
             }
@@ -210,15 +216,16 @@ TreeEnumeration
     }
 
     public static <T> HashSet<String>
-    hartiganScoredEnumerateRecursive(Tree<SetList<T>> tree,
-                                  Node<SetList<T>> current,
-                                  int size)
+    hartiganScoredEnumerateRecursive(Tree<List<SetList<T>>> tree,
+                                     SetList<T> worldSet,
+                                     Node<List<SetList<T>>> current,
+                                     int size)
     {
         HashSet<String> trees = new HashSet<String>();
         int parsimonyScore;
 
         if (size == tree.size()) {
-            parsimonyScore = Hartigan.bottomUp(tree);
+            parsimonyScore = Hartigan.bottomUp(tree, worldSet);
             if (parsimonyScore < bestParsimonyScore) {
                 trees.clear();
                 trees.add(tree.toString());
@@ -232,20 +239,21 @@ TreeEnumeration
         } else {
             for (int index = 0; index < current.getChildren().size(); index++) {
                 trees.addAll(hartiganScoredEnumerateRecursive(tree,
-                                                current.getChildren().get(0),
-                                                size));
+                                                            worldSet,
+                                                            current.getChild(0),
+                                                            size));
             }
             if (current != tree.getRoot()) {
-                if (Hartigan.bottomUp(tree) <= bestParsimonyScore || 
+                if (Hartigan.bottomUp(tree, worldSet) <= bestParsimonyScore ||
                     bestParsimonyScore == -1) {
 
-                    Node<SetList<T>> newLeaf = 
+                    Node<List<SetList<T>>> newLeaf = 
                         tree.getNodes().get(size);
 
-                    Node<SetList<T>> internal = 
-                        new Node<SetList<T>>();
+                    Node<List<SetList<T>>> internal = 
+                        new Node<List<SetList<T>>>();
 
-                    Node<SetList<T>> parent =
+                    Node<List<SetList<T>>> parent =
                         current.getParent();
 
                     parent.makeNotChild(current);
@@ -254,7 +262,8 @@ TreeEnumeration
                     internal.makeChild(current);
                     internal.makeChild(newLeaf);
 
-                    trees.addAll(hartiganScoredEnumerateRecursive(tree, 
+                    trees.addAll(hartiganScoredEnumerateRecursive(tree,
+                                                               worldSet,
                                                                tree.getRoot(),
                                                                size + 1));
 
