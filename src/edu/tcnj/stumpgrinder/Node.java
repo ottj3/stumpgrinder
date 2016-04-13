@@ -296,4 +296,46 @@ Node<T> extends Vertex<T>
             return false;
         }
     }
+
+    /**************************************************************************
+     * Returns a node's child at a certain index.
+     * @param index of ArrayList where child is contained.
+     **************************************************************************/
+   public Node getChild(int index) {
+        return (Node) children.get(index);
+   }
+   
+   /**************************************************************************
+    * Returns the number of children a node has.
+    **************************************************************************/
+   public int numChildren() {
+       return children.size();
+  }
+
+  /**************************************************************************
+   * Checks whether a child has a parent.
+   **************************************************************************/
+  public boolean hasParent() {
+	   return (parent != null);
+  }
+ 
+  /**************************************************************************
+   * Returns the cost of a child node to its parent.
+   **************************************************************************/
+   public int getCost() {
+	   int cost = 0;
+	   if (this.hasParent()){
+		   if (this.getLabel()==this.getParent().getLabel()){
+			   cost = 0;
+		   }
+		   else {
+			   cost = 1;
+		   }
+	   }
+	   else{
+		   cost = 0;
+	   }
+	   return cost;
+   }
+  
 }

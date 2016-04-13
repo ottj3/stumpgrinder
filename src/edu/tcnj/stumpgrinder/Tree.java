@@ -3,6 +3,7 @@ package edu.tcnj.stumpgrinder;
 import java.util.ArrayList;
 import java.util.Collection;
 
+<<<<<<< HEAD
 public class Tree<T>
 {
     /** A list of the nodes in the tree **/
@@ -167,14 +168,80 @@ public class Tree<T>
         return string;
     }
 
-    /**************************************************************************
-     **************************************************************************/
-    public void fromString(String string)
+    public Node getNode(String label)
     {
-        StringBuilder reverser = new StringBuilder(string);
-        reverser.reverse();
-        string = reverser.toString();
+        for (Node node : this.nodes) {
+            if (node.label == label) {
+                return node;
+            }
+        }
 
+        if (this.getRoot().label == label) {
+            //TODO: Should be some sort of special indicator
+            return this.getRoot();
+        }
 
+        return null;
     }
+
+	/**************************************************************************
+	 * Returns the root Node of the reconstructed tree.
+	 * @param A string representation of the tree.
+	 **************************************************************************/
+	public Node fromString(String treeString) {
+		/* Find the root node and make it the parent */
+		int last = treeString.lastIndexOf(':');
+		
+		String label = treeString.substring(last - 1, last);
+		
+		return fromStringRecursive(treeString, new Node(this.getNode(label).getLabel(), this.getNode(label).getData()), 0, last);
+	}
+
+	/**************************************************************************
+	 * Recursively builds the tree from its string representation.
+	 * @param A string representation of the tree.
+	 * @param Node 
+	 * @param start index of the string
+	 * @param end index of the string
+	 * 
+	 **************************************************************************/
+	public Node fromStringRecursive(String s, Node parent, int start, int end) {
+		/*Check if the substring contains a single label.
+		 * If so, return the node. Else, continue parsing the string*/
+		if (s.charAt(start) != '(') {
+			return parent;
+		}
+
+		int brackets = 0; // counts parenthesis
+		int colon = 0; // marks the position of the colon
+		int marker = start; // marks the position of string
+		String label = ""; //stores the label of the node
+
+		for (int i = start; i < end; i++) {
+			char c = s.charAt(i);
+
+			if (c == '(')
+				brackets++;
+			else if (c == ')')
+				brackets--;
+			else if (c == ':')
+				colon = i;
+
+			if (brackets == 0 && c == ')' || brackets == 1 && c == ',') {
+
+				if (!(s.charAt(colon - 1) == ')')) {
+					label = s.substring(colon - 1, colon);
+
+				}
+
+				else {
+					label = "";
+
+				}
+				parent.makeChild(fromStringRecursive(s, new Node(this.getNode(label).getLabel(), this.getNode(label).getData()), marker + 1, colon));
+				marker = i;
+			}
+		}
+		return parent;
+	}
 }
