@@ -298,31 +298,35 @@ Node<T> extends Vertex<T>
     }
 
     /**************************************************************************
-     * Returns a node's child at a certain index.
-     * @param index of ArrayList where child is contained.
-     **************************************************************************/
-   public Node getChild(int index) {
-        return (Node) children.get(index);
-   }
-   
-   /**************************************************************************
-    * Returns the number of children a node has.
+    * Returns the number of children this node has.
+    * @return The number of children this node has.
+    *
+    * TODO: Not sure if this is neccessary
     **************************************************************************/
-   public int numChildren() {
-       return children.size();
-  }
+    public int 
+    numChildren() 
+    {
+        return children.size();
+    }
 
-  /**************************************************************************
-   * Checks whether a child has a parent.
-   **************************************************************************/
-  public boolean hasParent() {
-	   return (parent != null);
-  }
+    /**************************************************************************
+     * Checks whether this node has a parent.
+     * @return true if this node has a parent, false otherwise.
+     **************************************************************************/
+    public boolean 
+    hasParent()
+    {
+	    return (parent != null);
+    }
  
-  /**************************************************************************
-   * Returns the cost of a child node to its parent.
-   **************************************************************************/
-   public int getCost() {
+    /**************************************************************************
+     * Returns the cost of a child node to its parent.
+     *
+     * TODO: Not sure what is going on here
+     **************************************************************************/
+    public int 
+    getCost()
+    {
 	   int cost = 0;
 	   if (this.hasParent()){
 		   if (this.getLabel()==this.getParent().getLabel()){
@@ -336,6 +340,6 @@ Node<T> extends Vertex<T>
 		   cost = 0;
 	   }
 	   return cost;
-   }
+    }
   
 }
