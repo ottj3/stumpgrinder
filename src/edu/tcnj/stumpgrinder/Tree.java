@@ -172,9 +172,9 @@ public class Tree<T>
 	 * @param label of node
 	 * @return Node belonging to tree if node is found
 	 **************************************************************************/
-    public Node getNode(String label)
+    public Node<T> getNode(String label)
     {
-        for (Node node : this.nodes) {
+        for (Node<T> node : this.nodes) {
             if (node.getLabel() == label) {
                 return node;
             }
@@ -194,15 +194,15 @@ public class Tree<T>
 	 * @param label of node
 	 * @return Node belonging to tree if node is found; unlabelled node otherwise
 	 **************************************************************************/
-	public Node createNode(String label) {
-		Node current = new Node("");
+	public Node<T> createNode(String label) {
+		Node<T> current = new Node<T>("");
 		if (this.getRoot().getLabel().equals(label)) {
 			//current = this.getRoot();
-			current = new Node (this.getRoot().getLabel(), this.getRoot().getData());
+			current = new Node<T>(this.getRoot().getLabel(), this.getRoot().getData());
 		} else {
 			for (int i = 0; i < this.nodes.size(); i++) {
 				if (label != "" && this.nodes.get(i).getLabel().equals(label)) {
-					current = new Node (this.nodes.get(i).getLabel(), this.nodes.get(i).getData());
+					current = new Node<T>(this.nodes.get(i).getLabel(), this.nodes.get(i).getData());
 					//current = this.nodes.get(i);
 				}
 			}
@@ -221,7 +221,7 @@ public class Tree<T>
 		
 		String label = treeString.substring(last - 1, last);
 	
-		return fromStringRecursive(treeString, new Node(this.createNode(label).getLabel(), this.createNode(label).getData()), 0, last);
+		return fromStringRecursive(treeString, new Node<T>(this.createNode(label).getLabel(), this.createNode(label).getData()), 0, last);
 	}
 
 	/**************************************************************************
@@ -232,7 +232,7 @@ public class Tree<T>
 	 * @param end index of the string
 	 * 
 	 **************************************************************************/
-	public Node fromStringRecursive(String s, Node parent, int start, int end) {
+	public Node fromStringRecursive(String s, Node<T> parent, int start, int end) {
 		/*Check if the substring contains a single label.
 		 * If so, return the node. Else, continue parsing the string*/
 		if (s.charAt(start) != '(') {
@@ -265,7 +265,7 @@ public class Tree<T>
 					label = "";
 
 				}
-				parent.makeChild(fromStringRecursive(s, new Node(this.createNode(label).getLabel(), this.createNode(label).getData()), marker + 1, colon));
+				parent.makeChild(fromStringRecursive(s, new Node<T>(this.createNode(label).getLabel(), this.createNode(label).getData()), marker + 1, colon));
 				marker = i;
 			}
 		}
