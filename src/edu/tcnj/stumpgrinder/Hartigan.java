@@ -104,16 +104,19 @@ Hartigan
                                        worldSet);
         }
 
-        List<SetList<T>> sets = new ArrayList<SetList<T>>(current.getChildren().size());
+        if (current.getChildren().size() == 2) {
+            List<SetList<T>> sets =
+                new ArrayList<SetList<T>>(current.getChildren().size());
 
-        for (Node<List<SetList<T>>> child : current.getChildren()) {
-        	sets.add(child.getData().get(0));
-        }
-            
+            for (Node<List<SetList<T>>> child : current.getChildren()) {
+                sets.add(child.getData().get(0));
+            }
+                
             Pair<Integer, List<SetList<T>>> hartiganResults = hartigan(sets,
-                                                                    worldSet);
+                                                                       worldSet);
             score += hartiganResults.fst();
             current.setData(hartiganResults.snd());
+        }
             
         return score;
     }
