@@ -1,5 +1,7 @@
 package edu.tcnj.stumpgrinder;
 
+import java.util.List;
+
 /**************************************************************************
  * The edge contraction algorithm.
  *
