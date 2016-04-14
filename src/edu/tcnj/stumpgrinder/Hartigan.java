@@ -104,21 +104,17 @@ Hartigan
                                        worldSet);
         }
 
-        /** TODO: As long as all the children have sets **/
-        if (current.getChildren().size() == 2) {
-            List<SetList<T>> sets = 
-                new ArrayList<SetList<T>>(2);
+        List<SetList<T>> sets = new ArrayList<SetList<T>>(current.getChildren().size());
 
-            for (Node<List<SetList<T>>> child : current.getChildren()) {
-                sets.add(child.getData().get(0));
-            }
-
-            Pair<Integer, List<SetList<T>>> fitchResults = hartigan(sets,
-                                                                    worldSet);
-            score += fitchResults.fst();
-            current.setData(fitchResults.snd());
+        for (Node<List<SetList<T>>> child : current.getChildren()) {
+        	sets.add(child.getData().get(0));
         }
-
+            
+            Pair<Integer, List<SetList<T>>> hartiganResults = hartigan(sets,
+                                                                    worldSet);
+            score += hartiganResults.fst();
+            current.setData(hartiganResults.snd());
+            
         return score;
     }
 
