@@ -10,10 +10,6 @@ Graph<T>
     private 
     ArrayList<Vertex<T>> vertices;
 
-    /** TODO: Consider a dynamic programming approach for this **/
-    //private
-    //ArrayList<ArrayList<Boolean>> adjacencyMatrix;
-
     public
     Graph()
     {
@@ -56,10 +52,4 @@ Graph<T>
             return false;
         }
     }
-
-    /** TODO: Implement adjacency matrix printing
-    public String
-    toString()
-    {}
-    **/
 }

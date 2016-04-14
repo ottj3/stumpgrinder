@@ -6,15 +6,18 @@ import java.util.Collection;
 public class Tree<T>
 {
     /** A list of the nodes in the tree **/
-    private ArrayList<Node<T>> nodes;
+    private
+    ArrayList<Node<T>> nodes;
 
     /** A pointer to the root of the tree **/
-    private Node<T> root;
+    private
+    Node<T> root;
 
     /**************************************************************************
      * Constructs a tree with no nodes and no root.
      **************************************************************************/
-    public Tree()
+    public
+    Tree()
     {
         this.root = null;
         this.nodes = new ArrayList<Node<T>>();
@@ -24,7 +27,8 @@ public class Tree<T>
      * Constructs a tree with nodes and no root.
      * @param nodes The nodes that are to be placed in the tree.
      **************************************************************************/
-    public Tree(Collection<Node<T>> nodes)
+    public
+    Tree(Collection<Node<T>> nodes)
     {
         this.nodes = new ArrayList<Node<T>>(nodes);
         this.root = null;
@@ -35,7 +39,8 @@ public class Tree<T>
      * @param nodes The nodes that are to be placed in the tree.
      * @param root  The node that will be the root of the tree.
      **************************************************************************/
-    public Tree(Collection<Node<T>> nodes, Node<T> root)
+    public
+    Tree(Collection<Node<T>> nodes, Node<T> root)
     {
         this.nodes = new ArrayList<Node<T>>(nodes);
         this.root = root;
@@ -45,7 +50,8 @@ public class Tree<T>
      * Returns a list of the nodes in this tree.
      * @return A list of the nodes in this tree.
      **************************************************************************/
-    public ArrayList<Node<T>> getNodes()
+    public ArrayList<Node<T>>
+    getNodes()
     {
         return this.nodes;
     }
@@ -54,7 +60,8 @@ public class Tree<T>
      * Returns the root of this tree.
      * @return The root of this tree.
      **************************************************************************/
-    public Node<T> getRoot()
+    public Node<T>
+    getRoot()
     {
         return this.root;
     }
@@ -63,7 +70,8 @@ public class Tree<T>
      * Replaces the nodes in this tree.
      * @param nodes A list of the new nodes in this tree.
      **************************************************************************/
-    public void setNodes(Collection<Node<T>> nodes)
+    public void
+    setNodes(Collection<Node<T>> nodes)
     {
         this.nodes = new ArrayList<Node<T>>(nodes);
     }
@@ -72,7 +80,8 @@ public class Tree<T>
      * Replaces the root of this tree.
      * @param root The new root of the tree.
      **************************************************************************/
-    public void setRoot(Node<T> root)
+    public void
+    setRoot(Node<T> root)
     {
         this.root = root;
     }
@@ -82,7 +91,8 @@ public class Tree<T>
      * @param node The node to search this tree for.
      * @return true if the node is in this tree.
      **************************************************************************/
-    public boolean inTree(Node<T> node)
+    public boolean
+    inTree(Node<T> node)
     {
         return nodes.contains(node);
     }
@@ -92,7 +102,8 @@ public class Tree<T>
      * @param node The node to be added to this tree.
      * @return true if node is not already in this tree.
      **************************************************************************/
-    public boolean addNode(Node<T> node)
+    public boolean
+    addNode(Node<T> node)
     {
         if (inTree(node)) {
             return false;
@@ -107,7 +118,8 @@ public class Tree<T>
      * @param node The node to be removed from this tree.
      * @return true if node is not in this tree.
      **************************************************************************/
-    public boolean removeNode(Node<T> node)
+    public boolean
+    removeNode(Node<T> node)
     {
         if (inTree(node)) {
             nodes.remove(node);
@@ -121,7 +133,8 @@ public class Tree<T>
      * Returns the number of nodes in the tree.
      * @return The number of nodes in the tree.
      **************************************************************************/
-    public int size()
+    public int
+    size()
     {
         return nodes.size();
     }
@@ -130,7 +143,8 @@ public class Tree<T>
      * Returns a string representation of the tree. (Newick Tree Format)
      * @return A string representation of the tree.
      **************************************************************************/
-    public String toString()
+    public String
+    toString()
     {
         String string = this.root.getLabel() + ";";
         string = toStringRecursive(root) + string;
@@ -142,7 +156,8 @@ public class Tree<T>
      * Returns a string representation of the subtree from a specified node.
      * @return A string representation of the subtree from a specified node.
      **************************************************************************/
-    public String toStringRecursive(Node<T> current)
+    public String
+    toStringRecursive(Node<T> current)
     {
         String string = "";
 
@@ -172,7 +187,8 @@ public class Tree<T>
 	 * @param label of node
 	 * @return Node belonging to tree if node is found
 	 **************************************************************************/
-    public Node<T> getNode(String label)
+    public Node<T>
+    getNode(String label)
     {
         for (Node<T> node : this.nodes) {
             if (node.getLabel() == label) {
@@ -194,7 +210,9 @@ public class Tree<T>
 	 * @param label of node
 	 * @return Node belonging to tree if node is found; unlabelled node otherwise
 	 **************************************************************************/
-	public Node<T> createNode(String label) {
+	public Node<T>
+    createNode(String label)
+    {
 		Node<T> current = new Node<T>("");
 		if (this.getRoot().getLabel().equals(label)) {
 			//current = this.getRoot();
@@ -215,7 +233,9 @@ public class Tree<T>
 	 * Returns the root Node of the reconstructed tree.
 	 * @param A string representation of the tree.
 	 **************************************************************************/
-	public Node fromString(String treeString) {
+	public Node
+    fromString(String treeString)
+    {
 		/* Find the root node and make it the parent */
 		int last = treeString.lastIndexOf(':');
 		
@@ -232,7 +252,9 @@ public class Tree<T>
 	 * @param end index of the string
 	 * 
 	 **************************************************************************/
-	public Node fromStringRecursive(String s, Node<T> parent, int start, int end) {
+	public Node
+    fromStringRecursive(String s, Node<T> parent, int start, int end)
+    {
 		/*Check if the substring contains a single label.
 		 * If so, return the node. Else, continue parsing the string*/
 		if (s.charAt(start) != '(') {
@@ -258,12 +280,10 @@ public class Tree<T>
 
 				if (!(s.charAt(colon - 1) == ')')) {
 					label = s.substring(colon - 1, colon);
-
 				}
 
 				else {
 					label = "";
-
 				}
 				parent.makeChild(fromStringRecursive(s, new Node<T>(this.createNode(label).getLabel(), this.createNode(label).getData()), marker + 1, colon));
 				marker = i;

@@ -42,8 +42,6 @@ Hartigan
             k = new HashSet<T>(); kMinusOne = new HashSet<T>(worldSet.get(index));
             kOccurences = 1; kMinusOneOccurences = 0;
 
-            //TODO: Fix this
-            //Currently not accounting for possibilities not present in sets
             for (T state : count.get(index).keySet()) {
                 occurences = count.get(index).get(state);
                 if (occurences > kOccurences) {

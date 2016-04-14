@@ -11,9 +11,12 @@ import java.util.List;
  * @version 0.2
  ******************************************************************************/
 
-public class MixedTreeEnumeration{
+public class
+MixedTreeEnumeration
+{
 	/** HashSet to store trees as Newick strings */
-	private static HashSet<String> trees = new HashSet<String>();
+	private static
+    HashSet<String> trees = new HashSet<String>();
 
 	/***************************************************************************
 	 * Initializes the enumeration of all possible trees.
@@ -26,7 +29,9 @@ public class MixedTreeEnumeration{
 	 * @param tree
 	 *            List of tree structures.
 	 **************************************************************************/
-	public static <T> HashSet<String> enumerate(Tree<List<SetList<T>>> tree) {
+	public static <T> HashSet<String>
+    enumerate(Tree<List<SetList<T>>> tree)
+    {
 		if (tree.size() > 1) {
 			tree.setRoot(tree.getNodes().get(0));
 			tree.getRoot().makeChild(tree.getNodes().get(1));
@@ -56,10 +61,11 @@ public class MixedTreeEnumeration{
 	 *            An integer containing the number of leaves that have been
 	 *            added to the tree.
 	 **************************************************************************/
-	public static <T> HashSet<String> enumerateRecursive(
-			Tree<List<SetList<T>>> tree, Node<List<SetList<T>>> current,
-			int size) {
-
+	public static <T> HashSet<String>
+    enumerateRecursive(Tree<List<SetList<T>>> tree,
+                       Node<List<SetList<T>>> current,
+			           int size)
+    {
 		if (size == tree.size()) {
 			trees.add(tree.toString());
 		} else {
@@ -83,8 +89,9 @@ public class MixedTreeEnumeration{
 	 *            An integer containing the number of leaves that have been
 	 *            added to the tree.
 	 **************************************************************************/
-	public static <T> HashSet<String> case1(Tree<List<SetList<T>>> tree,
-			Node<List<SetList<T>>> current, int size) {
+	public static <T> HashSet<String>
+    case1(Tree<List<SetList<T>>> tree, Node<List<SetList<T>>> current, int size)
+    {
 		for (int index = 0; index < current.getChildren().size(); index++) {
 			trees.addAll(case1(tree, current.getChildren().get(0), size));
 		}
@@ -108,6 +115,7 @@ public class MixedTreeEnumeration{
 			parent.makeNotChild(internal);
 			parent.makeChild(current);
 		}
+
 		return trees;
 	}
 
@@ -123,8 +131,9 @@ public class MixedTreeEnumeration{
 	 *            An integer containing the number of leaves that have been
 	 *            added to the tree.
 	 **************************************************************************/
-	public static <T> HashSet<String> case2(Tree<List<SetList<T>>> tree,
-			Node<List<SetList<T>>> current, int size) {
+	public static <T> HashSet<String>
+    case2(Tree<List<SetList<T>>> tree, Node<List<SetList<T>>> current, int size)
+    {
 		for (int index = 0; index < current.getChildren().size(); index++) {
 			trees.addAll(case2(tree, current.getChildren().get(0), size));
 		}
@@ -145,6 +154,7 @@ public class MixedTreeEnumeration{
 			parent.makeNotChild(newIntNode);
 			parent.makeChild(current);
 		}
+
 		return trees;
 	}
 
@@ -161,8 +171,9 @@ public class MixedTreeEnumeration{
 	 *            added to the tree.
 	 **************************************************************************/
 
-	public static <T> HashSet<String> case3(Tree<List<SetList<T>>> tree,
-			Node<List<SetList<T>>> current, int size) {
+	public static <T> HashSet<String>
+    case3(Tree<List<SetList<T>>> tree, Node<List<SetList<T>>> current, int size)
+    {
 		for (int index = 0; index < current.getChildren().size(); index++) {
 			trees.addAll(case3(tree, current.getChildren().get(index), size));
 		}
@@ -188,8 +199,9 @@ public class MixedTreeEnumeration{
 	 *            An integer containing the number of leaves that have been
 	 *            added to the tree.
 	 **************************************************************************/
-	public static <T> HashSet<String> case4(Tree<List<SetList<T>>> tree,
-			Node<List<SetList<T>>> current, int size) {
+	public static <T> HashSet<String>
+    case4(Tree<List<SetList<T>>> tree, Node<List<SetList<T>>> current, int size)
+    {
 		for (int index = 0; index < current.getChildren().size(); index++) {
 			trees.addAll(case4(tree, current.getChildren().get(index), size));
 		}

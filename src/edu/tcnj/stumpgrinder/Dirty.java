@@ -7,17 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
 
-public class Dirty
+public class
+Dirty
 {
-    static ArrayList<String> labels = new ArrayList<String>();
-    static ArrayList<String> data   = new ArrayList<String>();
+    static
+    ArrayList<String> labels = new ArrayList<String>();
 
-    static SetList<Character> worldSet = new SetList<Character>();
+    static
+    ArrayList<String> data   = new ArrayList<String>();
 
-    static ArrayList<Node<List<SetList<Character>>>> species = 
+    static
+    SetList<Character> worldSet = new SetList<Character>();
+
+    static
+    ArrayList<Node<List<SetList<Character>>>> species = 
         new ArrayList<Node<List<SetList<Character>>>>();
 
-    public static void main(String[] args) throws IOException
+    public static void
+    main(String[] args) throws IOException
     {
         getInput();
         makeNodes();
@@ -26,9 +33,11 @@ public class Dirty
         //testTreefromString();
     }
 
-    public static void getInput() throws IOException
+    public static void
+    getInput() throws IOException
     {
-        BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader stdin =
+            new BufferedReader(new InputStreamReader(System.in));
 
         String line;
 
@@ -41,7 +50,8 @@ public class Dirty
         } while (line != null && line.length() > 0);
     }
 
-    public static void makeNodes()
+    public static void
+    makeNodes()
     {
         for (int index = 0; index < data.get(0).length(); index++) {
             worldSet.add(new HashSet<Character>());
@@ -64,7 +74,8 @@ public class Dirty
         }
     }
 
-    public static void testFitch()
+    public static void
+    testFitch()
     {
         for (int index = 1; index < species.size(); index++) {
             System.out.println("---");
@@ -95,7 +106,8 @@ public class Dirty
         }
     }
 
-    public static void testTrees()
+    public static void
+    testTrees()
     {
         Node<Integer> a = new Node<Integer>("A");
         Node<Integer> b = new Node<Integer>("B");
@@ -117,7 +129,8 @@ public class Dirty
     }
 
     
-    public static void testEnumeration()
+    public static void
+    testEnumeration()
     {
         Tree<List<SetList<Character>>> tree = 
             new Tree<List<SetList<Character>>>(species);
@@ -138,7 +151,8 @@ public class Dirty
         }
     }
     
-    public static void testTreefromString()
+    public static void
+    testTreefromString()
     {
     	Tree<List<SetList<Character>>> tree =
             new Tree<List<SetList<Character>>>(species.subList(1, species.size()), species.get(0));

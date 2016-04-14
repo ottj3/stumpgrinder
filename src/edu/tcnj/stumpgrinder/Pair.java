@@ -11,10 +11,12 @@ public class
 Pair <T1, T2>
 {
     /** The first element of the pair **/
-    private final T1 first;
+    private final
+    T1 first;
 
     /** The second element of the pair **/
-    private final T2 second;
+    private final
+    T2 second;
 
     /**************************************************************************
      * Constructs a pair.
