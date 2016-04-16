@@ -13,8 +13,8 @@ public class
 Node<T> extends Vertex<T>
 {
     /** The node that is this node's parent **/
-    private 
-    Node<T> parent;
+    private Node<T>
+    parent;
 
     /** The distance between this node and it's parent **/
     private
