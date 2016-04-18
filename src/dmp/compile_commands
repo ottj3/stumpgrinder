@@ -1,5 +1,0 @@
-# javac -cp .:edu/tcnj/stumpgrinder/junit-4.12.jar edu/tcnj/stumpgrinder/VertexTest.java edu/tcnj/stumpgrinder/Vertex.java
- 
-# java -cp .:edu/tcnj/stumpgrinder/junit-4.12.jar:edu/tcnj/stumpgrinder/hamcrest-core-1.3.jar org.junit.runner.JUnitCore edu.tcnj.stumpgrinder.VertexTest
-
-

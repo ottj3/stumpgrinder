@@ -1,0 +1,26 @@
+CONTRIBUTING
+============
+
+Coding Style
+------------
+
+  - Use 4 spaces instead of tabs.
+  - Do not add any trailing spaces at the end of a line.
+  - Variable and function names are in studlyCaps.
+  - Functions should have any modifiers and the return type on one line and the
+    function name and parameters on another.
+  - The opening braces for functions should be on a new line.
+  - The opening braces for ifs, fors, and whiles inside a function should be on
+    the same line.
+  - All comments should be started with /** and ended with **/
+  - All functions and classes should have javadoc comments.
+
+An example for clarity is shown below.
+
+    public Foo
+    Bar(Foo fooExample)
+    {
+	Foo fooReturn = new Foo();
+        /** Do some function stuff here **/
+	return fooReturn;
+    }
