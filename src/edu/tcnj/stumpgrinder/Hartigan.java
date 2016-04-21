@@ -124,9 +124,9 @@ Hartigan
     {
         Node<List<SetList<T>>> root = tree.getRoot();
         
-        /** For the root perform a union between VH and VL **/
+        /** For the root, only VH is part of the root set. **/
         SetList<T> vv = new SetList<T>(root.getData().get(0));
-        vv.addAll(root.getData().get(1));
+
         root.getData().add(vv);
 
         topDownRecursive(root);
@@ -142,7 +142,7 @@ Hartigan
             SetList<T> vh = current.getData().get(0),
                        vl = current.getData().get(1),
                        vv = parent.getData().get(2);
-            if (vh.containsAll(vv)) {
+            if (vv.containsAll(vh)) {
                 current.getData().add(vv);
             } else {
                 SetList<T> newVH = new SetList<T>(vh),
