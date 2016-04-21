@@ -136,23 +136,28 @@ Hartigan
     public static <T> void
     topDownRecursive(Node<List<SetList<T>>> current)
     {
-        Node<List<SetList<T>>> parent = current.getParent();
-
-        if (parent != null) {
-            SetList<T> vh = current.getData().get(0),
-                       vl = current.getData().get(1),
-                       vv = parent.getData().get(2);
+    	if (current.getChildren().size() >= 1) {
+    	for (int index = 0; index < current.getChildren().size(); index++) {
+    
+            SetList<T> vh = current.getChildren().get(index).getData().get(0),
+                    vl = current.getChildren().get(index).getData().get(1),
+                    vv = current.getData().get(2);
+            
             if (vv.containsAll(vh)) {
-                current.getData().add(vv);
+                current.getChildren().get(index).getData().add(vv);
             } else {
                 SetList<T> newVH = new SetList<T>(vh),
                            newVL = new SetList<T>(vl);
                 newVL.retainAll(vv);
+                
                 newVH.addAll(newVL);
-                current.getData().add(newVH);
+                current.getChildren().get(index).getData().add(newVH);
             }
+            	
+               topDownRecursive(current.getChildren().get(index));
+           }
         }
-
+    	
         return;
     }
 }
