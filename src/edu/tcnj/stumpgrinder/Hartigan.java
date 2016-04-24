@@ -274,7 +274,7 @@ Hartigan
                     vl = current.getChildren().get(index).getData().get(1),
                     vv = current.getData().get(2);
             
-            if (vv.containsAll(vh)) {
+            if (vh.get(0).containsAll(vv.get(0))) {
                 current.getChildren().get(index).getData().add(vv);
             } else {
                 SetList<T> newVH = new SetList<T>(vh),
