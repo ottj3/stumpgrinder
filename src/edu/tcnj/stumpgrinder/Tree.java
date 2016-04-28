@@ -177,17 +177,21 @@ public class Tree<T> implements Serializable{
 	 **************************************************************************/
     public Node<T> getNode(String label, Node<T> parent, ArrayList<Node<T>> children)
     {
-        for (Node<T> node : this.nodes) {
-            if (node.getLabel() == label && node.getChildren() == children && node.getParent() == parent) {
-                return node;
+        Node <T> current = new Node<T>();
+        for (Node<T> node : treeNodes) {
+            if (node.getLabel().equals(label) && node.getChildren().equals(children) && node.getParent() == parent) {
+                current = node;
+            }
+            else if (node.getChildren().size()>0){
+            	current = getNode(label, parent, children, node.getChildren());
             }
         }
 
         if (this.getRoot().getLabel() == label && this.getRoot().getChildren() == children && this.getRoot().getParent() == parent ) {
-            return this.getRoot();
+            current = this.getRoot();
         }
 
-        return null;
+        return current;
     }
 
 	/**************************************************************************
