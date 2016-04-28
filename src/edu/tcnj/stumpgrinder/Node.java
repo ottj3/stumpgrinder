@@ -10,8 +10,10 @@ import java.util.Collection;
  * @version 1.0
  **************************************************************************/
 public class
-Node<T> extends Vertex<T>
+Node<T> extends Vertex<T> implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+    
     /** The node that is this node's parent **/
     private 
     Node<T> parent;
