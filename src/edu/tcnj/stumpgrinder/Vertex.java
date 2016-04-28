@@ -10,8 +10,11 @@ import java.util.Collection;
  * @version 1.0
  **************************************************************************/
 public class
-Vertex<T> 
+Vertex<T> implements Serializable
 {
+    
+	private static final long serialVersionUID = 1L;
+	
     /** A unique label identifying this vertex **/
     private String
     label;
