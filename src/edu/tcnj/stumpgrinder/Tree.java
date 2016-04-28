@@ -1,9 +1,10 @@
 package edu.tcnj.stumpgrinder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Tree<T> {
+public class Tree<T> implements Serializable{
 	/** A list of the nodes in the tree **/
 	private ArrayList<Node<T>> nodes;
 
@@ -17,6 +18,7 @@ public class Tree<T> {
 		this.root = null;
 		this.nodes = new ArrayList<Node<T>>();
 	}
+
 
 	/**************************************************************************
 	 * Constructs a tree with nodes and no root.
@@ -173,16 +175,15 @@ public class Tree<T> {
 	 * @param label of node
 	 * @return Node belonging to tree if node is found
 	 **************************************************************************/
-    public Node<T> getNode(String label)
+    public Node<T> getNode(String label, Node<T> parent, ArrayList<Node<T>> children)
     {
         for (Node<T> node : this.nodes) {
-            if (node.getLabel() == label) {
+            if (node.getLabel() == label && node.getChildren() == children && node.getParent() == parent) {
                 return node;
             }
         }
 
-        if (this.getRoot().getLabel() == label) {
-            //TODO: Should be some sort of special indicator
+        if (this.getRoot().getLabel() == label && this.getRoot().getChildren() == children && this.getRoot().getParent() == parent ) {
             return this.getRoot();
         }
 
