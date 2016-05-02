@@ -87,7 +87,7 @@ Hartigan
                 }
             }
           
-            //TODO: This accounts for possibilities not present in sets.
+            //This accounts for possibilities not present in sets.
             if (kOccurences==1 && current.getChildren().size()!=0) {
                 for (T state : worldSet.get(index)){
                 	if (!k.contains(state)){
@@ -244,50 +244,73 @@ Hartigan
                     worldSet, current);
         	current.setData(leafResults.snd());
         }
-        
-        
-            
+
         return score;
     }
     
+    /**
+     * Top Down of Hartigan's.
+     * @param tree
+     * @return
+     */
     public static <T> void
     topDown(Tree<List<SetList<T>>> tree)
     {
         Node<List<SetList<T>>> root = tree.getRoot();
         
-        /** For the root, only the primary set is in the root set **/   
-        SetList<T> vv = new SetList<T>(root.getData().get(0));
+        int length = root.getData().get(0).size();
+        
+       	SetList<T> vv = new SetList<T>();
+       	
+        for (int index = 0; index < length; index++) {
+        	
+        	/** For the root, only the primary set is in the root set **/   
+        	vv.add(root.getData().get(0).get(index));
+        }
         
         root.getData().add(vv);
 
         topDownRecursive(root);
+        
+        
         return;
     }
 
     public static <T> void
     topDownRecursive(Node<List<SetList<T>>> current)
-    {    
-    	if (current.getChildren().size() >= 1) {
-    	for (int index = 0; index < current.getChildren().size(); index++) {
+    {   
+    	int length = current.getData().get(0).size();
+    	
+    	if (current.getChildren().size() > 0) {
+    		for (int index = 0; index < current.getChildren().size(); index++) {
+    		
+    		SetList<T> vvAll = new SetList<T>();
     
+    		for (int i = 0; i<length; i++){
             SetList<T> vh = current.getChildren().get(index).getData().get(0),
                     vl = current.getChildren().get(index).getData().get(1),
                     vv = current.getData().get(2);
             
-            if (vh.get(0).containsAll(vv.get(0))) {
-                current.getChildren().get(index).getData().add(vv);
-            } else {
+            if (vh.get(i).containsAll(vv.get(i))) {
+            	vvAll.add(vv.get(i));
+            	
+
+            } 
+            
+            else {
                 SetList<T> newVH = new SetList<T>(vh),
                            newVL = new SetList<T>(vl);
                 newVL.retainAll(vv);
                 
                 newVH.addAll(newVL);
-                current.getChildren().get(index).getData().add(newVH);
+                vvAll.add(newVH.get(i));
             }
-            	
-               topDownRecursive(current.getChildren().get(index));
            }
-        }
+    		
+    		current.getChildren().get(index).getData().add(vvAll);
+    		topDownRecursive(current.getChildren().get(index));
+    		}
+    	}
     	
         return;
      } 
