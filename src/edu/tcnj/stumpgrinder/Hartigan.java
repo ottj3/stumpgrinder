@@ -5,15 +5,27 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+
+/*******************************************************************************
+ * This class contains methods to perform Hartigan's bottom-up and town-down
+ * algorithms for species with m characters. 
+ * The bottom-up implementation also accounts for internal labelled nodes 
+ * (fast-hartigan's). 
+ * 
+ * @author Angela Huang <huanga9@tcnj.edu> and Andrew Miller <millea18@tcnj.edu> 
+ * @date (Spring 2016)
+ * @version 3.0
+ ******************************************************************************/
 public class
 Hartigan
 {
-	/**
-	 * Performs Hartigan's algorithm.
-	 * @param sets
-	 * @param worldSet
-	 * @return
-	 */
+	/*******************************************************************************
+	 * Performs the calculation of upper and lower sets as well as MP-score.
+	 * Used in bottom-up of Hartigan's algorithm.
+	 * @param sets These are the upper and lower sets of the children nodes.
+	 * @param worldSet This set contains all possible character states. 
+	 * 		  (used when K=1)	
+	 ******************************************************************************/
     public static <T> Pair<Integer, List<SetList<T>>>
     //Initialize upper and lower sets of leaves
     hartigan(List<SetList<T>> sets, SetList<T> worldSet, Node<List<SetList<T>>> current)
@@ -111,14 +123,16 @@ Hartigan
             new Pair<Integer, List<SetList<T>>>(score, setResult);
         return results;
     }
-    
-    /**
-     * Performs Fast Hartigan's algorithm.
-     * @param sets
-     * @param worldSet
-     * @param data
-     * @return
-     */
+	/*******************************************************************************
+	 * Performs Fast Hartigan's algorithm:
+	 * Performs the calculation of upper and lower sets as well as MP-score of a 
+	 * labelled nodes.
+	 * Used in bottom-up of Hartigan's algorithm.
+	 * @param sets These are the upper and lower sets of the children nodes.
+	 * @param worldSet This set contains all possible character states. 
+	 * @param data This is the data of the labelled node
+	 * 		  (Used when K=1)	
+	 ******************************************************************************/   
     public static <T> Pair<Integer, List<SetList<T>>>
     fastHartigan(List<SetList<T>> sets, SetList<T> worldSet, SetList<T> data)
     {
@@ -169,10 +183,10 @@ Hartigan
             T label = data.get(0).iterator().next();
             
             k.add(label);
+           
+            //int kv = count.get(index).get(label);
             
-            int kv = count.get(index).get(label);
-            
-            score += sets.size() - kv;
+            //score += sets.size() - kv;
             
             vh.set(index, k);
             vl.set(index,kMinusOne);
@@ -188,12 +202,13 @@ Hartigan
         return results;
     }
     
-/**
- * Bottom Up of Hartigan's.
- * @param tree
- * @param worldSet
- * @return
- */
+	/*******************************************************************************
+	 * Performs bottom up of Hartigan's algorithm (see Theorem2 of Hartigan's paper)
+	 * @param tree Tree to be computed
+	 * @param worldSet This set contains all possible character states. 
+	 * @param data This is the data of the labelled node
+	 * 		  (Used when K=1)	
+	 ******************************************************************************/   
     public static <T> int
     bottomUp(Tree<List<SetList<T>>> tree, SetList<T> worldSet)
     {
@@ -248,12 +263,12 @@ Hartigan
         return score;
     }
     
-    /**
-     * Top Down of Hartigan's.
-     * @param tree
-     * @return
-     */
-    public static <T> void
+	/*******************************************************************************
+	 * Performs top-down of Hartigan's algorithm. (See Theorem3 of Hartigan's paper.)
+	 * 
+	 * @param tree Tree to be refined
+	 ******************************************************************************/   
+    public static <T> ArrayList<ArrayList<Node<List<SetList<T>>>>>
     topDown(Tree<List<SetList<T>>> tree)
     {
         Node<List<SetList<T>>> root = tree.getRoot();
@@ -270,21 +285,21 @@ Hartigan
         
         root.getData().add(vv);
 
-        topDownRecursive(root);
+        return topDownRecursive(root);
         
-        
-        return;
     }
 
-    public static <T> void
+    public static <T> ArrayList<ArrayList<Node<List<SetList<T>>>>>
     topDownRecursive(Node<List<SetList<T>>> current)
     {   
+    	ArrayList<ArrayList<Node<List<SetList<T>>>>> edges = new ArrayList();
     	int length = current.getData().get(0).size();
     	
     	if (current.getChildren().size() > 0) {
     		for (int index = 0; index < current.getChildren().size(); index++) {
     		
     		SetList<T> vvAll = new SetList<T>();
+    		int cost = 0;
     
     		for (int i = 0; i<length; i++){
             SetList<T> vh = current.getChildren().get(index).getData().get(0),
@@ -293,7 +308,6 @@ Hartigan
             
             if (vh.get(i).containsAll(vv.get(i))) {
             	vvAll.add(vv.get(i));
-            	
 
             } 
             
@@ -301,17 +315,26 @@ Hartigan
                 SetList<T> newVH = new SetList<T>(vh),
                            newVL = new SetList<T>(vl);
                 newVL.retainAll(vv);
-                
                 newVH.addAll(newVL);
                 vvAll.add(newVH.get(i));
+                
+                cost +=1;
             }
            }
     		
+    		if (cost == 0){
+    			ArrayList<Node<List<SetList<T>>>> newEdge = new ArrayList<Node<List<SetList<T>>>>();
+    			newEdge.add(current);
+    			newEdge.add(current.getChildren().get(index));
+    			
+    			edges.add(newEdge);	
+    		}
+    		
     		current.getChildren().get(index).getData().add(vvAll);
-    		topDownRecursive(current.getChildren().get(index));
+    		edges.addAll (topDownRecursive(current.getChildren().get(index)));
     		}
     	}
     	
-        return;
+        return edges;
      } 
 }
