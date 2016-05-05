@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-/**
+/*******************************************************************************
+ * This class enumerates all most parsimonious trees and contracts all 0-cost edges. 
+ * 
  * 
  * @author Angela Huang <huanga9@tcnj.edu>
- * 
- * Enumerates all most parsimonious trees and contracts all trees with the greatest number of 0-cost edges. 
- * 
- */
-
+ * @date (Spring 2016)
+ * @version 2.0
+ ******************************************************************************/
 public class
 MultipleContractions
 {		 
@@ -47,7 +47,7 @@ MultipleContractions
     	
         for (T state: tree.getRoot().getData().get(0).get(0)){
         	
-        	//create a new Root
+        	/**create a new Root**/
         	Node<List<SetList<T>>> newRoot = (Node<List<SetList<T>>>)deepClone(tree.getRoot());
         	
         	newRoot.getData().clear();
@@ -62,8 +62,6 @@ MultipleContractions
             
             nodes.add(newRoot);
             
-           // System.out.println (tree2);
-  
         }
         
         
@@ -76,7 +74,7 @@ MultipleContractions
     	
     	HashMap<Tree<List<SetList<T>>>, Pair <Integer, ArrayList<ArrayList<Node<List<SetList<T>>>>>>> treesToEdges = new HashMap<Tree<List<SetList<T>>>, Pair <Integer, ArrayList<ArrayList<Node<List<SetList<T>>>>>>>();
     	
-    	/*Find trees with maximum number of contractable edges*/
+    	/**Find trees with maximum number of contractable edges*/
         for (Node<List<SetList<T>>> root: rootNodes) {
         	
         	Tree<List<SetList<T>>> fittedTree= new Tree<List<SetList<T>>>(root.getChildren(),root);
@@ -98,10 +96,6 @@ MultipleContractions
         		max = value.fst();
         	}
         }
-
-        System.out.println(max);
-        System.out.println(treesToEdges);
-        
         
         for (Tree<List<SetList<T>>> key : treesToEdges.keySet()){
         	if (treesToEdges.get(key).fst() != max){
@@ -110,37 +104,39 @@ MultipleContractions
         }
         
         
-        //For each tree,contract all 0-cost edges
+        /**For each tree,contract all 0-cost edges*/
         for (Tree<List<SetList<T>>> key : treesToEdges.keySet()) {
         	 ArrayList<ArrayList<Node<List<SetList<T>>>>> zeroEdges = treesToEdges.get(key).snd();
         	
-        	System.out.println(zeroEdges);
+        	ArrayList<Node<List<SetList<T>>>> allNodes = key.getAllNodes(key.getNodes());
         	
         	for (int i = 0; i<zeroEdges.size(); i++){
         		ArrayList<Node<List<SetList<T>>>> edge = zeroEdges.get(i);
         		
-        		//System.out.println(edge);
         		
-        		Node<List<SetList<T>>> parent = key.getNode(edge.get(0).getLabel(), edge.get(0).getParent(), edge.get(0).getChildren(), key.getNodes());
-        		Node<List<SetList<T>>> child = key.getNode(edge.get(1).getLabel(), edge.get(1).getParent(), edge.get(1).getChildren(), key.getNodes());
+        		/**Modified*/
+        		Node<List<SetList<T>>> parent = key.getNode(edge.get(0), key.getRoot());
+        		Node<List<SetList<T>>> child = key.getNode(edge.get(1), key.getRoot());
 
-        		System.out.println(child);
-        		System.out.println(edge.get(1));
-
-
-       
-        		parent.makeNotChild(child);
+        		child.makeNotParent(parent);
         		
-        		/*
-        		for (Node<List<SetList<T>>> descendent: child.getChildren()){
-        			parent.makeChild(descendent);
         		}
-        		*/
-
-
-        	}
         	
-        	System.out.println(key);
+      		/**for all nodes in tree 
+    			if node has a parent
+    			find parent in list of child nodes in edges
+    			make node child of parent's parent*/
+        	
+        	for (Node<List<SetList<T>>> current : allNodes) {
+    			if (current.getParent()!=null){
+    				for (int j=0; j<zeroEdges.size(); j++ ){				
+    					if ((current.getParent().equals(zeroEdges.get(j).get(1)))){
+    						zeroEdges.get(j).get(0).makeChild(current);
+    					}
+    				}
+    			
+    			}
+        	}      	
         }
     
     }
@@ -155,7 +151,6 @@ MultipleContractions
       	if (current.getChildren().size() > 0) {
         	for (int index = 0; index < current.getChildren().size(); index++) {
         		
-        		//System.out.println(tree.getNode(current.getLabel()).getChildren());
         		SetList<T> vh = current.getChildren().get(index).getData().get(0),
                         vl = current.getChildren().get(index).getData().get(1),
                         vv = current.getData().get(0);
@@ -170,8 +165,7 @@ MultipleContractions
                 } 
                 
                 else {
-                	//System.out.println(vh + "..." + vv);
-                	
+
                     SetList<T> newVH = new SetList<T>(vh),
                                newVL = new SetList<T>(vl),
                                vf = new SetList<T>();
@@ -189,7 +183,7 @@ MultipleContractions
                     
                     else{
                     
-                    	/**for all but first (or last) state?*/
+                    /**for all but first (or last) state?*/
                     for (T state: newVH.get(0)){ 
                     	
                     	Node<List<SetList<T>>> newCurrent = (Node<List<SetList<T>>>)deepClone(current);
@@ -202,10 +196,8 @@ MultipleContractions
                     	newCurrent.makeChild(assignRecursive(tree, newCurrent.getChildren().get(index)).fst());
                     	
                     	nodes.add(newCurrent);
-                    	//System.out.println(current);
                     }
                     }
-                   // System.out.println (nodes);
                 } 
              }	
     	}
