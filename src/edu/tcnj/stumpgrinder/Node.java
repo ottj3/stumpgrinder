@@ -37,6 +37,7 @@ Node<T> extends Vertex<T>
         children = new ArrayList<Node<T>>();
     }
 
+
     /**************************************************************************
      * Constructs a node with a label, but no data, no children and no parent.
      * @param label The unique label to be used to identify this vertex.

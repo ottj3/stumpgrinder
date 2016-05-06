@@ -4,46 +4,48 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class
 Hartigan
 {
-    public static <T> Pair<Integer, List<SetList<T>>>
-    hartigan(List<SetList<T>> sets,
-             SetList<T> worldSet)
+    public static <T> Pair<Integer, Characters<T>>
+    hartigan(List<Characters<T>> sets, Characters<T> worldSet)
     {
-        int score = 0, length = sets.get(0).size();
-        SetList<T> vh = new SetList<T>(length),
-                   vl = new SetList<T>(length);
-        ArrayList<HashMap<T, Integer>> count = 
-            new ArrayList<HashMap<T, Integer>>(length);
-        for (int index = 0; index < length; index++) {
+        int score = 0;
+        int length = sets.get(0).getUpperSet().size();
+
+        Characters<T> zs = new Characters<T>(length);
+
+        List<Map<T, Integer>> count = new ArrayList<Map<T, Integer>>(length);
+        for (int i = 0; i < length; i++) {
             count.add(new HashMap<T, Integer>());
         }
 
-        for (SetList<T> set : sets) {
-            for (int index = 0; index < length; index++) {
-                for (T state : set.get(index)) {
-                    if (count.get(index).containsKey(state)) {
-                        count.get(index).put(state, 
-                                             count.get(index).get(state) + 1);
+        for (Characters<T> set : sets) {
+            for (int i = 0; i < length; i++) {
+                for (T state : set.getFromUpperSet(i)) {
+                    if (count.get(i).containsKey(state)) {
+                        count.get(i).put(state, count.get(i).get(state) + 1);
                     } else {
-                        count.get(index).put(state,
-                                             1);
+                        count.get(i).put(state, 1);
                     }
                 }
             }
         }
 
-        HashSet<T> k, kMinusOne;
+        Set<T> k, kMinusOne;
         int occurences, kOccurences, kMinusOneOccurences;
+        for (int i = 0; i < length; i++) {
+            k = new HashSet<T>();
+            kOccurences = 1;
 
-        for (int index = 0; index < length; index++) {
-            k = new HashSet<T>(); kMinusOne = new HashSet<T>(worldSet.get(index));
-            kOccurences = 1; kMinusOneOccurences = 0;
+            kMinusOne = new HashSet<T>(worldSet.getFromRootSet(i));
+            kMinusOneOccurences = 0;
 
-            for (T state : count.get(index).keySet()) {
-                occurences = count.get(index).get(state);
+            for (T state : count.get(i).keySet()) {
+                occurences = count.get(i).get(state);
                 if (occurences > kOccurences) {
                     if (kOccurences == occurences - 1) {
                         kMinusOne = k;
@@ -68,91 +70,91 @@ Hartigan
                 } else if (occurences == kMinusOneOccurences) {
                     kMinusOne.add(state);
                 }
+
             }
 
             score += sets.size() - kOccurences; 
-            vh.set(index, k);
-            vl.set(index,kMinusOne);
+            zs.addToUpperSet(i, k);
+            zs.addToLowerSet(i, kMinusOne);
         }
-
-        List<SetList<T>> setResult = new ArrayList<SetList<T>>(2);
-        setResult.add(vh);
-        setResult.add(vl);
-
-        Pair<Integer, List<SetList<T>>> results =
-            new Pair<Integer, List<SetList<T>>>(score, setResult);
-        return results;
+        
+        return new Pair<Integer, Characters<T>>(score, zs);
     }
 
     public static <T> int
-    bottomUp(Tree<List<SetList<T>>> tree,
-             SetList<T> worldSet)
+    bottomUp(Tree<Characters<T>> tree,
+             Characters<T> worldSet)
     {
         return bottomUpRecursive(tree.getRoot(), worldSet);
     }
 
-    public static<T>  int
-    bottomUpRecursive(Node<List<SetList<T>>> current,
-                      SetList<T> worldSet)
+    public static<T> int
+    bottomUpRecursive(Node<Characters<T>> current,
+                      Characters<T> worldSet)
     {
         int score = 0;
 
-        for (Node<List<SetList<T>>> child : current.getChildren()) {
+        for (Node<Characters<T>> child : current.getChildren()) {
             score += bottomUpRecursive(child,
                                        worldSet);
         }
 
-        if (current.getChildren().size() == 2) {
-            List<SetList<T>> sets =
-                new ArrayList<SetList<T>>(current.getChildren().size());
+        if (current.getChildren().size() > 0) {
+            List<Characters<T>> sets =
+                new ArrayList<Characters<T>>(current.getChildren().size());
 
-            for (Node<List<SetList<T>>> child : current.getChildren()) {
-                sets.add(child.getData().get(0));
+            for (Node<Characters<T>> child : current.getChildren()) {
+                sets.add(child.getData());
             }
                 
-            Pair<Integer, List<SetList<T>>> hartiganResults = hartigan(sets,
-                                                                       worldSet);
-            score += hartiganResults.fst();
-            current.setData(hartiganResults.snd());
+            Pair<Integer, Characters<T>> results = hartigan(sets,
+                                                           worldSet);
+            score += results.fst();
+            current.setData(results.snd());
         }
-            
+
         return score;
     }
 
     public static <T> void
-    topDown(Tree<List<SetList<T>>> tree)
+    topDown(Tree<Characters<T>> tree)
     {
-        Node<List<SetList<T>>> root = tree.getRoot();
+        Node<Characters<T>> root = tree.getRoot();
         
         /** For the root perform a union between VH and VL **/
-        SetList<T> vv = new SetList<T>(root.getData().get(0));
-        vv.addAll(root.getData().get(1));
-        root.getData().add(vv);
+        Characters<T> characters = root.getData();
+        /** TODO **/
+        characters.setRootSet(new ArrayList<Set<T>>(characters.getUpperSet()));
+        characters.getRootSet().addAll(characters.getLowerSet());
 
         topDownRecursive(root);
-        return;
     }
 
     public static <T> void
-    topDownRecursive(Node<List<SetList<T>>> current)
+    topDownRecursive(Node<Characters<T>> current)
     {
-        Node<List<SetList<T>>> parent = current.getParent();
+        Node<Characters<T>> parent = current.getParent();
+        List<Set<T>> upper, lower;
 
         if (parent != null) {
-            SetList<T> vh = current.getData().get(0),
-                       vl = current.getData().get(1),
-                       vv = parent.getData().get(2);
-            if (vh.containsAll(vv)) {
-                current.getData().add(vv);
+            Characters<T> c = current.getData();
+            Characters<T> p = parent.getData();
+
+            if (c.getUpperSet().containsAll(p.getRootSet())) {
+                c.setRootSet(p.getRootSet());
             } else {
-                SetList<T> newVH = new SetList<T>(vh),
-                           newVL = new SetList<T>(vl);
-                newVL.retainAll(vv);
-                newVH.addAll(newVL);
-                current.getData().add(newVH);
+                upper = new ArrayList<Set<T>>(c.getUpperSet());
+                lower = new ArrayList<Set<T>>(c.getLowerSet());
+
+                lower.retainAll(p.getRootSet());
+                upper.addAll(lower);
+
+                c.setRootSet(upper);
             }
         }
 
-        return;
+        for (Node<Characters<T>> child : current.getChildren()) {
+            topDownRecursive(child);
+        }
     }
 }

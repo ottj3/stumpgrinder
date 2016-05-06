@@ -6,31 +6,32 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
+import java.util.Set;
 
 public class
 Dirty
 {
-    static
-    ArrayList<String> labels = new ArrayList<String>();
+    /** A list used to store the labels from the input data **/
+    static List<String>
+    labels = new ArrayList<String>();
 
-    static
-    ArrayList<String> data   = new ArrayList<String>();
+    /** A list used to store the characters from the input data **/
+    static List<String>
+    data   = new ArrayList<String>();
 
-    static
-    SetList<Character> worldSet = new SetList<Character>();
+    /** A list used to store the world set of the input data **/
+    static Characters<Character>
+    worldSet;
 
-    static
-    ArrayList<Node<List<SetList<Character>>>> species = 
-        new ArrayList<Node<List<SetList<Character>>>>();
+    static List<Node<Characters<Character>>>
+    species = new ArrayList<Node<Characters<Character>>>();
 
     public static void
     main(String[] args) throws IOException
     {
         getInput();
         makeNodes();
-        //testFitch();
-        testEnumeration();
-        //testTreefromString();
+        enumerateTrees();
     }
 
     public static void
@@ -53,112 +54,46 @@ Dirty
     public static void
     makeNodes()
     {
-        for (int index = 0; index < data.get(0).length(); index++) {
-            worldSet.add(new HashSet<Character>());
-        }
+        worldSet = new Characters<Character>(data.get(0).length());
 
-        for (int index = 0; index < labels.size(); index++) {
-            List<SetList<Character>> sets = 
-                new ArrayList<SetList<Character>>();
-            sets.add(new SetList<Character>(data.get(0).length()));
+        for (int i = 0; i < labels.size(); i++) {
+            Characters<Character> sets = 
+                new Characters<Character>(data.get(0).length());
 
-            for (int index_ = 0; index_ < data.get(index).length(); index_++) {
-                sets.get(0).set(index_, data.get(index).charAt(index_));
-                worldSet.get(index_).add(data.get(index).charAt(index_));
+            for (int j = 0; j < data.get(i).length(); j++) {
+                sets.addToRootSet(j, data.get(i).charAt(j));
+                sets.addToUpperSet(j, data.get(i).charAt(j));
+                worldSet.addToRootSet(j, data.get(i).charAt(j));
             }
 
-            Node<List<SetList<Character>>> node = 
-                new Node<List<SetList<Character>>>(labels.get(index),
-                                                        sets);
+            Node<Characters<Character>> node = 
+                new Node<Characters<Character>>(labels.get(i), sets);
+
             species.add(node);
         }
     }
 
     public static void
-    testFitch()
+    enumerateTrees()
     {
-        for (int index = 1; index < species.size(); index++) {
-            System.out.println("---");
-            List<SetList<Character>> sets = new ArrayList<SetList<Character>>();
-            sets.add(species.get(index - 1).getData().get(0));
-            sets.add(species.get(index).getData().get(0));
-            System.out.println(Fitch.fitch(sets).fst());
-            System.out.println(Hartigan.hartigan(sets, worldSet).fst());
+        Tree<Characters<Character>> tree = 
+            new Tree<Characters<Character>>(species);
 
-            String one = Fitch.fitch(sets).snd().get(0).toString();
-            String two = Hartigan.hartigan(sets, worldSet).snd().get(0).toString();
-            SetList<Character> three = Hartigan.hartigan(sets, worldSet).snd().get(1);
-            
-            if (one.compareTo(two) == 0) {
-                System.out.println("Matching VH sets");
-                for (int index_ = 0; index_ < three.size(); index_++) {
-                    if (!three.get(index_).isEmpty()) {
-                        System.out.println((index_ + 1) + ":" + three.get(index_) +
-                                            ":" + worldSet.get(index_));
-                    }
-                }
-            } else {
-                System.out.println("FITCH: ");
-                System.out.println(one);
-                System.out.println("HARTIGAN: ");
-                System.out.println(two);
+        Set<String> trees = TreeEnumeration.enumerate("hartigan", tree, worldSet);
+
+        System.out.println(trees.size());
+        for (String s : trees) {
+            System.out.println(s);
+            tree.fromString(s);
+            System.out.println(Hartigan.bottomUp(tree, worldSet));
+            for (Node<Characters<Character>> node : tree.getInternals()) {
+                System.out.println(node.getData().getRootSet());
+            }
+            Hartigan.topDown(tree);
+            System.out.println("AFTER");
+            for (Node<Characters<Character>> node : tree.getInternals()) {
+                System.out.println(node.getData().getRootSet());
             }
         }
     }
-
-    public static void
-    testTrees()
-    {
-        Node<Integer> a = new Node<Integer>("A");
-        Node<Integer> b = new Node<Integer>("B");
-        Node<Integer> c = new Node<Integer>("C");
-        Node<Integer> d = new Node<Integer>("D");
-        Node<Integer> e = new Node<Integer>("E");
-
-        a.makeChild(b);
-        a.makeChild(c);
-
-        b.makeChild(d);
-        b.makeChild(e);
-
-        ArrayList<Node<Integer>> list = new ArrayList<Node<Integer>>();
-        list.add(a); list.add(b); list.add(c); list.add(d); list.add(e);
-
-        Tree<Integer> tree = new Tree<Integer>(list, list.get(0));
-        System.out.println(tree);
-    }
-
-    
-    public static void
-    testEnumeration()
-    {
-        Tree<List<SetList<Character>>> tree = 
-            new Tree<List<SetList<Character>>>(species);
-
-        HashSet<String> trees = TreeEnumeration.enumerate(tree);
-        System.out.println(trees.size());
-
-        trees = TreeEnumeration.fitchScoredEnumerate(tree);
-        System.out.println(trees.size());
-        for (String s : trees) {
-            System.out.println(s);
-        }
-
-        trees = TreeEnumeration.hartiganScoredEnumerate(tree, worldSet);
-        System.out.println(trees.size());
-        for (String s : trees) {
-            System.out.println(s);
-        }
-    }
-    
-    public static void
-    testTreefromString()
-    {
-    	Tree<List<SetList<Character>>> tree =
-            new Tree<List<SetList<Character>>>(species.subList(1, species.size()), species.get(0));
-    	
-    	System.out.println(tree);
-        
-        System.out.println(new Tree<List<SetList<Character>>>(tree.fromString("(E:1,(D:1,B:1):1,C:1)A:0").getChildren(), tree.fromString("(E:1,(D:1,B:1):1,C:1)A:0")));
-    }    
 }

@@ -11,9 +11,25 @@ import java.util.List;
 public class
 EdgeContraction
 {
-    public static <T> void
-    edgeContraction(Tree<List<SetList<T>>> tree)
-    {
+    private static int
+    bestCompactnessScore
 
+    public static <T> Set<String>
+    edgeContraction(Tree<List<SetList<T>>> tree,
+                    Characters<T> worldSet)
+    {
+        Set<String> trees = new HashSet<String>();
+        bestCompactnessScore = -1;
+
+        if (/* Tree can be compacted */) {
+            /* Compact tree */
+            /* Recurse on new tree */
+            /* Uncompact tree */
+        } else {
+            /* Tree is as compact as can be */
+            /* If the tree is as compact as the most compact tree add it */
+            /* Else discard this tree */
+        }
+        return trees;
     }
 }

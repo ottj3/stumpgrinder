@@ -21,7 +21,7 @@ clean :
 
 rebuild: clean build
 
-test:
+run:
 	java -jar $(JAR)
 
 $(JAR) : $(OBJS)

@@ -1,138 +1,261 @@
 package edu.tcnj.stumpgrinder;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
 /**************************************************************************
- * A list of sets.
+ * A wrapper around a list, for use with sets.
  * @author  Andrew Miller <millea18@tcnj.edu>
  * @version 0.1
  **************************************************************************/
-public class 
-SetList<E>
+public class SetList<E>
+// extends AbstractList<E>
+// implements List <E>
 {
-    /** The underlying list storing all the sets **/
-    private
-    ArrayList<HashSet<E>> list;
+    /** The List the SetList wraps **/
+    private List<Set<E>>
+    list;
 
     /**************************************************************************
      * Constructs an empty list with an initial capacity of ten.
      **************************************************************************/
-    public 
+    public
     SetList()
     {
-        this.list = new ArrayList<HashSet<E>>();
+        this.list = new ArrayList<Set<E>>();
     }
 
     /**************************************************************************
      * Constructs a list containing the elements of the specified collection, 
      * in the order they are returned by the collection iterator.
-     * @param c The collection whose elements are to be placed into this list.
+     * @param c the collection whose elements are to be placed into this list.
      **************************************************************************/
     public
     SetList(Collection<? extends E> c)
     {
-        this.list = new ArrayList<HashSet<E>>(c.size());
+        this.list = new ArrayList<Set<E>>(c.size());
 
-        int index = 0;
         for (E element : c) {
-            this.list.get(index++).add(element);
+            add(element);
         }
-    }
-
-    public 
-    SetList(SetList<E> c)
-    {
-        this.list = new ArrayList<HashSet<E>>(c.list);
     }
 
     /**************************************************************************
      * Constructs an empty list with the specified initial capacity.
-     * @param initialCapacity The initial capacity of the list.
+     * @param initialCapacity the initial capacity of the list.
      **************************************************************************/
     public
     SetList(int initialCapacity)
     {
-        this.list = new ArrayList<HashSet<E>>(initialCapacity);
-
-        for (int index = 0; index < initialCapacity; index++) {
-            list.add(index, new HashSet<E>());
-        }
+        this.list = new ArrayList<Set<E>>(initialCapacity);
     }
 
-    public void
-    add(HashSet<E> e)
-    {
-        this.list.add(e);
-    }
-
+    /**************************************************************************
+     * Append the specified element to the end of this list.
+     * @param e element to be appended to this list
+     **************************************************************************/
     public void
     add(E e)
     {
-        HashSet<E> s = new HashSet<E>();
+        Set<E> s = new HashSet<E>();
         s.add(e);
         this.list.add(s);
+
     }
 
+    /**************************************************************************
+     * Inserts the specified element at the specified position in this list.
+     * Shifts the element currently at that position (if any) and any subsequent
+     * elements to the right (adds one to their indices).
+     * @param index   index at which the specified element is to be inserted
+     * @param element element to be inserted
+     **************************************************************************/
     public void
-    add(int index, E e)
+    add(int index, E element)
     {
-        HashSet<E> s = new HashSet<E>();
-        s.add(e);
-        this.list.add(index, s);
+        Set<E> set = new HashSet<E>();
+        set.add(element);
+        this.list.add(index, set);
     }
 
+    /**************************************************************************
+     * Appends all of the elements in the specified collection to the end of
+     * this list, in the order that they are returned by the specified
+     * collection's Iterator. The behavior of this operation is undefined if the
+     * specified collection is modified while the operation is in progress.
+     *
+     * @param c collection containing elements to be added to this list
+     * @return true if this list changed as a result of the call
+     **************************************************************************/
     public boolean
-    addAll(SetList<E> c)
+    addAll(Collection<? extends E> c)
     {
-        return this.list.addAll(c.list);
+        return this.list.addAll(c);
     }
 
+    /**************************************************************************
+     **************************************************************************/
     public boolean
-    containsAll(SetList<E> c)
+    addAll(int index, Collection<? extends E> c)
     {
-        return this.list.containsAll(c.list);
+        return this.list.addAll(index, c);
     }
 
-    public HashSet<E>
+    /**************************************************************************
+     * Removes all of the elements from this list. The list will be empty after
+     * this call returns.
+     **************************************************************************/
+    public void
+    clear()
+    {
+        this.list.clear();
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public void
+    contains(Object o)
+    {
+        this.list.contains(o);
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public boolean
+    containsAll(Collection<?> c)
+    {
+        this.list.containsAll(c);
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public boolean
+    equals(Object o)
+    {
+        return this.list.equals(o);
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public Set<E>
     get(int index)
     {
         return list.get(index);
     }
 
+    /**************************************************************************
+     **************************************************************************/
+    public int
+    hashCode()
+    {
+        return this.list.hashCode();
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public int
+    indexOf(Object o)
+    {
+        return this.list.indexOf(o);
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public int
+    indexOf(Set<Object> so)
+    {
+        return this.list.indexOf(so);
+    }
+
+    /**************************************************************************
+     * Returns true if this list contains no elements.
+     * @return true if this list contains no elements
+     **************************************************************************/
     public boolean
     isEmpty()
     {
-        return list.isEmpty();
+        return this.list.isEmpty();
     }
 
-    public boolean
-    retainAll(SetList<E> c)
+    /**************************************************************************
+     **************************************************************************/
+    public Iterator<E>
+    iterator()
     {
-        return this.list.retainAll(c.list);
+
     }
 
-    public void
+    /**************************************************************************
+     **************************************************************************/
+    public int
+    lastIndexOf(Object o)
+    {
+        return this.list.lastIndexOf(o);
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public ListIterator<E>
+    listIterator()
+    {
+        return this.list.listIterator();
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public ListIterator<E>
+    listIterator(int index)
+    {
+        return this.list.listIterator(index);
+    }
+
+    /**************************************************************************
+     **************************************************************************/
+    public E
+    remove(int index)
+    {
+        return this.list.remove(index);
+    }
+
+    /**************************************************************************
+     * Replaces the element at the specified position in this list with the
+     * specified element.
+     * @param index   index of the element to replace
+     * @param element element to be stored at the specified position
+     * @return the element previously stored at the specified position
+     **************************************************************************/
+    public Set<E>
     set(int index, E element)
     {
         HashSet<E> set = new HashSet<E>();
         set.add(element);
-        this.list.set(index, set);
+        return this.list.set(index, set);
     }
 
-    public void
-    set(int index, HashSet<E> element)
-    {
-        this.list.set(index, element);
-    }
-
+    /**************************************************************************
+     * Returns the number of elements in this list.
+     * @return the number of elements in this list
+     **************************************************************************/
     public int
     size()
     {
         return this.list.size();
     }
 
+    public List<E>
+    subList(int fromIndex, int toIndex)
+    {
+        return new SetList<E>(this.list.subList(fromIndex, toIndex));
+    }
+
+    /**************************************************************************
+     **************************************************************************/
     public String
     toString()
     {
