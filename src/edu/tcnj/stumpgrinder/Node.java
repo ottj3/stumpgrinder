@@ -116,6 +116,10 @@ public class Node<T> extends Vertex<T>
         }
     }
 
+
+  /** Instance Methods **/
+
+
   /**
    * Returns the parent of this node.
    *
