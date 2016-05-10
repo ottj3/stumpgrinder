@@ -1,0 +1,11 @@
+#NEXUS
+begin data;
+  dimensions ntax = 5 nchar = 3;
+  format symbols = "ABC" labels = left;
+  matrix
+    1 AAA
+    2 AAB
+    3 AAC
+    4 ABA
+    5 ABB
+end;
