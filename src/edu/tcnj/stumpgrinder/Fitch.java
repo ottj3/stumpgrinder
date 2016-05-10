@@ -64,7 +64,10 @@ public class Fitch
    */
   public static <T> int bottomUp(Tree<Characters<T>> tree)
     {
-      return bottomUpRecursive(tree.getRoot());
+      tree.root();
+      int score = bottomUpRecursive(tree.getRoot());
+      tree.unroot();
+      return score;
     }
 
   /** TODO
