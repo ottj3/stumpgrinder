@@ -1,0 +1,15 @@
+apply plugin: 'java'
+
+jar
+{ 
+  manifest
+    {
+      attributes 'Main-Class': 'edu.tcnj.stumpgrinder.Dirty'
+    }
+}
+
+/*
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+*/

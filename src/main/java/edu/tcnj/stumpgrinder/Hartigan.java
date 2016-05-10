@@ -120,6 +120,8 @@ Hartigan
     topDown(Tree<Characters<T>> tree)
     {
         Node<Characters<T>> root = tree.getRoot();
+        List<Set<T>> upper, lower;
+        Characters<T> r;
         
         /** For the root perform a union between VH and VL **/
         Characters<T> characters = root.getData();
@@ -127,34 +129,45 @@ Hartigan
         characters.setRootSet(new ArrayList<Set<T>>(characters.getUpperSet()));
         characters.getRootSet().addAll(characters.getLowerSet());
 
+        r = root.getData();
+        r.setRootSet(r.getUpperSet());
+
         topDownRecursive(root);
     }
 
-    public static <T> void
-    topDownRecursive(Node<Characters<T>> current)
-    {
+    public static <T> void topDownRecursive(Node<Characters<T>> current)
+      {
         Node<Characters<T>> parent = current.getParent();
         List<Set<T>> upper, lower;
 
-        if (parent != null) {
+        if (parent != null)
+          {
             Characters<T> c = current.getData();
             Characters<T> p = parent.getData();
 
-            if (c.getUpperSet().containsAll(p.getRootSet())) {
+            if (c.getUpperSet().containsAll(p.getRootSet()))
+              {
                 c.setRootSet(p.getRootSet());
-            } else {
+              }
+            else
+              {
                 upper = new ArrayList<Set<T>>(c.getUpperSet());
                 lower = new ArrayList<Set<T>>(c.getLowerSet());
 
-                lower.retainAll(p.getRootSet());
-                upper.addAll(lower);
-
+                for (int i = 0; i < lower.size(); i++)
+                  {
+                    lower.get(i).retainAll(p.getRootSet().get(i));
+                    upper.get(i).addAll(lower.get(i));
+                    // lower.set(i, lower.get(i));
+                    // upper.set(i, upper.get(i));
+                  }
                 c.setRootSet(upper);
-            }
-        }
+              }
+          }
 
-        for (Node<Characters<T>> child : current.getChildren()) {
+        for (Node<Characters<T>> child : current.getChildren())
+          {
             topDownRecursive(child);
-        }
-    }
+          }
+      }
 }
