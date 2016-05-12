@@ -52,6 +52,16 @@ public class Dirty
     {
       worldSet = new Characters<Character>(data.get(0).length());
 
+      // TODO
+      List<Set<Character>> worldSetRootSet =
+        new ArrayList<Set<Character>>(data.get(0).length());
+
+      // TODO
+      for (int i = 0; i < data.get(0).length(); i++)
+        {
+          worldSetRootSet.add(new HashSet<Character>());
+        }
+
       for (int i = 0; i < labels.size(); i++)
         {
           Characters<Character> sets = 
@@ -61,12 +71,15 @@ public class Dirty
             {
               sets.addToRootSet(j, data.get(i).charAt(j));
               sets.addToUpperSet(j, data.get(i).charAt(j));
-              worldSet.addToRootSet(j, data.get(i).charAt(j));
+              // TODO
+              worldSetRootSet.get(j).add(data.get(i).charAt(j));
             }
 
           Node<Characters<Character>> node = 
               new Node<Characters<Character>>(labels.get(i), sets);
 
+          // TODO
+          worldSet.setRootSet(worldSetRootSet);
           species.add(node);
         }
     }
@@ -79,6 +92,7 @@ public class Dirty
       Set<String> trees = TreeEnumeration.enumerate("hartigan", tree, worldSet);
 
       System.out.println(trees.size());
+      System.out.println(worldSet);
       for (String s : trees)
         {
           tree.fromString(s);
