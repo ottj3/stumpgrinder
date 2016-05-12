@@ -1,26 +1,111 @@
 CONTRIBUTING
 ============
 
+Build System
+------------
+
+We are currently using the gradle build system in order to build our project.
+
+The project can be built using
+    gradle build
+
+This command not only builds the project, but also runs the project through all
+of its tests automatically. This helps to ensure that every build work properly.
+
+In order to generate the documentation for the project you use
+    gradle javadoc
+
+This will generate documentation from all javadoc commments in the source code.
+
 Coding Style
 ------------
 
-  - Use 4 spaces instead of tabs.
-  - Do not add any trailing spaces at the end of a line.
-  - Variable and function names are in studlyCaps.
-  - Functions should have any modifiers and the return type on one line and the
-    function name and parameters on another.
-  - The opening braces for functions should be on a new line.
-  - The opening braces for ifs, fors, and whiles inside a function should be on
-    the same line.
-  - All comments should be started with /** and ended with **/
-  - All functions and classes should have javadoc comments.
+A clear and consistent code style is the key to maintainability of the codebase.
+To this end we have chosen to use a modified version of the GNU coding style.
 
-An example for clarity is shown below.
+* This means that
+  * Use spaces instead of tabs
+  * Indentation should be two spaces
+  * Do not add any trailing spaces at the end of a line.
 
-    public Foo
-    Bar(Foo fooExample)
+  * Variable and function names are in studlyCaps.
+
+  * The opening brace for classes should be unindented on its own line.
+  * The closing brace for classes should be unindented on its own line.
+
+  * The opening brace for functions should be indented on its own line.
+  * The closing brace for functions should be indented on its own line.
+  * The body of a function should be indented one level further than the opening
+    brace.
+
+  * An if, for, or while statment should always have an opening and closing
+    brace, even if it only contain one statement.
+  * The opening brace for an if, for, or while statement should be indented on
+    its own line.
+  * The closing brace for an if, for, or while statement should be indented on
+    its own line.
+  * The body of a if, for, or while statment should be indented one level
+    further than the opening brace of that statement.
+
+  * All classes, class variables, instance variables, class methods, and
+    instance methods must be documented with a javadoc comment.
+  * Aside from javadoc comments single line comment (//) are preferred.
+
+For clarity an example is shown below:
+
+/**
+ * This is an example class.
+ *
+ * @version 1.0
+ * @since   1.0
+ */
+public class Foo
+{
+  /**
+   * This is the integer foo.
+   */
+  private int foo;
+
+  /**
+   * This is the integer bar.
+   */
+  private int bar;
+
+  /**
+   * This is the integer fooBar.
+   */ 
+  private double foobar;
+
+  /**
+   * This method prints out bar a number of times depending on the values of foo
+   * and bar. 
+   *
+   * @return The number of times bar was printed.
+   */
+  public int fooBar()
     {
-	Foo fooReturn = new Foo();
-        /** Do some function stuff here **/
-	return fooReturn;
+      int count = 0;
+
+      // If foo and bar are equal do not print anythings
+      if (foo == bar)
+        {
+          return count;
+        }
+      // If foo and bar are not equal add foo to bar and print "Bar!" bar number
+      // of times.
+      else
+        {
+          for (int i = 0; i < foo; i++)
+            {
+              bar += 1;
+            }
+          while (bar != 0)
+            {
+              System.out.println("Bar!");
+	      count += 1;
+              bar -= 1;
+            }
+        }
+      return count;
     }
+}
