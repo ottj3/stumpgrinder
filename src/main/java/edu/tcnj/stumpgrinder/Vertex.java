@@ -7,7 +7,7 @@ import java.util.List;
 /** TODO: Make the default label null **/
 
 /**
- * A vertex in an undirected graph.
+ * A vertex in an undirected graph, containing data of type T.
  * <p>
  * Because the graph is the adjacency list is maintained in a symmetrical
  * fashion.
