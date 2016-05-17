@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * A tree.
  *
  * @author Andrew Miller <millea18@tcnj.edu>
  * @version 0.1
@@ -168,7 +169,7 @@ public class Tree<T>
   /**
    * Replaces the list of internal nodes in this tree.
    *
-   * @param leaves A collection of the new internal nodes in this tree.
+   * @param internals A collection of the new internal nodes in this tree.
    */
   public void setInternals(Collection<? extends Node<T>> internals)
     {
@@ -178,7 +179,7 @@ public class Tree<T>
   /**
    * Replaces the list of nodes in this tree.
    *
-   * @param leaves A collection of the new nodes in this tree.
+   * @param nodes A collection of the new nodes in this tree.
    */
   public void setNodes(Collection<? extends Node<T>> nodes)
     {
