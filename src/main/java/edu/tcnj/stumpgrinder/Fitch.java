@@ -18,43 +18,44 @@ public class Fitch
   /** Class Methods **/
 
 
-  /** TODO
+  /**
    * Perform the fitch operations on two character sets.
    *
-   * @param xs The characters of the left child.
-   * @param ys The characters of the right child.
+   * @param lefts The characters of the left child.
+   * @param rights The characters of the right child.
    * @return A pair containing the score, and the characters of the parent.
    */
-  public static <T> Pair<Integer, Characters<T>> fitch(Characters<T> xs,
-                                                       Characters<T> ys)
+  public static <T> Pair<Integer, Characters<T>> fitch(Characters<T> lefts,
+                                                       Characters<T> rights)
     {
-      /** Assertion: xs.size() == ys.size() **/
-      Characters<T> zs = new Characters<T>(xs.getUpperSet().size());
-      Set<T> x, y, z;
+      Characters<T> parents = new Characters<T>(lefts.getUpperSet().size());
+      Set<T> left, right, parent;
       int score = 0;
 
-      for (int i = 0; i < zs.size(); i++)
+      for (int i = 0; i < parents.size(); i++)
         {
-          x = xs.getFromUpperSet(i);
-          y = ys.getFromUpperSet(i);
+          left = lefts.getFromUpperSet(i);
+          right = rights.getFromUpperSet(i);
 
-          z = new HashSet<T>(x);     /** Intersection **/
-          z.retainAll(y);
+          // Intersection
+          parent = new HashSet<T>(left);
+          parent.retainAll(right);
 
-          if (z.isEmpty())
+          // Union, if intersection is empty.
+          if (parent.isEmpty())
             {
-              z = new HashSet<T>(x); /** Union **/
-              z.addAll(y);
+              parent = new HashSet<T>(left);
+              parent.addAll(right);
               score += 1;
             }
 
-          zs.addToUpperSet(i, z);
+          parents.addToUpperSet(i, parent);
         }
 
-      return new Pair<Integer, Characters<T>>(score, zs);
+      return new Pair<Integer, Characters<T>>(score, parents);
     }
 
-  /** TODO
+  /**
    * Perform the bottom-up portion of Fitch's algorithm on a tree.
    * <p>
    * This method is a wrapper around the bottumUpRecursive method.
@@ -70,7 +71,7 @@ public class Fitch
       return score;
     }
 
-  /** TODO
+  /**
    * Perform the bottom-up portion of Fitch's algorithm recursively on subtrees
    * of the current tree.
    * <p>
@@ -91,7 +92,6 @@ public class Fitch
 
       if (current.getChildren().size() == 2)
         {
-          /** TODO **/
           Characters<T> left =  current.getChild(0).getData();
           Characters<T> right = current.getChild(1).getData();
 
