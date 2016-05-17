@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Dirty
+public class Main
 {
   /** A list used to store the labels from the input data **/
   static List<String> labels = new ArrayList<String>();
@@ -95,21 +95,30 @@ public class Dirty
       System.out.println(worldSet);
       for (String s : trees)
         {
-          tree.fromString(s);
-          System.out.print(Hartigan.bottomUp(tree, worldSet) + ":");
-          System.out.println(s);
-          for (Node<Characters<Character>> node : tree.getInternals())
-            {
-              System.out.print(node.getData().getUpperSet());
-              System.out.print(" - ");
-              System.out.println(node.getData().getLowerSet());
-            }
-          Hartigan.topDown(tree);
-          System.out.println("AFTER");
-          for (Node<Characters<Character>> node : tree.getInternals())
-            {
-              System.out.println(node.getData().getRootSet());
-            }
+          if (s.equals("((5,2),1,(4,3));"))
+          {
+            tree.fromString(s);
+            System.out.print(Hartigan.bottomUp(tree, worldSet) + ":");
+            System.out.println(s);
+            for (Node<Characters<Character>> node : tree.getInternals())
+              {
+                System.out.print(node.getData().getRootSet());
+                System.out.print(" - ");
+                System.out.print(node.getData().getUpperSet());
+                System.out.print(" - ");
+                System.out.println(node.getData().getLowerSet());
+              }
+            Hartigan.topDown(tree);
+            System.out.println("AFTER");
+            for (Node<Characters<Character>> node : tree.getInternals())
+              {
+                System.out.print(node.getData().getRootSet());
+                System.out.print(" - ");
+                System.out.print(node.getData().getUpperSet());
+                System.out.print(" - ");
+                System.out.println(node.getData().getLowerSet());
+              }
+          }
         }
 
       // tree  = new Tree<Characters<Character>>(species);
