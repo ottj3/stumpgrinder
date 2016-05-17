@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A node in a tree.
+ * A node in a tree, containing data of type T.
  *
  * @author  Andrew Miller <millea18@tcnj.edu>
  * @version 0.1
