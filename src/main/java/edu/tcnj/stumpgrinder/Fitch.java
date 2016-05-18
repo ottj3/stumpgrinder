@@ -8,6 +8,9 @@ import java.util.Set;
 /**
  * An algorithm used to score binary phylogenetic trees based on maximum
  * parsimony criteria.
+ * <p>
+ * This algorithm is a specialized version of Hartigan's. Due to its specialized
+ * nature it is much simpler and can be run more quickly.
  *
  * @author  Andrew Miller <millea18@tcnj.edu>
  * @version 0.1
@@ -25,7 +28,7 @@ public class Fitch
    * @param rights The characters of the right child.
    * @return A pair containing the score, and the characters of the parent.
    */
-  public static <T> Pair<Integer, Characters<T>> fitch(Characters<T> lefts,
+  private static <T> Pair<Integer, Characters<T>> fitch(Characters<T> lefts,
                                                        Characters<T> rights)
     {
       Characters<T> parents = new Characters<T>(lefts.getUpperSet().size());
@@ -74,14 +77,11 @@ public class Fitch
   /**
    * Perform the bottom-up portion of Fitch's algorithm recursively on subtrees
    * of the current tree.
-   * <p>
-   * This method performs Fitch's algorithm on subtrees, treating the current
-   * node as the root of a subtree.
    * 
    * @param current The root of the current subtree.
    * @return The score of the current subtree
    */
-  public static <T> int bottomUpRecursive(Node<Characters<T>> current)
+  private static <T> int bottomUpRecursive(Node<Characters<T>> current)
     {
       int score = 0;
 
