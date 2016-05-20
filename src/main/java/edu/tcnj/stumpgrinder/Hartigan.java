@@ -114,8 +114,7 @@ Hartigan
    * @return The score of the tree.
    */
   public static <T> int
-  bottomUp(Tree<Characters<T>> tree,
-           Characters<T> worldSet)
+  bottomUp(Tree<Characters<T>> tree, Characters<T> worldSet)
     {
       return bottomUpRecursive(tree.getRoot(), worldSet);
     }
@@ -133,17 +132,15 @@ Hartigan
    * @return The score of the current subtree.
    */
   private static<T> int
-  bottomUpRecursive(Node<Characters<T>> current,
-                    Characters<T> worldSet)
+  bottomUpRecursive(Node<Characters<T>> current, Characters<T> worldSet)
     {
       int score = 0;
 
       for (Node<Characters<T>> child : current.getChildren()) {
-          score += bottomUpRecursive(child,
-                                     worldSet);
+          score += bottomUpRecursive(child, worldSet);
       }
 
-      if (current.getChildren().size() > 0) {
+      if (current.getChildren().size() >= 1) {
           List<Characters<T>> sets =
               new ArrayList<Characters<T>>(current.getChildren().size());
 
@@ -151,10 +148,9 @@ Hartigan
               sets.add(child.getData());
           }
               
-          Pair<Integer, Characters<T>> results = hartigan(sets,
-                                                         worldSet);
-          score += results.fst();
+          Pair<Integer, Characters<T>> results = hartigan(sets, worldSet);
           current.setData(results.snd());
+          score += results.fst();
       }
 
       return score;
@@ -171,9 +167,7 @@ Hartigan
   public static <T> void topDown(Tree<Characters<T>> tree)
     {
       Node<Characters<T>> root = tree.getRoot();
-      Characters<T> r;
-      
-      r = root.getData();
+      Characters<T> r = root.getData();
       r.setRootSet(r.getUpperSet());
 
       topDownRecursive(root);
@@ -188,36 +182,39 @@ Hartigan
   private static <T> void topDownRecursive(Node<Characters<T>> current)
     {
       Node<Characters<T>> parent = current.getParent();
-      List<Set<T>> root, upper, lower;
-      boolean isSubset = true;
+      List<Set<T>> vv, vh, vl;
+
 
       if (parent != null)
         {
           Characters<T> c = current.getData();
           Characters<T> p = parent.getData();
 
-          for (int i = 0; i < c.getUpperSet().size(); i++)
+          vv = new ArrayList<Set<T>>(p.getRootSet());
+          vh = new ArrayList<Set<T>>(c.getUpperSet());
+          vl = new ArrayList<Set<T>>(c.getLowerSet());
+
+          for (int i = 0; i < vv.size(); i++)
             {
-              if (!p.getRootSet().get(i).containsAll(c.getUpperSet().get(i)))
+              if (vh.get(i).containsAll(vv.get(i)))
                 {
-                  isSubset = false;
-                  break;
+                  vh.set(i, vv.get(i));
+                }
+              else
+                {
+                  if (vl.size() >= vh.size())
+                    {
+                      vv.get(i).retainAll(vv.get(i));
+                      vh.get(i).addAll(vv.get(i));
+                    }
+                  else
+                    {
+                      vh.get(i).addAll(vv.get(i));
+                    }
+
                 }
             }
-          if (isSubset)
-            {
-              System.out.println(p.getRootSet() + " is a subset of " + c.getUpperSet());
-              c.setRootSet(p.getRootSet());
-            }
-          else
-            {
-              root = new ArrayList<Set<T>>(c.getUpperSet());
-              for (int i = 0; i < c.getUpperSet().size(); i++)
-                {
-                  //root.get(i).addAll();
-                }
-              c.setRootSet(root);
-            }
+            c.setRootSet(vh);
         }
 
       for (Node<Characters<T>> child : current.getChildren())
