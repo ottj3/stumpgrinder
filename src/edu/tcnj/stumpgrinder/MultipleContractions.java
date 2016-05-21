@@ -10,8 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 
 /*******************************************************************************
- * This class enumerates all most parsimonious trees and contracts all 0-cost edges. 
+ * This class contracts all MP-cubic trees by enumerating all 
+ * most parsimonious tree fits and contracting all 0-cost edges in the fitted tree.
  * 
+ * **NOTE: This class is no longer needed, but I am leaving it here since 
+ * it can be used to verify the output of the EdgeContraction class.
  * 
  * @author Angela Huang <huanga9@tcnj.edu>
  * @date (Spring 2016)
@@ -20,25 +23,7 @@ import java.util.List;
 public class
 MultipleContractions
 {		 
-	/**Allows for a deep copy of any object -- Used to make copy of node objects/references**/
-	 public static Object deepClone(Object object) {
-	   try {
-	     ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();	     
-	     ObjectOutputStream objectOutput = new ObjectOutputStream(byteOutput);	     
-	     objectOutput.writeObject(object);
-	     
-	     ByteArrayInputStream byteInput = new ByteArrayInputStream(byteOutput.toByteArray());	     
-	     ObjectInputStream objectInput = new ObjectInputStream(byteInput);
-	     
-	     return objectInput.readObject();
-	   }
-	   catch (Exception e) {
-	     e.printStackTrace();
-	     return null;
-	   }
-	 }
-	    
-	/**Start enumerating root assignments**/
+    /**Start enumerating root assignments**/
     public static <T> void
     assign(Tree<List<SetList<T>>> tree)
     { 
@@ -48,26 +33,24 @@ MultipleContractions
         for (T state: tree.getRoot().getData().get(0).get(0)){
         	
         	/**create a new Root**/
-        	Node<List<SetList<T>>> newRoot = (Node<List<SetList<T>>>)deepClone(tree.getRoot());
+        	Node<List<SetList<T>>> newRoot = (Node<List<SetList<T>>>)copy(tree.getRoot());
         	
         	newRoot.getData().clear();
         	
         	SetList<T> vf = new SetList<T>();
-            vf.add(state);
-            newRoot.getData().add(vf);
+                vf.add(state);
+                newRoot.getData().add(vf);
             
-            Tree<List<SetList<T>>> tree2 = new Tree(newRoot.getChildren(), newRoot);
+                Tree<List<SetList<T>>> tree2 = new Tree(newRoot.getChildren(), newRoot);
             
-            nodes.addAll(assignRecursive(tree2, newRoot).snd());
+                nodes.addAll(assignRecursive(tree2, newRoot).snd());
             
-            nodes.add(newRoot);
-            
+                nodes.add(newRoot);
         }
         
-        
         HashSet<Node<List<SetList<T>>>> rootNodes = new HashSet<Node<List<SetList<T>>>>();
+        
         for (Node<List<SetList<T>>> nodeinTree: nodes) {
-
         	rootNodes.addAll(getRoot(nodeinTree));        	
         }
         
@@ -86,7 +69,6 @@ MultipleContractions
         	Pair <Integer, ArrayList<ArrayList<Node<List<SetList<T>>>>>> zeroEdges = new Pair (numZeroEdges, edges);
         	
 			treesToEdges.put(fittedTree, zeroEdges);
-
         }
         
         
@@ -186,7 +168,7 @@ MultipleContractions
                     /**for all but first (or last) state?*/
                     for (T state: newVH.get(0)){ 
                     	
-                    	Node<List<SetList<T>>> newCurrent = (Node<List<SetList<T>>>)deepClone(current);
+                    	Node<List<SetList<T>>> newCurrent = (Node<List<SetList<T>>>)copy(current);
 
                     	newCurrent.getChildren().get(index).getData().clear();
                     	vf.add(state);
@@ -268,5 +250,22 @@ MultipleContractions
         }
         return nodesToRoot;
     }
-
+    
+	/**Allows for a deep copy of any object -- Used to make copy of node objects/references**/
+	 public static Object copy(Object object) {
+	   try {
+	     ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();	     
+	     ObjectOutputStream objectOutput = new ObjectOutputStream(byteOutput);	     
+	     objectOutput.writeObject(object);
+	     
+	     ByteArrayInputStream byteInput = new ByteArrayInputStream(byteOutput.toByteArray());	     
+	     ObjectInputStream objectInput = new ObjectInputStream(byteInput);
+	     
+	     return objectInput.readObject();
+	   }
+	   catch (Exception e) {
+	     e.printStackTrace();
+	     return null;
+	   }
+	 }
 }
