@@ -3,16 +3,17 @@ package edu.tcnj.stumpgrinder;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * A representation of a graph. 
+ * Stores vertices and the relationships between them. 
+ *
+ * @param <T>
+ */
 public class
 Graph<T>
 {
     /** A list of the vertices in the graph **/
-    private 
-    ArrayList<Vertex<T>> vertices;
-
-    /** TODO: Consider a dynamic programming approach for this **/
-    //private
-    //ArrayList<ArrayList<Boolean>> adjacencyMatrix;
+    private ArrayList<Vertex<T>> vertices;
 
     public
     Graph()
@@ -56,10 +57,4 @@ Graph<T>
             return false;
         }
     }
-
-    /** TODO: Implement adjacency matrix printing
-    public String
-    toString()
-    {}
-    **/
 }
