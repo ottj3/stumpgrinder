@@ -1,31 +1,29 @@
 package edu.tcnj.stumpgrinder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**************************************************************************
  * A node in a tree.
  *
- * @author  Andrew Miller <millea18@tcnj.edu>
+ * @author Andrew Miller <millea18@tcnj.edu> 
+ * 
  * @version 1.0
  **************************************************************************/
 public class
 Node<T> extends Vertex<T> implements Serializable
 {
     private static final long serialVersionUID = 1L;
-    
+
     /** The node that is this node's parent **/
-    private 
-    Node<T> parent;
+    private Node<T> parent;
 
     /** The distance between this node and it's parent **/
-    private
-    Integer distanceToParent;
+    private Integer distanceToParent;
 
     /** A list containing nodes that are children of this node */
-    private 
-    ArrayList<Node<T>> children;
-
+    private ArrayList<Node<T>> children;
 
     /**************************************************************************
      * Constructs a node with no label, no data, no children and no parent.
@@ -300,18 +298,6 @@ Node<T> extends Vertex<T> implements Serializable
     }
 
     /**************************************************************************
-    * Returns the number of children this node has.
-    * @return The number of children this node has.
-    *
-    * TODO: Not sure if this is neccessary
-    **************************************************************************/
-    public int 
-    numChildren() 
-    {
-        return children.size();
-    }
-
-    /**************************************************************************
      * Checks whether this node has a parent.
      * @return true if this node has a parent, false otherwise.
      **************************************************************************/
@@ -323,8 +309,6 @@ Node<T> extends Vertex<T> implements Serializable
  
     /**************************************************************************
      * Returns the cost of a child node to its parent.
-     *
-     * TODO: Not sure what is going on here
      **************************************************************************/
     public int 
     getCost()
@@ -343,5 +327,4 @@ Node<T> extends Vertex<T> implements Serializable
 	   }
 	   return cost;
     }
-  
 }
