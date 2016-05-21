@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/********************************************************************************
+ *Performs the bottom up procedure of Fitch's algorithm.
+ ********************************************************************************/
 public class 
 Fitch
 {
@@ -20,7 +23,7 @@ Fitch
             x = xs.get(i); y = ys.get(i);
 
             /** Intersection **/
-            z = new HashSet<T>(x);     /** Intersection **/
+            z = new HashSet<T>(x);     
             z.retainAll(y);
 
             if (z.isEmpty()) {         /** If Intersection is empty **/
