@@ -12,7 +12,6 @@ import java.util.List;
  * This class runs Hartigan's bottom-up and top-down algorithms on a given tree.
  * It then recursively performs the edge-contraction algorithm.
  * 
- * 
  * @author Angela Huang <huanga9@tcnj.edu>
  * @date (Spring 2016)
  * @version 1.0
@@ -38,7 +37,7 @@ public class EdgeContraction {
 		/* If there are no 0-min-cost edges, the tree cannot be compacted. */
 		if (edges.size() == 0) {
 			System.out.println("Cannot compact the tree any further.");
-			System.out.println(tree);
+			System.out.println("Compacted Tree: " + tree);
 		}
 
 		/* Otherwise, proceed to contract 0-min-cost edges. */
@@ -67,7 +66,7 @@ public class EdgeContraction {
 		/* Base case: stop compacting when there are no more 0-min-cost edges. */
 		if (edges.size() == 0) {
 			System.out.println("Cannot compact the tree any further.");
-			System.out.println(tree);
+			System.out.println("Compacted Tree: " + tree);
 		}
 
 		else {
@@ -202,5 +201,4 @@ public class EdgeContraction {
 			return null;
 		}
 	}
-
 }
