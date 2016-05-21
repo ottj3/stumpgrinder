@@ -5,28 +5,28 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-
 /*******************************************************************************
- * This class contains methods to perform Hartigan's bottom-up algorithm.
- * The bottom-up implementation also accounts for internal labelled nodes 
+ * This class overrides Hartigan's bottom-up algorithm.
+ * This bottom-up implementation also accounts for internal labelled nodes 
  * (fast-hartigan's algorithm).
  * 
+ * @author Angela Huang <huanga9@tcnj.edu> and Andrew Miller <millea18@tcnj.edu> 
  * @date (Spring 2016)
- * @version 2.0
+ * @version 3.0
  ******************************************************************************/
 public class
 FastHartigan extends Hartigan
 {
-	/*******************************************************************************
-	 * Performs Fast Hartigan's algorithm:
-	 * Performs the calculation of upper and lower sets as well as MP-score of  
-	 * labelled nodes.
-	 * Used in bottom-up of Hartigan's algorithm.
-	 * @param sets These are the upper and lower sets of the children nodes.
-	 * @param worldSet This set contains all possible character states. 
-	 * @param data This is the data of the labelled node
-	 * 		  (Used when K=1)	
-	 ******************************************************************************/   
+    /*******************************************************************************
+     * Performs Fast Hartigan's algorithm:
+     * Performs the calculation of upper and lower sets as well as MP-score of  
+     * labelled nodes.
+     * Used in bottom-up of Hartigan's algorithm.
+     * @param sets These are the upper and lower sets of the children nodes.
+     * @param worldSet This set contains all possible character states. 
+     * @param data This is the data of the labelled node
+     * 	      (Used when K=1)	
+     ******************************************************************************/   
     public static <T> Pair<Integer, List<SetList<T>>>
     fastHartigan(List<SetList<T>> sets, SetList<T> worldSet, SetList<T> data)
     {
@@ -34,7 +34,7 @@ FastHartigan extends Hartigan
         int length = sets.get(0).size(); //number of characters in alignment
         
         SetList<T> vh = new SetList<T>(length),
-                   vl = new SetList<T>(length); //create upper and lower sets for each char of node
+                   vl = new SetList<T>(length); //create upper and lower sets 
         
         ArrayList<HashMap<T, Integer>> count = new ArrayList<HashMap<T, Integer>>(length);
         //array to store count of each char 
@@ -69,7 +69,7 @@ FastHartigan extends Hartigan
 
         HashSet<T> k, kMinusOne;
 
-        //for each character in alignment
+        //Calculate the parsimony score for each character in the alignment
         for (int index = 0; index < length; index++) {
             k = new HashSet<T>(); kMinusOne = new HashSet<T>();
             
@@ -95,19 +95,19 @@ FastHartigan extends Hartigan
         return results;
     }
     
-	/*******************************************************************************
-	 * @Override Overrides bottom up method in Hartigan class
-	 * 
-	 * Performs bottom up of Hartigan's algorithm (see Theorem2 of Hartigan's paper).
-	 * If the node is unlabelled, perform regular Hartigan's algorithm.
-	 * If the node is labelled, perform fast Hartigan's
-	 * to calculate MP score and VU, VL, VV sets.
-	 * 
-	 * @param tree Tree to be computed
-	 * @param worldSet This set contains all possible character states. 
-	 * @param data This is the data of the labelled node
-	 * 		  (Used when K=1)	
-	 ******************************************************************************/   
+    /*******************************************************************************
+     * @Override Overrides bottom up method in Hartigan class
+     * 
+     * Performs bottom up of Hartigan's algorithm (see Theorem2 of Hartigan's paper).
+     * If the node is unlabelled, perform regular Hartigan's algorithm.
+     * If the node is labelled, perform fast Hartigan's
+     * to calculate MP score and VU, VL, VV sets.
+     * 
+     * @param tree Tree to be computed
+     * @param worldSet This set contains all possible character states. 
+     * @param data This is the data of the labelled node
+     *        (Used when K=1)	
+     ******************************************************************************/   
     public static <T> int
     bottomUp(Tree<List<SetList<T>>> tree, SetList<T> worldSet)
     {
