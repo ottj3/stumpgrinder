@@ -5,31 +5,68 @@ import java.util.List;
 /**************************************************************************
  * The edge contraction algorithm.
  *
- * @author  Andrew Miller <millea18@tcnj.edu>
- * @version 0.0
+ * @author  Angela Huang <millea18@tcnj.edu>
+ * @version 0.1
+ * @since   0.1
  **************************************************************************/
 public class
 EdgeContraction
 {
-    private static int
-    bestCompactnessScore;
+  private static int
+  bestCompactnessScore;
 
-    // public static <T> Set<String>
-    // edgeContraction(Tree<List<SetList<T>>> tree,
-    //                 Characters<T> worldSet)
-    // {
-    //     Set<String> trees = new HashSet<String>();
-    //     bestCompactnessScore = -1;
+  public static <T> void edgeContraction(Tree<Characters<T>> tree,
+                                         Characters<T> worldSet,
+                                         int length)
+    {
+      Hartigan.bottomUp(tree, worldSet);
+      Hartigan.topDown(tree);
 
-    //     if (/* Tree can be compacted */) {
-    //         /* Compact tree */
-    //         /* Recurse on new tree */
-    //         /* Uncompact tree */
-    //     } else {
-    //         /* Tree is as compact as can be */
-    //         /* If the tree is as compact as the most compact tree add it */
-    //         /* Else discard this tree */
-    //     }
-    //     return trees;
-    // }
+      // edges = 
+      
+      if (edges.size() == 0)
+        {
+
+        }
+      else
+        {
+          edgeContractionRecursive(tree, worldSet, length);
+        }
+    }
+
+  private static <T> void edgeContractionRecursive(Tree<Characters<T> tree,
+                                                   Characters<T> worldSet,
+                                                   int length)
+    {
+
+
+    }
+
+  /**
+   * Helper method to get all parent nodes up to the root. Allows us to root a
+   * tree by that node.
+   *
+   * @param node Node that we want to root the tree by
+   * @return A list of parent nodes within the path to the root node
+   */
+  public static <T> List<Node<Characters<T>>> getNodesToRoot(Node<Characters<T> node)
+    {
+      List<Node<Characters<T>> nodesToRoot = new ArrayList<Node<Characters<T>>>();
+      return getNodesToRootRecursive(node.getParent(), nodesToRoot);
+    }
+
+  private static <T> List<Node<Characters<T>>> getNodesToRootRecursive(Node<Characters<T>> node,
+                                                                       List<Node<Characters<T>> list)
+    {
+      if (node == null)
+        {
+          return null;
+        }
+      else
+        {
+          list.add(node);
+          getNodesToRootRecursive(node.getParent(), list);
+        }
+      return list;
+    }
 }

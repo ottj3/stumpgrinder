@@ -256,6 +256,12 @@ public class Tree<T>
         }
     }
 
+  /**
+   * Removes a leaf node from this tree.
+   *
+   * @param leaf The leaf node to be removed from this tree.
+   * @return true if node is not in this tree's leaves.
+   */
   public boolean removeLeaf(Node<T> leaf)
     {
       if (leaves.contains(leaf))
@@ -270,6 +276,12 @@ public class Tree<T>
         }
     }
 
+  /**
+   * Removes an internal node from this tree.
+   *
+   * @param internal The internal node to be removed from this tree.
+   * @return true if node is not in this tree's internal nodes.
+   */
   public boolean removeInternal(Node<T> internal)
     {
       if (internals.contains(internal))
@@ -329,7 +341,7 @@ public class Tree<T>
    *
    * @return A string representation of the subtree from a specified node.
    */
-  public String toStringRecursive(Node<T> current)
+  private String toStringRecursive(Node<T> current)
     {
       String string = "";
 
@@ -398,6 +410,11 @@ public class Tree<T>
       return defaultNode;
     }
 
+  /**
+   * Regenerates a tree topology from its string representation.
+   *
+   * @param string The string representation of the tree to regenerate.
+   */
   public void fromString(String string)
   {
       /** Check that the string is valid **/
@@ -432,7 +449,14 @@ public class Tree<T>
                           this.root);
   }
 
-  public void
+  /**
+   * Recursively regenerates a tree topology from its substring representation.
+   *
+   * @param string The substring representation of the tree to regenerate.
+   * @param current The node in the tree whose children are currently being
+   *                regenerated.
+   */
+  private void
   fromStringRecursive(String string, Node<T> current)
   {
       /** Termination case **/
@@ -494,6 +518,13 @@ public class Tree<T>
       fromStringRecursive(string.substring(0, index - 1), current);
   }
 
+  /**
+   * Parse a node's string representation and returns the node in this tree that
+   * the representation refers to.
+   *
+   * @param string The string representation of a node in this tree.
+   * @return The node the string representation refers to.
+   */
   private Node<T>
   parseNodeString(String string)
   {

@@ -6,17 +6,31 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
-import java.util.Set;
-
+import java.util.Set; 
+/**
+ * The driver of the stumpgrinder system.
+ * <p>
+ * This is the class that contains the main method and handles I/O formatting.
+ *
+ * @author  Andrew Miller <millea18@tcnj.edu>
+ * @version 0.1
+ * @since   0.1
+ */
 public class Main
 {
-  /** A list used to store the labels from the input data **/
+  /**
+   * A list used to store the labels from the input data
+   */
   static List<String> labels = new ArrayList<String>();
 
-  /** A list used to store the characters from the input data **/
+  /**
+   * A list used to store the characters from the input data 
+   */
   static List<String> data = new ArrayList<String>();
 
-  /** A list used to store the world set of the input data **/
+  /**
+   * A list used to store the world set of the input data
+   */
   static Characters<Character> worldSet;
 
   static List<Node<Characters<Character>>> species =
@@ -89,9 +103,9 @@ public class Main
       Tree<Characters<Character>> tree = 
           new Tree<Characters<Character>>(species);
 
-      Set<String> trees = TreeEnumeration.enumerate("hartigan", tree, worldSet);
-
+      Set<String> trees = TreeEnumeration.fitchEnumerate(tree);
       System.out.println(trees.size());
+
       System.out.println(worldSet);
       for (String s : trees)
         {
@@ -120,14 +134,5 @@ public class Main
               }
           }
         }
-
-      // tree  = new Tree<Characters<Character>>(species);
-      // trees = TreeEnumeration.enumerate("fitch", tree, null);
-
-      // System.out.println(trees.size());
-      // for (String s : trees)
-      //   {
-      //     System.out.println(s);
-      //   }
     }
 }

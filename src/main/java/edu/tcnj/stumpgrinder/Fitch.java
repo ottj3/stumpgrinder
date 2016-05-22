@@ -92,13 +92,12 @@ public class Fitch
 
       if (current.getChildren().size() == 2)
         {
-          Characters<T> left =  current.getChild(0).getData();
+          Characters<T> left  = current.getChild(0).getData();
           Characters<T> right = current.getChild(1).getData();
 
           Pair<Integer, Characters<T>> results = fitch(left, right);
-
-          score += results.fst();
           current.setData(results.snd());
+          score += results.fst();
         }
 
       return score;

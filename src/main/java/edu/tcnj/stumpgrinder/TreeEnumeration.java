@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class TreeEnumeration
 {
-  /** Variables **/
+  /** Class Variables **/
 
   /**
    * The current best parsimony score for any bounded tree enumeration.
@@ -25,9 +25,18 @@ public class TreeEnumeration
    */
   private static Set<String> trees;
 
+
   /** Class methods **/
 
 
+  /**
+   * Generates the base topology for a tree with n leaves.
+   * <p>
+   * This method initializes a tree topology to give us a starting point for
+   * enumerating unrooted trees.
+   *
+   * @param tree The collection of n leaves to initialize into a tree topology
+   */
   private static <T> void initializeTree(Tree<T> tree)
     {
       if (tree.size() == 1)
@@ -51,6 +60,8 @@ public class TreeEnumeration
         }
     }
 
+  /**
+   */
   private static <T> void addNodeToEdge(Node<T> current,
                                         Node<T> parent,
                                         Node<T> internal,
@@ -268,4 +279,57 @@ public class TreeEnumeration
         }
       return;
     }
+
+  // public static <T> Set<String> mixedEnumerate(Tree<Characters<T>> tree,
+  //                                              Characters<T> worldSet)
+  //   {
+  //     // Reset the state of the algorithm by clearing trees.
+  //     trees = new HashSet<String>();
+  //     parsimonyScore = -1;
+
+  //     initializeTree(tree);
+  //     if (tree.size() < 4)
+  //       {
+  //         trees.add(tree.toString());
+  //       }
+  //     else
+  //       {
+  //         mixedEnumerateRecursive(tree, tree.getRoot(), 3, worldSet);
+  //       }
+  //     return trees;
+  //   }
+
+  // private static <T> Set<String> mixedEnumerateRecursive(Tree<Characters<T>> tree,
+  //                                                        Node<Characters<T>> current,
+  //                                                        int size,
+  //                                                        Characters<T> worldSet)
+  //   {
+  //     if (size == tree.size())
+  //       {
+  //         trees.add(tree.toString());
+  //       }
+  //     else
+  //       {
+  //         for (int i = 0; i < current.getChildren().size(); i++)
+  //           {
+  //             mixedEnumerateRecursive(tree, current, size, worldSet);
+  //           }
+  //         if (current != tree.getRoot())
+  //           {
+  //             Node<Characters<T>> internal = new Node<Characters<T>>();
+  //             Node<Characters<T>> leaf = tree.getNodes().get(size);
+  //             Node<Characters<T>> parent = current.getParent();
+
+  //             addNodeToEdge(current, parent, internal, leaf);
+  //             mixedEnumerateRecursive(tree, current, size + 1, worldSet);
+  //             removeNodeFromEdge(current, parent, internal, leaf);
+
+  //             mixedEnumerateRecursive(tree, current, size + 1, worldSet);
+
+  //             mixedEnumerateRecursive(tree, current, size + 1, worldSet);
+  //             mixedEnumerateRecursive(tree, current, size + 1, worldSet);
+  //           }
+  //       }
+  //     return;
+  //   }
 }
