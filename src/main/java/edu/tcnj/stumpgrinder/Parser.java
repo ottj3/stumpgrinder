@@ -1,25 +1,34 @@
-package edu.tcnj.stumpgrinder.data;
+package edu.tcnj.stumpgrinder;
+
+import edu.tcnj.stumpgrinder.data.CharacterList;
+import edu.tcnj.stumpgrinder.data.Node;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Set;
 
-public final class Parser {
+public class Parser {
 
-    private Parser() {
+    public Parser() {
     }
 
-    private static <S> String toStringRecursive(Node<S> root, boolean data) {
+    public <S> String toString(Node<S> root, boolean data) {
+        String string = root.label + ":" + (data ? stateString(root.root) : root.cost) + ";";
+        return toStringRecursive(root, data) + string;
+    }
+
+    private <S> String toStringRecursive(Node<S> root, boolean data) {
         String string = "";
 
         if (root.children.size() > 0) {
             string = ")" + string;
         }
 
-        Iterator<Node<S>> it = root.children.iterator();
-        while (it.hasNext()) {
-            Node<S> child = it.next();
-            string = (it.hasNext() ? "," : "") + child.label + ":" + (data ? stateString(child.root) : child.cost) + string;
-            string = toStringRecursive(child, data) + string;
+        ListIterator<Node<S>> it = root.children.listIterator(root.children.size());
+        while (it.hasPrevious()) {
+            Node<S> child = it.previous();
+            string = child.label + ":" + (data ? stateString(child.root) : child.cost) + string;
+            string = (it.hasPrevious() ? "," : "") + toStringRecursive(child, data) + string;
         }
 
         if (root.children.size() > 0) {
@@ -29,12 +38,7 @@ public final class Parser {
         return string;
     }
 
-    public static <S> String toString(Node<S> root, boolean data) {
-        String string = root.label + ":" + (data ? stateString(root.root) : root.cost);
-        return toStringRecursive(root, data) + string;
-    }
-
-    public static <S> Node<S> fromString(String s) {
+    public <S> Node<S> fromString(String s) {
         int last = s.lastIndexOf(':');
 
         String label = s.substring(last - 1, last);
@@ -42,30 +46,35 @@ public final class Parser {
         return fromStringRecursive(s, new Node<S>(label), 0, last);
     }
 
-    private static <S> Node<S> fromStringRecursive(String s, Node<S> parent, int start, int end) {
+    private <S> Node<S> fromStringRecursive(String s, Node<S> parent, int start, int end) {
         //Check if the substring contains a single label.
         // if so, return the node. Else, continue parsing the string
         if (s.charAt(start) != '(') {
             return parent;
         }
 
-        int brackets = 0; // counts parenthesis
+        int parens = 0; // counts parenthesis
+        int brackets = 0; // for comments, label data, etc
         int colon = 0; // marks the position of the colon
         int marker = start; // marks the position of string
-        String label = ""; //stores the label of the node
+        String label; //stores the label of the node
 
         for (int i = start; i < end; i++) {
             char c = s.charAt(i);
 
             if (c == '(') {
-                brackets++;
+                parens++;
             } else if (c == ')') {
-                brackets--;
+                parens--;
             } else if (c == ':') {
                 colon = i;
+            } else if (c == '[') {
+                brackets++;
+            } else if (c == ']') {
+                brackets--;
             }
 
-            if (brackets == 0 && c == ')' || brackets == 1 && c == ',') {
+            if (parens == 0 && c == ')' || parens == 1 && c == ',') {
                 if (s.charAt(colon - 1) == ')') {
                     label = "";
                 } else {
@@ -83,13 +92,18 @@ public final class Parser {
     }
 
 
-    private static <S> String stateString(CharacterList<S> root) {
+    private <S> String stateString(CharacterList<S> root) {
         Iterator<Set<S>> it = root.iterator();
         StringBuilder sb = new StringBuilder();
-        while (it.hasNext()) {
+        while (it.hasNext()) { // for each character
             Iterator<S> intIt = it.next().iterator();
-            while (intIt.hasNext()) {
+            boolean first = true;
+            while (intIt.hasNext()) { // for each state in potential set of states
+                if (!first) {
+                    sb.append("-");
+                }
                 sb.append(intIt.next());
+                first = false;
             }
         }
         return sb.toString();

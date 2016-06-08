@@ -37,6 +37,6 @@ public class Node<S> {
     public CharacterList<S> lower = new CharacterList<>();
 
     public Node<S> parent;
-    public Set<Node<S>> children = new HashSet<>();
+    public List<Node<S>> children = new ArrayList<>();
 
 }
