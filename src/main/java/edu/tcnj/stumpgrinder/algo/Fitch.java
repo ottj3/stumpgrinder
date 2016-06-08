@@ -1,5 +1,6 @@
 package edu.tcnj.stumpgrinder.algo;
 
+import edu.tcnj.stumpgrinder.Parser;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
@@ -72,6 +73,7 @@ public class Fitch {
         }
 
         if (root.children.size() > 2) {
+            System.out.println((new Parser()).toString(root, false));
             throw new IllegalArgumentException("Can only perform Fitch on cubic tree - got node of degree > 3");
         }
 
@@ -80,4 +82,18 @@ public class Fitch {
         return score;
     }
 
+    static <S> Node<S> cubicToBinary(Node<S> root) {
+        Node<S> newRoot = new Node<>("");
+        Node.linkNodes(newRoot, root);
+        Node.linkNodes(newRoot, root.children.get(root.children.size() - 1));
+        Node.unlinkNodes(root, newRoot.children.get(1));
+        return newRoot;
+    }
+    static <S> Node<S> binaryToCubic(Node<S> root) {
+        Node<S> oldRoot = root.children.get(0);
+        Node.linkNodes(oldRoot, root.children.get(1));
+        Node.unlinkNodes(root, root.children.get(1));
+        Node.unlinkNodes(root, oldRoot);
+        return oldRoot;
+    }
 }

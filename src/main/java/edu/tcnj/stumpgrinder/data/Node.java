@@ -15,7 +15,16 @@ public class Node<S> {
         }
         return new CharacterList<>(sets);
     }
-
+    public static <S> void linkNodes(Node<S> parent, Node<S> child) {
+        parent.children.add(child);
+        child.parent = parent;
+    }
+    public static <S> void unlinkNodes(Node<S> parent, Node<S> child) {
+        parent.children.remove(child);
+        if (parent == child.parent) {
+            child.parent = null;
+        }
+    }
     public Node(String label) {
         this.label = label;
         this.labelled = !label.isEmpty();
@@ -26,6 +35,18 @@ public class Node<S> {
         this.cost = cost;
     }
 
+    public Node<S> clone() {
+        Node<S> newNode = new Node<>(this.label, this.cost);
+        for(Node<S> child : children) {
+            Node<S> newChild = child.clone();
+            newChild.parent = newNode;
+            newNode.children.add(newChild);
+        }
+        newNode.root = this.root;
+        newNode.upper = this.upper;
+        newNode.lower = this.lower;
+        return newNode;
+    }
     public String label;
 
     public int cost;
