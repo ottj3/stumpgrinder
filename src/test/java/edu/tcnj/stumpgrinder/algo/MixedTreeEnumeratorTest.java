@@ -12,17 +12,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-
 @RunWith(Parameterized.class)
 public class MixedTreeEnumeratorTest extends EnumeratorTest {
     @Parameterized.Parameters
     public static Iterable<? extends Object> data() {
-        return Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9, 10);
+        return Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
     }
 
     @Parameterized.Parameter
     public int treeSize = 0;
+
     @Ignore
     @Test
     public void testMixedEnumerator() {
@@ -30,7 +29,6 @@ public class MixedTreeEnumeratorTest extends EnumeratorTest {
 //        worldSet.add(new HashSet<Integer>());
         List<Node<Integer>> treeNodes = new ArrayList<>();
         MixedTreeEnumerator<Integer> treeEnumerator;
-        Parser parser = new Parser();
 
         for (int i = 1; i <= treeSize; i++) {
             treeNodes.add(new Node<Integer>(((Integer) i).toString()));
@@ -42,6 +40,7 @@ public class MixedTreeEnumeratorTest extends EnumeratorTest {
         //if (i == 1) expectedScore = 1;
         int treeListSize = treeEnumerator.enumerate();
 
+//        Parser parser = new Parser();
 //        for (Node<Integer> tree : treeList) {
 //            System.out.println(parser.toString(tree, false));
 //        }
@@ -50,6 +49,7 @@ public class MixedTreeEnumeratorTest extends EnumeratorTest {
 
     @Test
     public void testHartigan() {
+        long start = System.currentTimeMillis();
         getData(treeSize);
         Parser parser = new Parser();
         MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
@@ -58,6 +58,7 @@ public class MixedTreeEnumeratorTest extends EnumeratorTest {
         for (Node<Character> tree : treeList) {
             System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet) + " Size: " + tree.size());
         }
+        System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }
 
 }

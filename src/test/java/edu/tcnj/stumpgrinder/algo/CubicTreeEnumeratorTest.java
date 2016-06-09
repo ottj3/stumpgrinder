@@ -17,8 +17,9 @@ import static org.junit.Assert.assertEquals;
 public class CubicTreeEnumeratorTest extends EnumeratorTest {
     @Parameterized.Parameters
     public static Iterable<? extends Object> data() {
-        return Arrays.asList(4, 5, 6, 7, 8, 9, 10);
+        return Arrays.asList(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
     }
+
     @Parameterized.Parameter
     public int treeSize = 0;
 
@@ -57,9 +58,9 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
     @Test
     public void testHartigan() {
         getData(treeSize);
-        Parser parser = new Parser();
         CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species, worldSet);
         Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
+//        Parser parser = new Parser();
 //        System.out.println("Hartigan enumerate: ");
 //        for (Node<Character> tree : treeList) {
 //            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));

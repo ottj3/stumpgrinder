@@ -21,12 +21,18 @@ public abstract class EnumeratorTest {
         lines.add("D:GAGGACCCCCGTTACTTTGCCGGCGAGGCC");
         lines.add("E:GAGGATCCCAGATATTTTGCGGGTGAGGCT");
         lines.add("F:GAAGACCCGCGCTACTTTGCCGGCACCGGC");
-        lines.add("G:GAAGATCCACGTTTCTTCGCAGGAGAAGCA");
-//      lines.add("G:GAAGATCC{AG}CGTTTCTTCGCAGGAGAA");
+//      lines.add("G:GAAGATCC?CGTTTCTTCGCAGGAGAAGCA"); // true sequence with ? = A or G
+//      lines.add("G:GAAGATCC{AG}CGTTTCTTCGCAGGAGAA"); // original sequence without last three chars
+        lines.add("G:GAAGATCCCAGACGTTTCTTCGCAGGAGAA"); // Angela's replaced { with C and } with A
         lines.add("H:GAAGATCCACGCTACTATGCAGGACCTCAA");
         lines.add("I:GAAGACCCTCGCTATTACGCCGGTCCGCAA");
         lines.add("J:GAGGACCCACGATATTACGCGGGAGAAGGA");
         lines.add("K:GAGGATCCGCGCTACTTTGCCGGCCCGCAG");
+        lines.add("L:GAAGACCCGCGATATTTTGCCGGAGAATCA");
+        lines.add("M:GAAGATCCTCGATATTTTGCCGGTCCGCAA");
+        lines.add("N:GAAGATCCTCGATATTTTGCCGGTCCGCAA");
+        lines.add("O:GAAGACCCGCGTTATTTTGCCGGTACCAGC");
+
         labels = new ArrayList<>();
         data = new ArrayList<>();
         worldSet = new CharacterList<>();
