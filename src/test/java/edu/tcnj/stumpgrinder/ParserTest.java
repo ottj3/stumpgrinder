@@ -40,15 +40,32 @@ public class ParserTest {
     @Test
     public void parseDataTree() {
         String[] treeStrings = {
-            "A[[1,1,1][2,2,2]]:0;",
-            "(B[1,1,2]:1,C[1,1,1]:1)A:0;",
-            "((C[A,A][A,B]:0,D[[A][B]]:1)B[A,A][A,B]:1)A[A:B]:0;"
+            "A[[1][2][]]:0;",
+            "(B[[1,2][][]]:1,C[[1,3][][]]:1)A[[][][]]:0;",
+            "((C[[A][A,B][]]:0,D[[A][B][]]:1)B[[A][A,B][]]:1)A[[A:B][][]]:0;"
         };
 
         for (String treeString : treeStrings) {
             Node<?> root = parser.fromString(treeString);
-            String out = parser.toString(root, false);
+            String out = parser.toString(root, true);
             assertEquals("Data-labelled tree re-parsing", treeString, out);
+        }
+    }
+
+    @Test
+    public void parseDataNode() {
+        String[] nodeStrings = {
+            "A[[1|2|a|0|50|x][][]]",
+            "A[[1,2,3|3,4,5][][]]",
+            "A[[y,x|y,x|x][z,x|z,x|y,x][0,1,2|0,1|0,1]]", // technically sets are unordered, so input string
+            // order does matter when comparing to output string. in practice, this won't matter since
+            // labelled input nodes should only have one (known) state for each character
+        };
+
+        for (String nodeString : nodeStrings) {
+            Node<?> node = parser.nodeFromLabel(nodeString, 0);
+            String out = parser.nodeToString(node, true);
+            assertEquals("Data-labelled node re-parsing", nodeString + ":0", out);
         }
     }
 
