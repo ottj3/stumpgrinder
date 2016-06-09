@@ -2,6 +2,7 @@ package edu.tcnj.stumpgrinder.algo;
 
 import edu.tcnj.stumpgrinder.Parser;
 import edu.tcnj.stumpgrinder.data.Node;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class CubicTreeEnumeratorTest extends EnumeratorTest {
+
     @Parameterized.Parameters
     public static Iterable<? extends Object> data() {
         return Arrays.asList(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
@@ -23,11 +25,11 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
     @Parameterized.Parameter
     public int treeSize = 0;
 
+    @Ignore
     @Test
     public void testEnumerator() {
         List<Node<Integer>> treeNodes = new ArrayList<>();
         CubicTreeEnumerator<Integer> treeEnumerator;
-        Parser parser = new Parser();
         for (int i = 1; i <= treeSize; i++) {
             treeNodes.add(new Node<Integer>(((Integer) i).toString()));
         }
@@ -36,7 +38,8 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
         for (int j = 2 * treeSize - 5; j > 0; j -= 2) {
             expectedScore *= j;
         }
-        //if (i == 1) expectedScore = 1;
+//        Parser parser = new Parser();
+//        if (i == 1) expectedScore = 1;
 //        for (Node<Integer> tree : treeList) {
 //            System.out.println(parser.toString(tree, false));
 //        }
@@ -45,6 +48,7 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
 
     @Test
     public void testFitch() {
+        long start = System.currentTimeMillis();
         getData(treeSize);
         Parser parser = new Parser();
         CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species);
@@ -53,8 +57,10 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
         for (Node<Character> tree : treeList) {
             System.out.println(parser.toString(tree, false) + " Score: " + Fitch.bottomUp(tree));
         }
+        System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }
 
+    @Ignore
     @Test
     public void testHartigan() {
         getData(treeSize);
