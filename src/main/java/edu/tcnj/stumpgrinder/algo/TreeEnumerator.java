@@ -24,7 +24,6 @@ public class TreeEnumerator<S> {
     /**
      * Class Variables
      **/
-    private Fitch fitch = new Fitch();
     protected CharacterList<S> worldSet = new CharacterList<>();
     /**
      * The current best parsimony score for any bounded tree enumeration.
@@ -139,7 +138,7 @@ public class TreeEnumerator<S> {
     protected void fitchEnumerateRecursive(Node<S> current, int size) {
         if (size == labelledNodes.size()) {
             root = Fitch.cubicToBinary(root);
-            int score = fitch.bottomUp(root);
+            int score = Fitch.bottomUp(root);
             updateMPlist(score);
             root = Fitch.binaryToCubic(root);
         } else {
@@ -148,7 +147,7 @@ public class TreeEnumerator<S> {
             }
 
             root = Fitch.cubicToBinary(root);
-            int thisScore = fitch.bottomUp(root);
+            int thisScore = Fitch.bottomUp(root);
             root = Fitch.binaryToCubic(root);
 
             if (current != root && (thisScore <= parsimonyScore || parsimonyScore == -1)) {

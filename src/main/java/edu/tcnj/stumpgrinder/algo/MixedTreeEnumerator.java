@@ -44,7 +44,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
     protected void enumerateRecursive(Node<S> current, int size) {
         if (size == labelledNodes.size()) {
 //            System.out.println(++completed);
-//            trees.add(root.clone());
+            trees.add(root.clone());
         } else {
             case1(current, size, false);
             case2(current, size, false);
@@ -54,6 +54,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
     }
 
     public Set<Node<S>> hartiganEnumerate() {
+        parsimonyScore = -1;
         initializeTree();
         if (labelledNodes.size() <= 2) {
             trees.add(root.clone());
@@ -69,7 +70,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
         if (size == labelledNodes.size()) {
             int score = Hartigan.bottomUp(root, worldSet);
             updateMPlist(score);
-        } else {
+        } else if (Hartigan.bottomUp(root, worldSet) <= parsimonyScore || parsimonyScore == -1) {
             case1(current, size, true);
             case2(current, size, true);
             case3(current, size, true);

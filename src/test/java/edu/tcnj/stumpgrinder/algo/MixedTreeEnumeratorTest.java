@@ -1,12 +1,10 @@
 package edu.tcnj.stumpgrinder.algo;
 
 import edu.tcnj.stumpgrinder.Parser;
-import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,10 +13,10 @@ import static org.junit.Assert.assertEquals;
 public class MixedTreeEnumeratorTest extends TreeEnumeratorTest {
     @Test
     public void testMixedEnumerator() {
-        for(int i = 1; i <= 8; i++) {
-            testMixedEnumerator(i);
-        }
-        for(int i = 4; i <= 8; i++) {
+//        for(int i = 1; i <= 8; i++) {
+//            testMixedEnumerator(i);
+//        }
+        for(int i = 1; i <= 10; i++) {
             testHartigan(i);
         }
     }
@@ -51,7 +49,7 @@ public class MixedTreeEnumeratorTest extends TreeEnumeratorTest {
         Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
         System.out.println("Hartigan enumerate: ");
         for (Node<Character> tree : treeList) {
-            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));
+            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet) + " Size: " + tree.size());
         }
     }
 

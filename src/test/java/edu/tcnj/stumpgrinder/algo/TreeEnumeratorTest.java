@@ -19,12 +19,12 @@ public class TreeEnumeratorTest {
     public List<Node<Character>> species = new ArrayList<>();
     @Test
     public void testEnumerator() {
-//        for (int i = 1; i <= 8; i++) {
-//            testEnumerator(i);
-//        }
-        for (int i = 1; i <= 6; i++) {
+        for (int i = 1; i <= 10; i++) {
+            testEnumerator(i);
+        }
+        for (int i = 1; i <= 10; i++) {
             testFitch(i);
-            testHartigan(i);
+            //testHartigan(i);
         }
     }
 
@@ -54,9 +54,9 @@ public class TreeEnumeratorTest {
         TreeEnumerator<Character> treeEnumerator = new TreeEnumerator<>(species);
         Set<Node<Character>> treeList = treeEnumerator.fitchEnumerate();
 //        System.out.println("Fitch enumerate: ");
-//        for (Node<Character> tree : treeList) {
-//            System.out.println(parser.toString(tree, false) + " Score: " + (new Fitch()).bottomUp(tree));
-//        }
+        for (Node<Character> tree : treeList) {
+            System.out.println(parser.toString(tree, false) + " Score: " + Fitch.bottomUp(tree));
+        }
     }
 
     public void testHartigan(int dataSize) {
@@ -78,8 +78,12 @@ public class TreeEnumeratorTest {
         lines.add("D:GAGGACCCCCGTTACTTTGCCGGCGAGGCC");
         lines.add("E:GAGGATCCCAGATATTTTGCGGGTGAGGCT");
         lines.add("F:GAAGACCCGCGCTACTTTGCCGGCACCGGC");
-        lines.add("G:GAAGATCC{AG}CGTTTCTTCGCAGGAGAA");
+        lines.add("G:GAAGATCCACGTTTCTTCGCAGGAGAAGCA");
+//      lines.add("G:GAAGATCC{AG}CGTTTCTTCGCAGGAGAA");
         lines.add("H:GAAGATCCACGCTACTATGCAGGACCTCAA");
+        lines.add("I:GAAGACCCTCGCTATTACGCCGGTCCGCAA");
+        lines.add("J:GAGGACCCACGATATTACGCGGGAGAAGGA");
+        lines.add("K:GAGGATCCGCGCTACTTTGCCGGCCCGCAG");
         labels = new ArrayList<>();
         data = new ArrayList<>();
         worldSet = new CharacterList<>();
