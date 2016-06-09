@@ -1,5 +1,6 @@
 package edu.tcnj.stumpgrinder.algo;
 
+import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
 import java.util.ArrayList;
@@ -14,8 +15,17 @@ public class TreeEnumerator<S> {
     public TreeEnumerator(List<Node<S>> labelledNodes) {
         this.labelledNodes = labelledNodes;
     }
-    /** Class Variables **/
+
+    public TreeEnumerator(List<Node<S>> labelledNodes, CharacterList<S> worldSet) {
+        this.labelledNodes = labelledNodes;
+        this.worldSet = worldSet;
+    }
+
+    /**
+     * Class Variables
+     **/
     private Fitch fitch = new Fitch();
+    private CharacterList<S> worldSet = new CharacterList<>();
     /**
      * The current best parsimony score for any bounded tree enumeration.
      */
@@ -163,74 +173,53 @@ public class TreeEnumerator<S> {
             }
         }
     }
-    //
-    //    public Set<String> hartiganEnumerate(Tree<Characters<S>> tree,
-    //                                                    Characters<S> worldSet)
-    //    {
-    //        // Reset the state of the algorithm by clearing trees.
-    //        trees = new HashSet<String>();
-    //        parsimonyScore = -1;
-    //
-    //        initializeTree(tree);
-    //        if (tree.size() < 4)
-    //        {
-    //            trees.add(tree.toString());
-    //        }
-    //        else
-    //        {
-    //            hartiganEnumerateRecursive(tree, tree.getRoot(), 3, worldSet);
-    //        }
-    //        return trees;
-    //    }
-    //
-    //    private void hartiganEnumerateRecursive(Tree<Characters<S>> tree,
-    //                                                       Node<Characters<S>> current,
-    //                                                       int size,
-    //                                                       Characters<S> worldSet)
-    //    {
-    //        if (size == tree.size())
-    //        {
-    //            int score = Hartigan.bottomUp(tree, worldSet);
-    //            if (score <= parsimonyScore)
-    //            {
-    //                if (score < parsimonyScore)
-    //                {
-    //                    parsimonyScore = score;
-    //                    trees.clear();
-    //                }
-    //                trees.add(tree.toString());
-    //            }
-    //            else if (parsimonyScore == -1)
-    //            {
-    //                parsimonyScore = score;
-    //                trees.add(tree.toString());
-    //            }
-    //        }
-    //        else
-    //        {
-    //            for (int i = 0; i < current.getChildren().size(); i++)
-    //            {
-    //                hartiganEnumerateRecursive(tree, current.getChild(0), size,
-    //                        worldSet);
-    //            }
-    //            if (current != tree.getRoot()
-    //                    && (Hartigan.bottomUp(tree, worldSet) <= parsimonyScore
-    //                    || parsimonyScore == -1))
-    //            {
-    //                Node<Characters<S>> internal = new Node<Characters<S>>();
-    //                Node<Characters<S>> leaf = tree.getNodes().get(size);
-    //                Node<Characters<S>> parent = current.getParent();
-    //
-    //                addNodeToEdge(current, parent, internal, leaf);
-    //
-    //                hartiganEnumerateRecursive(tree, tree.getRoot(), size + 1,
-    //                        worldSet);
-    //
-    //                removeNodeFromEdge(current, parent, internal, leaf);
-    //            }
-    //        }
-    //        return;
-    //    }
+
+    public Set<Node<S>> hartiganEnumerate() {
+        // Reset the state of the algorithm by clearing trees.
+        trees = new HashSet<>();
+        parsimonyScore = -1;
+        initializeTree();
+        if (labelledNodes.size() < 4) {
+            trees.add(root.clone());
+        } else {
+            hartiganEnumerateRecursive(root, 3);
+        }
+        return trees;
+    }
+
+    /**
+     *
+     */
+    private void hartiganEnumerateRecursive(Node<S> current, int size) {
+        if (size == labelledNodes.size()) {
+            int score = Hartigan.bottomUp(root, worldSet);
+            if (score <= parsimonyScore) {
+                if (score < parsimonyScore) {
+                    parsimonyScore = score;
+                    trees.clear();
+                }
+                trees.add(root.clone());
+            } else if (parsimonyScore == -1) {
+                parsimonyScore = score;
+                trees.add(root.clone());
+            }
+        } else {
+            for (int i = 0; i < current.children.size(); i++) {
+                hartiganEnumerateRecursive(current.children.get(0), size);
+            }
+            if (current != root && (Hartigan.bottomUp(root, worldSet) <= parsimonyScore || parsimonyScore == -1)) {
+                Node<S> internal = new Node<>("");
+                Node<S> leaf = labelledNodes.get(size);
+                Node<S> parent = current.parent;
+
+                addNodeToEdge(current, parent, internal, leaf);
+
+                hartiganEnumerateRecursive(root, size + 1);
+
+                removeNodeFromEdge(current, parent, internal, leaf);
+            }
+        }
+    }
 
     // public  <S> Set<String> mixedEnumerate(Tree<Characters<S>> tree,
     //                                              Characters<S> worldSet)

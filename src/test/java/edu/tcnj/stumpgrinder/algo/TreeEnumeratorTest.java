@@ -15,16 +15,18 @@ import static org.junit.Assert.assertEquals;
 public class TreeEnumeratorTest {
     public ArrayList<String> labels = new ArrayList<>();
     public ArrayList<String> data = new ArrayList<>();
-    public List<Set<Character>> worldSet = new ArrayList<>();
+    public CharacterList<Character> worldSet = new CharacterList<>();
     public List<Node<Character>> species = new ArrayList<>();
 
     @Test
     public void testEnumerator() {
-        for(int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 5; i++) {
             testEnumerator(i);
         }
         testFitch();
+        testHartigan();
     }
+
     public void testEnumerator(int treeSize) {
         List<Node<Integer>> treeNodes = new ArrayList<>();
         TreeEnumerator<Integer> treeEnumerator = new TreeEnumerator<>();
@@ -34,12 +36,12 @@ public class TreeEnumeratorTest {
         }
         treeEnumerator = new TreeEnumerator<>(new ArrayList<>(treeNodes));
         int expectedScore = 1;
-        for (int j = 2*treeSize-5; j > 0; j-=2) {
+        for (int j = 2 * treeSize - 5; j > 0; j -= 2) {
             expectedScore *= j;
         }
         //if (i == 1) expectedScore = 1;
         Set<Node<Integer>> treeList = treeEnumerator.enumerate();
-        for(Node<Integer> tree : treeList) {
+        for (Node<Integer> tree : treeList) {
             System.out.println(parser.toString(tree, false));
         }
         assertEquals("Size: " + treeNodes.size(), expectedScore, treeList.size());
@@ -50,18 +52,37 @@ public class TreeEnumeratorTest {
         Parser parser = new Parser();
         TreeEnumerator<Character> treeEnumerator = new TreeEnumerator<>(species);
         Set<Node<Character>> treeList = treeEnumerator.fitchEnumerate();
-        for(Node<Character> tree : treeList) {
+        System.out.println("Fitch enumerate: ");
+        for (Node<Character> tree : treeList) {
             System.out.println(parser.toString(tree, false) + " Score: " + (new Fitch()).bottomUp(tree));
         }
     }
+
+    public void testHartigan() {
+        getData();
+        Parser parser = new Parser();
+        TreeEnumerator<Character> treeEnumerator = new TreeEnumerator<>(species, worldSet);
+        Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
+        System.out.println("Hartigan enumerate: ");
+        for (Node<Character> tree : treeList) {
+            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));
+        }
+    }
+
     public void getData() {
         List<String> lines = new ArrayList<>();
         lines.add("A:GAGGACCCCAGATATTACGCGGGTCGAACA");
         lines.add("B:GAAGATCCCAGATACTTTGCCGGAGAACAA");
         lines.add("C:GAGGATCCGCGTTACTTTAGCGGTATTCAA");
         lines.add("D:GAGGACCCCCGTTACTTTGCCGGCGAGGCC");
-		/* Processes the data. */
-        for(String line : lines) {
+
+        labels = new ArrayList<>();
+        data = new ArrayList<>();
+        worldSet = new CharacterList<>();
+        species = new ArrayList<>();
+
+        /* Processes the data. */
+        for (String line : lines) {
             if (line != null && line.length() > 0) {
                 labels.add(line.split(":", 2)[0]);
                 data.add(line.split(":", 2)[1]);
@@ -87,7 +108,7 @@ public class TreeEnumeratorTest {
                 //System.out.println(data.get(index).length());
                 characters.add(new HashSet<Character>());
                 characters.get(index_).add(data.get(index).charAt(index_));
-                while(index_ >= worldSet.size()) {
+                while (index_ >= worldSet.size()) {
                     worldSet.add(new HashSet<Character>());
                 }
                 worldSet.get(index_).add(data.get(index).charAt(index_));
