@@ -8,19 +8,17 @@ import static org.junit.Assert.assertEquals;
 
 public class FitchTest {
 
-    private Fitch fitch;
     private int handScored;
     private Node<Integer> testTree;
 
     @Before
     public void setup() {
         testTree = makeTestTree();
-        fitch = new Fitch();
     }
 
     @Test
     public void testFitchScoring() {
-        int score = fitch.bottomUp(testTree);
+        int score = Fitch.bottomUp(testTree);
         assertEquals("Fitch score for test tree", handScored, score);
     }
 

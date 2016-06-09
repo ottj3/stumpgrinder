@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class Fitch {
 
-    private <S> int fitch(Node<S> current) {
+    private static <S> int fitch(Node<S> current) {
         // if we are a leaf node, our current root set is already
         // correct, and the score is 0
         if (current.children.size() == 0) {
@@ -64,7 +64,7 @@ public class Fitch {
         return score;
     }
 
-    public <S> int bottomUp(Node<S> root) {
+    public static <S> int bottomUp(Node<S> root) {
         int score = 0;
 
         // recursive down the to bottom of the tree first
