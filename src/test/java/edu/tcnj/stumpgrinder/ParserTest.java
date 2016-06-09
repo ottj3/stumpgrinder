@@ -76,6 +76,7 @@ public class ParserTest {
         Node<?> root = parser.fromString(genOut);
         String genOutAgain = parser.toString(root, false);
 
+        System.out.println(leaves + " " + genOutAgain);
         assertEquals("Generated tree re-parsing (leaves: " + leaves + ")", genOut, genOutAgain);
     }
 
@@ -87,14 +88,17 @@ public class ParserTest {
     }
 
     private static int leaves = 0;
+    private static final int MAX_LEAVES = 1000;
+    private static final double DECAY = 0.5;
     private static void genRecursive(Node<Integer> current) {
-        if (Math.random() < 0.5) {
+        if (leaves > MAX_LEAVES) return;
+        if (Math.random() < DECAY) {
             Node<Integer> left = new Node<>("");
             current.children.add(left);
             left.parent = current;
             genRecursive(left);
         }
-        if (Math.random() < 0.5) {
+        if (Math.random() < DECAY) {
             Node<Integer> right = new Node<>("");
             current.children.add(right);
             right.parent = current;

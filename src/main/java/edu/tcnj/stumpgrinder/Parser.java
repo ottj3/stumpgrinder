@@ -12,9 +12,111 @@ import java.util.Set;
 
 public class Parser {
 
+    private static final String SPECIALS = "():,;";
+
     public Parser() {
     }
 
+    private static <S> CharacterList<S> charactersFromString(String s) {
+        int i = 0;
+        int t;
+        List<Set<S>> cList = new ArrayList<>();
+        while ((t = s.indexOf('|', i)) != -1) { // move end cursor to the next '|' delimiter if it exists
+            Set<S> set = stateSetFromString(s.substring(i, t));
+            if (set != null) cList.add(set); // substring from start cursor to end cursor
+            i = t + 1; // move start cursor past the last end cursor position (i.e. after the '|')
+        }
+        Set<S> set = stateSetFromString(s.substring(i, s.length()));
+        if (set != null) cList.add(set); // substring to end of characters
+        return new CharacterList<>(cList);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <S> Set<S> stateSetFromString(String s) {
+        if (s.isEmpty()) return null;
+        int i = 0;
+        int t;
+        Set<S> set = new HashSet<>();
+        while ((t = s.indexOf(',', i)) != -1) { // move end cursor to next ',' if exists
+            Object o = stateFromString(s.substring(i, t));  // parse single state object
+            set.add((S) o);
+            i = t + 1; // move start past end
+        }
+        set.add((S) stateFromString(s.substring(i, s.length()))); // substring to end of states
+        return set;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <S> S stateFromString(String s) {
+        S o;
+        try {
+            o = (S) Integer.valueOf(s);
+        } catch (NumberFormatException e) {
+            try {
+                o = (S) Double.valueOf(s);
+            } catch (NumberFormatException e2) {
+                o = (S) (s.length() == 1 ? s.charAt(0) : s);
+            }
+        }
+        return o;
+    }
+
+    private static void checkMissingSet(int index, String label) {
+        if (index == -1)
+            throw new IllegalArgumentException("Found node with data but missing character sets: " + label);
+    }
+
+    private static <S> String nodeToCharacterString(Node<S> node) {
+        return "[" +
+                (node.root.isEmpty() ? "[]" : listToCharacterString(node.root)) +
+                (node.upper.isEmpty() ? "[]" : listToCharacterString(node.upper)) +
+                (node.lower.isEmpty() ? "[]" : listToCharacterString(node.lower)) +
+                "]";
+    }
+
+    private static <S> String listToCharacterString(CharacterList<S> set) {
+        Iterator<Set<S>> it = set.iterator();
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        boolean firstOut = true;
+        while (it.hasNext()) { // for each character
+            if (!firstOut) {
+                sb.append('|');
+            }
+            Iterator<S> intIt = it.next().iterator();
+            boolean firstIn = true;
+            while (intIt.hasNext()) { // for each state in potential set of states
+                if (!firstIn) {
+                    sb.append(',');
+                }
+                sb.append(intIt.next()); /// append type of S as string
+                firstIn = false;
+            }
+            firstOut = false;
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
+     * Converts a single node to a full node string, but does not recursively build a tree.
+     *
+     * @param node the {@link Node} to stringify
+     * @param data {@code true} to append the root/upper/lower sets to the label
+     * @return string of the Node's label and cost
+     */
+    public <S> String nodeToString(Node<S> node, boolean data) {
+        if (node == null) return "";
+        return node.label + (data ? nodeToCharacterString(node) : "") + ":" + node.cost;
+    }
+
+    /**
+     * Converts a root (or sub-tree root) node into a Newick-format string.
+     *
+     * @param root top-most node of tree to convert
+     * @param data true to add root/upper/lower sets to label
+     * @return Newick-format tree representation
+     */
     public <S> String toString(Node<S> root, boolean data) {
         if (root == null) return ";";
         String string = nodeToString(root, data) + ";";
@@ -42,10 +144,16 @@ public class Parser {
         return string;
     }
 
-    private static final String SPECIALS = "():,;";
-
+    /**
+     * Converts a Newick tree string to a {@link Node} object which roots the entire tree.
+     *
+     * @param s Newick-formatted string
+     * @return root {@link Node} of the tree
+     */
     public <S> Node<S> fromString(String s) {
-        if (s.length() == 1 && s.charAt(0) == ';') return null;
+        if (s.isEmpty())
+            throw new IllegalArgumentException("Empty string can't be a Newick tree, needs at least a ';'");
+        if (s.length() == 1 && s.charAt(0) == ';') return null; // empty tree is technically a valid tree
         if (s.charAt(s.length() - 1) != ';') {
             throw new IllegalArgumentException("Invalid Newick string, missing ';'");
         }
@@ -55,7 +163,7 @@ public class Parser {
     private <S> Node<S> fromStringRecursive(String s, Node<S> parent) {
         int brackets = 0;
         int topLabelPos = s.lastIndexOf(':');
-        if (topLabelPos == -1) return null; // empty tree
+        if (topLabelPos == -1) return null; // empty tree, but should be handled already
         if (topLabelPos == s.length()) throw new IllegalArgumentException("Found node with no cost");
 
         // label is everything between the colon and the closest special character on the left
@@ -169,6 +277,7 @@ public class Parser {
             node.label = label.substring(0, i);
             node.labelled = true;
             int rootStart, upperStart, lowerStart;
+            // separate root, upper, and lower sets by their '[]'s
             rootStart = label.indexOf('[', i + 1);
             checkMissingSet(rootStart, label);
             upperStart = label.indexOf('[', rootStart + 1);
@@ -177,6 +286,7 @@ public class Parser {
             checkMissingSet(lowerStart, label);
 
             try {
+                // parse character strings for each potential substring
                 node.root = charactersFromString(label.substring(rootStart + 1, upperStart - 1));
                 node.upper = charactersFromString(label.substring(upperStart + 1, lowerStart - 1));
                 node.lower = charactersFromString(label.substring(lowerStart + 1, label.length() - 2)); // don't include the last two ']'s
@@ -191,89 +301,4 @@ public class Parser {
         return node;
     }
 
-    private static <S> CharacterList<S> charactersFromString(String s) {
-        int i = 0;
-        int t;
-        List<Set<S>> cList = new ArrayList<>();
-        while ((t = s.indexOf('|', i)) != -1) { // move end cursor to the next '|' delimiter if it exists
-            Set<S> set = statesFromString(s.substring(i, t));
-            if (set != null) cList.add(set); // substring from start cursor to end cursor
-            i = t + 1; // move start cursor past the last end cursor position (i.e. after the '|')
-        }
-        Set<S> set = statesFromString(s.substring(i, s.length()));
-        if (set != null) cList.add(set); // substring to end of characters
-        return new CharacterList<>(cList);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <S> Set<S> statesFromString(String s) {
-        if (s.isEmpty()) return null;
-        int i = 0;
-        int t;
-        Set<S> set = new HashSet<>();
-        while ((t = s.indexOf(',', i)) != -1) { // move end cursor to next ',' if exists
-            Object o = stateFromString(s.substring(i, t));  // parse single state object
-            set.add((S) o);
-            i = t + 1; // move start past end
-        }
-        set.add((S) stateFromString(s.substring(i, s.length()))); // substring to end of states
-        return set;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <S> S stateFromString(String s) {
-        S o;
-        try {
-            o = (S) Integer.valueOf(s);
-        } catch (NumberFormatException e) {
-            try {
-                o = (S) Double.valueOf(s);
-            } catch (NumberFormatException e2) {
-                o = (S) (s.length() == 1 ? s.charAt(0) : s);
-            }
-        }
-        return o;
-    }
-
-    private static void checkMissingSet(int index, String label) {
-        if (index == -1)
-            throw new IllegalArgumentException("Found node with data but missing character sets: " + label);
-    }
-
-    protected <S> String nodeToString(Node<S> node, boolean data) {
-        if (node == null) return "";
-        return node.label + (data ? toCharacters(node) : "") + ":" + node.cost;
-    }
-
-    private static <S> String toCharacters(Node<S> node) {
-        return "[" +
-                (node.root.isEmpty() ? "[]" : toStateString(node.root)) +
-                (node.upper.isEmpty() ? "[]" : toStateString(node.upper)) +
-                (node.lower.isEmpty() ? "[]" : toStateString(node.lower)) +
-                "]";
-    }
-
-    private static <S> String toStateString(CharacterList<S> set) {
-        Iterator<Set<S>> it = set.iterator();
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        boolean firstOut = true;
-        while (it.hasNext()) { // for each character
-            if (!firstOut) {
-                sb.append('|');
-            }
-            Iterator<S> intIt = it.next().iterator();
-            boolean firstIn = true;
-            while (intIt.hasNext()) { // for each state in potential set of states
-                if (!firstIn) {
-                    sb.append(',');
-                }
-                sb.append(intIt.next()); /// append type of S as string
-                firstIn = false;
-            }
-            firstOut = false;
-        }
-        sb.append(']');
-        return sb.toString();
-    }
 }
