@@ -25,20 +25,20 @@ public class TreeEnumerator<S> {
      * Class Variables
      **/
     private Fitch fitch = new Fitch();
-    private CharacterList<S> worldSet = new CharacterList<>();
+    protected CharacterList<S> worldSet = new CharacterList<>();
     /**
      * The current best parsimony score for any bounded tree enumeration.
      */
-    private int parsimonyScore = -1;
+    protected int parsimonyScore = -1;
     //The list of labelled nodes received from the input
-    private List<Node<S>> labelledNodes = new ArrayList<>();
+    protected List<Node<S>> labelledNodes = new ArrayList<>();
     /**
      * The set of tree topologies.
      */
-    private Set<Node<S>> trees = new HashSet<>();
+    protected Set<Node<S>> trees = new HashSet<>();
 
     //The root of the current tree
-    private Node<S> root = new Node<>("");
+    protected Node<S> root = new Node<>("");
 
     /** Class methods **/
 
@@ -49,7 +49,7 @@ public class TreeEnumerator<S> {
      * This method initializes a tree topology to give us a starting point for
      * enumerating unrooted trees.
      */
-    private void initializeTree() {
+    protected void initializeTree() {
         if (labelledNodes.size() == 1) {
             root = labelledNodes.get(0);
         } else if (labelledNodes.size() == 2) {
@@ -66,7 +66,7 @@ public class TreeEnumerator<S> {
 
     /**
      */
-    private void addNodeToEdge(Node<S> current, Node<S> parent, Node<S> internal, Node<S> leaf) {
+    protected void addNodeToEdge(Node<S> current, Node<S> parent, Node<S> internal, Node<S> leaf) {
         Node.unlinkNodes(parent, current);
 
         Node.linkNodes(parent, internal);
@@ -74,7 +74,7 @@ public class TreeEnumerator<S> {
         Node.linkNodes(internal, leaf);
     }
 
-    private void removeNodeFromEdge(Node<S> current, Node<S> parent, Node<S> internal, Node<S> leaf) {
+    protected void removeNodeFromEdge(Node<S> current, Node<S> parent, Node<S> internal, Node<S> leaf) {
         Node.unlinkNodes(internal, leaf);
         Node.unlinkNodes(internal, current);
         Node.unlinkNodes(parent, internal);
@@ -101,7 +101,7 @@ public class TreeEnumerator<S> {
     /**
      *
      */
-    private void enumerateRecursive(Node<S> current, int size) {
+    protected void enumerateRecursive(Node<S> current, int size) {
         if (size == labelledNodes.size()) {
             trees.add(root.clone());
         } else {
@@ -136,20 +136,11 @@ public class TreeEnumerator<S> {
         return trees;
     }
 
-    private void fitchEnumerateRecursive(Node<S> current, int size) {
+    protected void fitchEnumerateRecursive(Node<S> current, int size) {
         if (size == labelledNodes.size()) {
             root = Fitch.cubicToBinary(root);
             int score = fitch.bottomUp(root);
-            if (score <= parsimonyScore) {
-                if (score < parsimonyScore) {
-                    parsimonyScore = score;
-                    trees.clear();
-                }
-                trees.add(root.clone());
-            } else if (parsimonyScore == -1) {
-                parsimonyScore = score;
-                trees.add(root.clone());
-            }
+            updateMPlist(score);
             root = Fitch.binaryToCubic(root);
         } else {
             for (int i = 0; i < current.children.size(); i++) {
@@ -190,19 +181,10 @@ public class TreeEnumerator<S> {
     /**
      *
      */
-    private void hartiganEnumerateRecursive(Node<S> current, int size) {
+    protected void hartiganEnumerateRecursive(Node<S> current, int size) {
         if (size == labelledNodes.size()) {
             int score = Hartigan.bottomUp(root, worldSet);
-            if (score <= parsimonyScore) {
-                if (score < parsimonyScore) {
-                    parsimonyScore = score;
-                    trees.clear();
-                }
-                trees.add(root.clone());
-            } else if (parsimonyScore == -1) {
-                parsimonyScore = score;
-                trees.add(root.clone());
-            }
+            updateMPlist(score);
         } else {
             for (int i = 0; i < current.children.size(); i++) {
                 hartiganEnumerateRecursive(current.children.get(0), size);
@@ -220,7 +202,18 @@ public class TreeEnumerator<S> {
             }
         }
     }
-
+    protected void updateMPlist(int thisParsimonyScore) {
+        if (thisParsimonyScore <= parsimonyScore) {
+            if (thisParsimonyScore < parsimonyScore) {
+                parsimonyScore = thisParsimonyScore;
+                trees.clear();
+            }
+            trees.add(root.clone());
+        } else if (parsimonyScore == -1) {
+            parsimonyScore = thisParsimonyScore;
+            trees.add(root.clone());
+        }
+    }
     // public  <S> Set<String> mixedEnumerate(Tree<Characters<S>> tree,
     //                                              Characters<S> worldSet)
     //   {

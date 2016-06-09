@@ -17,19 +17,20 @@ public class TreeEnumeratorTest {
     public ArrayList<String> data = new ArrayList<>();
     public CharacterList<Character> worldSet = new CharacterList<>();
     public List<Node<Character>> species = new ArrayList<>();
-
     @Test
     public void testEnumerator() {
-        for (int i = 1; i <= 5; i++) {
-            testEnumerator(i);
+//        for (int i = 1; i <= 8; i++) {
+//            testEnumerator(i);
+//        }
+        for (int i = 1; i <= 6; i++) {
+            testFitch(i);
+            testHartigan(i);
         }
-        testFitch();
-        testHartigan();
     }
 
     public void testEnumerator(int treeSize) {
         List<Node<Integer>> treeNodes = new ArrayList<>();
-        TreeEnumerator<Integer> treeEnumerator = new TreeEnumerator<>();
+        TreeEnumerator<Integer> treeEnumerator;
         Parser parser = new Parser();
         for (int i = 1; i <= treeSize; i++) {
             treeNodes.add(new Node<Integer>(((Integer) i).toString()));
@@ -41,55 +42,58 @@ public class TreeEnumeratorTest {
         }
         //if (i == 1) expectedScore = 1;
         Set<Node<Integer>> treeList = treeEnumerator.enumerate();
-        for (Node<Integer> tree : treeList) {
-            System.out.println(parser.toString(tree, false));
-        }
+//        for (Node<Integer> tree : treeList) {
+//            System.out.println(parser.toString(tree, false));
+//        }
         assertEquals("Size: " + treeNodes.size(), expectedScore, treeList.size());
     }
 
-    public void testFitch() {
-        getData();
+    public void testFitch(int dataSize) {
+        getData(dataSize);
         Parser parser = new Parser();
         TreeEnumerator<Character> treeEnumerator = new TreeEnumerator<>(species);
         Set<Node<Character>> treeList = treeEnumerator.fitchEnumerate();
-        System.out.println("Fitch enumerate: ");
-        for (Node<Character> tree : treeList) {
-            System.out.println(parser.toString(tree, false) + " Score: " + (new Fitch()).bottomUp(tree));
-        }
+//        System.out.println("Fitch enumerate: ");
+//        for (Node<Character> tree : treeList) {
+//            System.out.println(parser.toString(tree, false) + " Score: " + (new Fitch()).bottomUp(tree));
+//        }
     }
 
-    public void testHartigan() {
-        getData();
+    public void testHartigan(int dataSize) {
+        getData(dataSize);
         Parser parser = new Parser();
         TreeEnumerator<Character> treeEnumerator = new TreeEnumerator<>(species, worldSet);
         Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
-        System.out.println("Hartigan enumerate: ");
-        for (Node<Character> tree : treeList) {
-            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));
-        }
+//        System.out.println("Hartigan enumerate: ");
+//        for (Node<Character> tree : treeList) {
+//            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));
+//        }
     }
 
-    public void getData() {
+    public void getData(int dataSize) {
         List<String> lines = new ArrayList<>();
         lines.add("A:GAGGACCCCAGATATTACGCGGGTCGAACA");
         lines.add("B:GAAGATCCCAGATACTTTGCCGGAGAACAA");
         lines.add("C:GAGGATCCGCGTTACTTTAGCGGTATTCAA");
         lines.add("D:GAGGACCCCCGTTACTTTGCCGGCGAGGCC");
-
+        lines.add("E:GAGGATCCCAGATATTTTGCGGGTGAGGCT");
+        lines.add("F:GAAGACCCGCGCTACTTTGCCGGCACCGGC");
+        lines.add("G:GAAGATCC{AG}CGTTTCTTCGCAGGAGAA");
+        lines.add("H:GAAGATCCACGCTACTATGCAGGACCTCAA");
         labels = new ArrayList<>();
         data = new ArrayList<>();
         worldSet = new CharacterList<>();
         species = new ArrayList<>();
 
         /* Processes the data. */
-        for (String line : lines) {
+        for (int i = 0; i < dataSize; i++) {
+            String line = lines.get(i);
             if (line != null && line.length() > 0) {
                 labels.add(line.split(":", 2)[0]);
                 data.add(line.split(":", 2)[1]);
             }
         }
         makeNodes();
-
     }
 
 
