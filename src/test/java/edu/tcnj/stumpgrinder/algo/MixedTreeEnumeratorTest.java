@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class MixedTreeEnumeratorTest extends EnumeratorTest {
     @Parameterized.Parameters
     public static Iterable<? extends Object> data() {
-        return Arrays.asList(4, 5, 6, 7, 8, 9, 10);
+        return Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9, 10);
     }
 
     @Parameterized.Parameter
@@ -40,7 +40,7 @@ public class MixedTreeEnumeratorTest extends EnumeratorTest {
         double denominator = Math.sqrt(2) * Math.exp(treeSize / 2) * Math.pow((2 - Math.exp(0.5)), treeSize - 1.5);
         double expectedSize = Math.pow(treeSize, treeSize - 2) / denominator;
         //if (i == 1) expectedScore = 1;
-        Set<Node<Integer>> treeList = treeEnumerator.enumerate();
+        int treeListSize = treeEnumerator.enumerate();
 
 //        for (Node<Integer> tree : treeList) {
 //            System.out.println(parser.toString(tree, false));
@@ -52,7 +52,7 @@ public class MixedTreeEnumeratorTest extends EnumeratorTest {
     public void testHartigan() {
         getData(treeSize);
         Parser parser = new Parser();
-        TreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
+        MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
         Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
         System.out.println("Hartigan enumerate: ");
         for (Node<Character> tree : treeList) {

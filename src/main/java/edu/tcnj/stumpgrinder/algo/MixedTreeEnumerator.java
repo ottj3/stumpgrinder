@@ -7,18 +7,17 @@ import java.util.List;
 import java.util.Set;
 
 public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
-    public MixedTreeEnumerator() {
+
+    public MixedTreeEnumerator(List<Node<S>> labelledNodes) {
+        this.labelledNodes = labelledNodes;
     }
 
     public MixedTreeEnumerator(List<Node<S>> labelledNodes, CharacterList<S> worldSet) {
-        super(labelledNodes, worldSet);
+        this.labelledNodes = labelledNodes;
+        this.worldSet = worldSet;
     }
 
-    public MixedTreeEnumerator(List<Node<S>> labelledNodes) {
-        super(labelledNodes);
-    }
 
-    @Override
     protected void initializeTree() {
         if (labelledNodes.size() >= 1) {
             root = labelledNodes.get(0);
@@ -28,23 +27,25 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
         }
     }
 
-    public Set<Node<S>> enumerate() {
+    public int enumerate() {
+        treeCounter = 0;
         initializeTree();
         if (labelledNodes.size() <= 2) {
-            trees.add(root.clone());
+            //trees.add(root.clone());
+            treeCounter++;
         } else {
             enumerateRecursive(root, 2);
         }
-        return trees;
+        return treeCounter;
     }
 
 //    public int completed = 0;
 
-    @Override
     protected void enumerateRecursive(Node<S> current, int size) {
         if (size == labelledNodes.size()) {
 //            System.out.println(++completed);
-            trees.add(root.clone());
+            //trees.add(root.clone());
+            treeCounter++;
         } else {
             case1(current, size, false);
             case2(current, size, false);
@@ -64,8 +65,6 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
         return trees;
     }
 
-    //TODO: Branch and bound
-    @Override
     protected void hartiganEnumerateRecursive(Node<S> current, int size) {
         if (size == labelledNodes.size()) {
             int score = Hartigan.bottomUp(root, worldSet);

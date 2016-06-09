@@ -25,29 +25,28 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
     @Test
     public void testEnumerator() {
         List<Node<Integer>> treeNodes = new ArrayList<>();
-        TreeEnumerator<Integer> treeEnumerator;
+        CubicTreeEnumerator<Integer> treeEnumerator;
         Parser parser = new Parser();
         for (int i = 1; i <= treeSize; i++) {
             treeNodes.add(new Node<Integer>(((Integer) i).toString()));
         }
-        treeEnumerator = new TreeEnumerator<>(new ArrayList<>(treeNodes));
+        treeEnumerator = new CubicTreeEnumerator<>(new ArrayList<>(treeNodes));
         int expectedScore = 1;
         for (int j = 2 * treeSize - 5; j > 0; j -= 2) {
             expectedScore *= j;
         }
         //if (i == 1) expectedScore = 1;
-        Set<Node<Integer>> treeList = treeEnumerator.enumerate();
 //        for (Node<Integer> tree : treeList) {
 //            System.out.println(parser.toString(tree, false));
 //        }
-        assertEquals("Size: " + treeNodes.size(), expectedScore, treeList.size());
+        assertEquals("Size: " + treeNodes.size(), expectedScore, treeEnumerator.enumerate());
     }
 
     @Test
     public void testFitch() {
         getData(treeSize);
         Parser parser = new Parser();
-        TreeEnumerator<Character> treeEnumerator = new TreeEnumerator<>(species);
+        CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species);
         Set<Node<Character>> treeList = treeEnumerator.fitchEnumerate();
 //        System.out.println("Fitch enumerate: ");
         for (Node<Character> tree : treeList) {
@@ -59,7 +58,7 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
     public void testHartigan() {
         getData(treeSize);
         Parser parser = new Parser();
-        TreeEnumerator<Character> treeEnumerator = new TreeEnumerator<>(species, worldSet);
+        CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species, worldSet);
         Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
 //        System.out.println("Hartigan enumerate: ");
 //        for (Node<Character> tree : treeList) {
