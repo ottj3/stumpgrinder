@@ -161,25 +161,25 @@ public class Hartigan {
                     if (child.upper.get(i).containsAll(current.root.get(i))) {
                         child.root.add(current.root.get(i));
                     } else {
-                        CharacterList<S> newVH = new CharacterList<>(),
+                        CharacterList<S> newVU = new CharacterList<>(),
                                 newVL = new CharacterList<>();
                         //System.out.println("child.upper size: " + child.upper.size());
                         //System.out.println("child.lower size: " + child.lower.size());
                         for (Set<S> character : child.upper) {
-                            newVH.add(new HashSet<>(character));
+                            newVU.add(new HashSet<>(character));
                         }
                         for (Set<S> character : child.lower) {
                             newVL.add(new HashSet<>(character));
                         }
-                        // while(newVL.size() < newVH.size()) {
+                        // while(newVL.size() < newVU.size()) {
                         // newVL.add(new HashSet<S>());
                         // }
 
                         //System.out.println("newVL size: " + newVL.size() +
                         //    "current.root size: " + current.root.size());
                         newVL.get(i).retainAll(current.root.get(i));
-                        newVH.get(i).addAll(newVL.get(i));
-                        child.root.add(newVH.get(i));
+                        newVU.get(i).addAll(newVL.get(i));
+                        child.root.add(newVU.get(i));
                     }
                     //create sets to test if their intersection is empty
                     Set<S> x, y;
