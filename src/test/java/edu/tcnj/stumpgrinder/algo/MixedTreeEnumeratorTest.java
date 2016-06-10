@@ -16,7 +16,7 @@ import java.util.Set;
 public class MixedTreeEnumeratorTest extends EnumeratorTest {
     @Parameterized.Parameters
     public static Iterable<? extends Object> data() {
-        return Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
+        return Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
     }
 
     @Parameterized.Parameter
@@ -54,9 +54,9 @@ public class MixedTreeEnumeratorTest extends EnumeratorTest {
         Parser parser = new Parser();
         MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
         Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
-        System.out.println("Hartigan enumerate: ");
+//        System.out.println("Hartigan enumerate: ");
         for (Node<Character> tree : treeList) {
-            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet) + " Size: " + tree.size());
+            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));// + " Size: " + tree.size());
         }
         System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }

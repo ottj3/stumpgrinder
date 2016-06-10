@@ -32,6 +32,18 @@ public abstract class EnumeratorTest {
         lines.add("M:GAAGATCCTCGATATTTTGCCGGTCCGCAA");
         lines.add("N:GAAGATCCTCGATATTTTGCCGGTCCGCAA");
         lines.add("O:GAAGACCCGCGTTATTTTGCCGGTACCAGC");
+        lines.add("P:GAGGACCCGAGAATGTTCGCTGGCGTTGCC");
+        lines.add("Q:GAGGATCCTAGGTTTTATGCGGGCGAGGGC");
+        lines.add("R:GAAGACCCACGTTATTTCGCCGGCACCAGC");
+        lines.add("S:GAGGACCCCAGATATTTTGCGGGTGAGGCT");
+        lines.add("T:GAAGACCCGCGTTACTATGCGGGCACAGAT");
+        lines.add("U:GAGGACCCGCGTTACTATGCGGGCACAGAC");
+        lines.add("V:GAAGACCCGCGTTACTATGCGGGCACAGAT");
+        lines.add("W:GAAGACCCGCGCTACTTTGCCGGCACCGGC");
+        lines.add("X:AAGGACCCTTGTTATATTTCCGGCCCGCGT");
+        lines.add("Y:GAGGACCCGCGCTACTTCGCGGGCGAAGGA");
+        lines.add("Z:GAGGACCCGCGTTACTATGCGGGCACAGAT");
+
 
         labels = new ArrayList<>();
         data = new ArrayList<>();
