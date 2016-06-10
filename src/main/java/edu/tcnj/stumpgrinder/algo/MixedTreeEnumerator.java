@@ -17,36 +17,49 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
         this.worldSet = worldSet;
     }
 
-
+    /**
+     * Generates the base topology for a tree with n leaves.
+     * This method initializes a tree topology to give us a starting point for
+     * enumerating arbitrarily rooted mixed trees.
+     */
     protected void initializeTree() {
+        //Base cases for mixed trees:
         if (labelledNodes.size() >= 1) {
+            //Only one node: make it the root
             root = labelledNodes.get(0);
             if (labelledNodes.size() >= 2) {
+                //At least two nodes: pair them, making the first the root
                 Node.linkNodes(root, labelledNodes.get(1));
             }
         }
     }
 
+    /**
+     * Enumerate all mixed trees for the given list of labelled nodes
+     *
+     * @return the number of possible mixed trees
+     */
     public int enumerate() {
         treeCounter = 0;
         initializeTree();
         if (labelledNodes.size() <= 2) {
-            //trees.add(root.clone());
+            //For sizes less than two, only one tree is possible
             treeCounter++;
         } else {
+            //Recursively build all other possibilities
             enumerateRecursive(root, 2);
         }
         return treeCounter;
     }
 
-//    public int completed = 0;
-
     protected void enumerateRecursive(Node<S> current, int size) {
         if (size == labelledNodes.size()) {
-//            System.out.println(++completed);
-            //trees.add(root.clone());
+            //Once a tree has all labelled nodes, increase the number of trees made
+            //and stop the recursion
             treeCounter++;
         } else {
+            //Otherwise, go through any of the four possible ways to
+            //add a node to the tree
             case1(current, size, false);
             case2(current, size, false);
             case3(current, size, false);
@@ -54,6 +67,11 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
         }
     }
 
+    /**
+     * Branch+bounded enumeration of all mixed trees, scored using hartigan
+     *
+     * @return a set of root nodes of all most parsimonious trees
+     */
     public Set<Node<S>> hartiganEnumerate() {
         parsimonyScore = -1;
         initializeTree();
@@ -66,6 +84,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
     }
 
     protected void hartiganEnumerateRecursive(Node<S> current, int size) {
+        //Same as enumerateRecursive, but bounded using hartigan to score the trees in-progress
         if (size == labelledNodes.size()) {
             int score = Hartigan.bottomUp(root, worldSet);
             updateMPlist(score);
@@ -76,6 +95,9 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
             case4(current, size, true);
         }
     }
+
+    //The four cases for adding a node to the tree. The isScored parameter determines
+    //whether to return to the enumerateRecursive or hartiganEnumerateRecursive method
 
     /***************************************************************************
      * Case 1: Enumerates bifurcating trees.
