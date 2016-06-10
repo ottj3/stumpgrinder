@@ -163,7 +163,7 @@ public class Node<S> implements Cloneable {
     }
 
     /**
-     * Calculates the {@link #size()} of the current node object.
+     * Calculates the {@link #size(Node)} of the current node object.
      *
      * @return size of the current node's subtree, including itself
      */
