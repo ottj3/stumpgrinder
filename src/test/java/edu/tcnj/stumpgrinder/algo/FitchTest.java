@@ -22,6 +22,7 @@ public class FitchTest {
         assertEquals("Fitch score for test tree", handScored, score);
     }
 
+    // TODO parse or generate a more complex tree for scoring
     private Node<Integer> makeTestTree() {
         Node<Integer> root = new Node<>("");
         Node<Integer> left = new Node<>("L");
