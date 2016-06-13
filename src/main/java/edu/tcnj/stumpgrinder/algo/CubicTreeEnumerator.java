@@ -28,17 +28,17 @@ public class CubicTreeEnumerator<S> extends TreeEnumerator<S> {
         //Base cases of cubic trees:
         if (labelledNodes.size() == 1) {
             //Only one node: make the node a root
-            root = labelledNodes.get(0);
+            root = labelledNodes.get(0).clone();
         } else if (labelledNodes.size() == 2) {
             //Only two nodes: make and edge between the two
-            root = labelledNodes.get(0);
-            Node.linkNodes(root, labelledNodes.get(1));
+            root = labelledNodes.get(0).clone();
+            Node.linkNodes(root, labelledNodes.get(1).clone());
         } else {
             //3+ nodes: make an unlabelled node the root, with the first 3 nodes as its children
             root = new Node<>("");
 
             for (int i = 0; i < 3; i++) {
-                Node.linkNodes(root, labelledNodes.get(i));
+                Node.linkNodes(root, labelledNodes.get(i).clone());
             }
         }
     }

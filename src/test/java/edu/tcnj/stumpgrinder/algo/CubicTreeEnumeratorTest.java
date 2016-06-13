@@ -15,7 +15,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class CubicTreeEnumeratorTest extends EnumeratorTest {
+public class CubicTreeEnumeratorTest extends TreeEnumeratorTest {
 
     @Parameterized.Parameters
     public static Iterable<? extends Object> data() {

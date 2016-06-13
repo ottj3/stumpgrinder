@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +34,7 @@ public class HartiganTest {
     public void setup() {
         List<String> lines = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            lines.add(EnumeratorTest.testData.get(i));
+            lines.add(TreeEnumeratorTest.testData.get(i));
         }
 
         Parser parser = new Parser();

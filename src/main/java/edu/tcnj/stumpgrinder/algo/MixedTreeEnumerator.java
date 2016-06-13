@@ -26,10 +26,10 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
         //Base cases for mixed trees:
         if (labelledNodes.size() >= 1) {
             //Only one node: make it the root
-            root = labelledNodes.get(0);
+            root = labelledNodes.get(0).clone();
             if (labelledNodes.size() >= 2) {
                 //At least two nodes: pair them, making the first the root
-                Node.linkNodes(root, labelledNodes.get(1));
+                Node.linkNodes(root, labelledNodes.get(1).clone());
             }
         }
     }
