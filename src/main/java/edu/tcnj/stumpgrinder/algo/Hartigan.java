@@ -17,7 +17,7 @@ import java.util.Set;
 public class Hartigan {
     //Performs the calculation of upper and lower sets as well as MP-score.
     // Used in bottom-up of Hartigan's algorithm.
-    private static <S> int hartigan(Node<S> current, CharacterList<S> worldSet) {
+    public static <S> int hartigan(Node<S> current, CharacterList<S> worldSet) {
         int score = 0; //initialize maximum parsimony score of node
 
         current.upper = Node.sets();
@@ -138,7 +138,9 @@ public class Hartigan {
     public static <S> List<List<Node<S>>> topDown(Node<S> current) {
         //List of edges (inner list will always be a pair of nodes, to represent an edge)
         List<List<Node<S>>> edges = new ArrayList<>();
-
+        if (current.parent == null) {
+            current.root = current.upper;
+        }
         if (current.children.size() > 0) {
             //for each child, calculate its root set and get the minimum cost of the edge
             for (Node<S> child : current.children) {

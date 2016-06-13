@@ -56,7 +56,7 @@ public class MixedTreeEnumeratorTest extends EnumeratorTest {
         Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
 //        System.out.println("Hartigan enumerate: ");
         for (Node<Character> tree : treeList) {
-            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));// + " Size: " + tree.size());
+            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet) + " Size: " + tree.size());
         }
         System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }

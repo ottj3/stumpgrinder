@@ -56,6 +56,8 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
 //        System.out.println("Fitch enumerate: ");
         for (Node<Character> tree : treeList) {
             System.out.println(parser.toString(tree, false) + " Score: " + Fitch.bottomUp(tree));
+            EdgeContractor<Character> edgeContractor = new EdgeContractor<>(worldSet);
+            System.out.println("Old size: " + tree.size() + ", new size: " + edgeContractor.edgeContraction(tree).size());
         }
         System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }
@@ -66,11 +68,11 @@ public class CubicTreeEnumeratorTest extends EnumeratorTest {
         getData(treeSize);
         CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species, worldSet);
         Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
-//        Parser parser = new Parser();
-//        System.out.println("Hartigan enumerate: ");
-//        for (Node<Character> tree : treeList) {
-//            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));
-//        }
+        Parser parser = new Parser();
+        System.out.println("Hartigan enumerate: ");
+        for (Node<Character> tree : treeList) {
+            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet));
+        }
     }
 
 
