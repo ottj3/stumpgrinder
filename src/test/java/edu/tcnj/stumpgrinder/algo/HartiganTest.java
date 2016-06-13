@@ -19,11 +19,10 @@ public class HartiganTest {
 
     public Parser parser = new Parser();
 
-    public ArrayList<String> labels = new ArrayList<>();
-    public ArrayList<String> data = new ArrayList<>();
     public CharacterList<Character> worldSet = new CharacterList<>();
     public List<Node<Character>> species = new ArrayList<>();
     public Node<Character> root = new Node<>("");
+
     @Test
     public void testHartigan() throws IOException {
         int score = Hartigan.bottomUp(root, worldSet);
@@ -33,55 +32,18 @@ public class HartiganTest {
     }
 
     @Before
-    public void getData() {
+    public void setup() {
         List<String> lines = new ArrayList<>();
-        lines.add("A:GAGGACCCCAGATATTACGCGGGTCGAACA");
-        lines.add("B:GAAGATCCCAGATACTTTGCCGGAGAACAA");
-        lines.add("C:GAGGATCCGCGTTACTTTAGCGGTATTCAA");
-        lines.add("D:GAGGACCCCCGTTACTTTGCCGGCGAGGCC");
-		/* Processes the data. */
-        for(String line : lines) {
-            if (line != null && line.length() > 0) {
-                labels.add(line.split(":", 2)[0]);
-                data.add(line.split(":", 2)[1]);
-            }
+        for (int i = 0; i < 4; i++) {
+            lines.add(EnumeratorTest.testData.get(i));
         }
-        makeNodes();
+
+        Parser parser = new Parser();
+        List<Set<Character>> worldSet0 = new ArrayList<>();
+        parser.speciesList(lines, species, worldSet0);
+        worldSet = new CharacterList<>(worldSet0);
         makeTree();
     }
-
-
-    public void makeNodes() {
-        Node.chars = data.get(0).length();
-        for (int index = 0; index < data.get(0).length(); index++) {
-            worldSet.add(new HashSet<Character>());
-        }
-
-        for (int index = 0; index < labels.size(); index++) {
-            Node<Character> node = new Node<>(labels.get(index));
-            node.labelled = true;
-            CharacterList<Character> characters = new CharacterList<>();
-            //System.out.print(labels.get(index) + ": ");
-            for (int index_ = 0; index_ < data.get(index).length(); index_++) {
-                //System.out.println(data.get(index).length());
-                characters.add(new HashSet<Character>());
-                characters.get(index_).add(data.get(index).charAt(index_));
-                while(index_ >= worldSet.size()) {
-                    worldSet.add(new HashSet<Character>());
-                }
-                worldSet.get(index_).add(data.get(index).charAt(index_));
-                //System.out.print(data.get(index).charAt(index_));
-            }
-            node.root = characters;
-            // System.out.print(" root.size(): " + node.root.size());
-
-            // Node<List<SetList<Character>>> node = new Node<List<SetList<Character>>>(
-            // 		labels.get(index), sets);
-            species.add(node);
-            //System.out.println();
-        }
-    }
-
 
     public void makeTree() {
 
@@ -94,6 +56,7 @@ public class HartiganTest {
 
         species.add(unlabelled1);
         species.add(unlabelled2);
+
         //(B,C),D))A : score = 25
         A.children.add(unlabelled1);
         unlabelled1.parent = A;
@@ -111,18 +74,5 @@ public class HartiganTest {
         C.parent = unlabelled2;
 
         root = A;
-
-        //(((B)C,D))A : score = 31
-        // A.children.add(unlabelled1);
-        // unlabelled1.parent = A;
-
-        // unlabelled1.children.add(D);
-        // D.parent = unlabelled1;
-
-        // unlabelled1.children.add(C);
-        // C.parent = unlabelled2;
-
-        // C.children.add(B);
-        // B.parent = C;
     }
 }

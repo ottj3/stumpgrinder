@@ -5,7 +5,12 @@ import edu.tcnj.stumpgrinder.data.Node;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ParserTest {
 
@@ -16,6 +21,99 @@ public class ParserTest {
     public void setup() {
         parser = new Parser();
         genTree = genTestTree();
+    }
+
+    @Test
+    public void testSpeciesInput() {
+        List<String> lines = new ArrayList<>();
+        lines.add("A:GAGGACCCCAGATATTACGCGGGTCGAACA");
+        lines.add("B:GAAGATCCCAGATACTTTGCCGGAGAACAA");
+        lines.add("C:GAGGATCCGCGTTACTTTAGCGGTATTCAA");
+        lines.add("D:GAGGACCCCCGTTACTTTGCCGGCGAGGCC");
+        lines.add("E:GAGGATCCCAGATATTTTGCGGGTGAGGCT");
+        lines.add("F:GAAGACCCGCGCTACTTTGCCGGCACCGGC");
+//      lines.add("G:GAAGATCC?CGTTTCTTCGCAGGAGAAGCA"); // true sequence with ? = A or G
+//      lines.add("G:GAAGATCC{AG}CGTTTCTTCGCAGGAGAA"); // original sequence without last three chars
+        lines.add("G:GAAGATCCCAGACGTTTCTTCGCAGGAGAA"); // Angela's replaced { with C and } with A
+        lines.add("H:GAAGATCCACGCTACTATGCAGGACCTCAA");
+        lines.add("I:GAAGACCCTCGCTATTACGCCGGTCCGCAA");
+        lines.add("J:GAGGACCCACGATATTACGCGGGAGAAGGA");
+        lines.add("K:GAGGATCCGCGCTACTTTGCCGGCCCGCAG");
+        lines.add("L:GAAGACCCGCGATATTTTGCCGGAGAATCA");
+        lines.add("M:GAAGATCCTCGATATTTTGCCGGTCCGCAA");
+        lines.add("N:GAAGATCCTCGATATTTTGCCGGTCCGCAA");
+        lines.add("O:GAAGACCCGCGTTATTTTGCCGGTACCAGC");
+        lines.add("P:GAGGACCCGAGAATGTTCGCTGGCGTTGCC");
+        lines.add("Q:GAGGATCCTAGGTTTTATGCGGGCGAGGGC");
+        lines.add("R:GAAGACCCACGTTATTTCGCCGGCACCAGC");
+        lines.add("S:GAGGACCCCAGATATTTTGCGGGTGAGGCT");
+        lines.add("T:GAAGACCCGCGTTACTATGCGGGCACAGAT");
+        lines.add("U:GAGGACCCGCGTTACTATGCGGGCACAGAC");
+        lines.add("V:GAAGACCCGCGTTACTATGCGGGCACAGAT");
+        lines.add("W:GAAGACCCGCGCTACTTTGCCGGCACCGGC");
+        lines.add("X:AAGGACCCTTGTTATATTTCCGGCCCGCGT");
+        lines.add("Y:GAGGACCCGCGCTACTTCGCGGGCGAAGGA");
+        lines.add("Z:GAGGACCCGCGTTACTATGCGGGCACAGAT");
+        List<Node<Character>> nodes = new ArrayList<>();
+        List<Set<Character>> worldSet = new ArrayList<>();
+        parser.speciesList(lines, nodes, worldSet);
+        assertTrue("Species list size", nodes.size() == 26);
+        assertTrue("World set size", worldSet.size() == 30);
+        assertTrue("World set contents #0", worldSet.get(0).size() == 2);
+        assertTrue("World set contents #11", worldSet.get(11).size() == 4);
+    }
+
+    @Test
+    public void countSize() {
+        String[] treeStrings = {
+                "((((((((K:0,((H:0,I:0):0,(N:0)M:0):0):0,C:0):0,(F:0,O:0):0):0,D:0):0,E:0):0,((B:0,G:0):0,L:0):0):0,J:0):0)A:0;",
+                "((((((((((H:0,I:0):0,(M:0,N:0):0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,((B:0,G:0):0,L:0):0):0,E:0):0,J:0):0)A:0;",
+                "(((((((F:0,(((((I:0,(M:0,N:0):0):0,K:0):0,H:0):0,C:0):0,O:0):0):0,D:0):0,L:0):0,(B:0,G:0):0):0,E:0):0,J:0):0)A:0;",
+                "((((((((((H:0,I:0):0,(M:0)N:0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,((B:0,G:0):0,L:0):0):0,E:0):0,J:0):0)A:0;",
+                "((((((((((I:0,(M:0,N:0):0):0,H:0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,E:0):0,((B:0,G:0):0,L:0):0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,(I:0,(N:0)M:0):0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,((I:0,N:0):0)M:0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,(I:0,N:0)M:0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((H:0,(I:0,(N:0)M:0):0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,((B:0,G:0):0,L:0):0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,(I:0,(M:0,N:0):0):0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((F:0,((((K:0,(I:0,(N:0)M:0):0):0,H:0):0,C:0):0,O:0):0):0,D:0):0,L:0):0,(B:0,G:0):0):0,E:0):0,J:0):0)A:0;",
+                "((((((((((I:0,(M:0,N:0):0):0,H:0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,((B:0,G:0):0,L:0):0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,((I:0)M:0,N:0):0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "((((((((((H:0,I:0):0,(M:0,N:0):0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,E:0):0,((B:0,G:0):0,L:0):0):0,J:0):0)A:0;",
+                "((((((((((H:0,I:0):0,(M:0)N:0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,E:0):0,((B:0,G:0):0,L:0):0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,((I:0)M:0)N:0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,(I:0,(M:0)N:0):0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((H:0,(I:0,(N:0)M:0):0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,E:0):0,((B:0,G:0):0,L:0):0):0,J:0):0)A:0;",
+                "(((((((F:0,(((((I:0,(M:0)N:0):0,K:0):0,H:0):0,C:0):0,O:0):0):0,D:0):0,L:0):0,(B:0,G:0):0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,(M:0,(I:0,N:0):0):0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,(I:0,M:0,N:0):0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,((I:0,M:0):0,N:0):0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "((((((((K:0,((H:0,I:0):0,(N:0)M:0):0):0,C:0):0,(F:0,O:0):0):0,D:0):0,((B:0,G:0):0,L:0):0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,(M:0,(I:0)N:0):0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,((I:0,M:0):0)N:0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "((((((((((I:0,(M:0)N:0):0,H:0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,((B:0,G:0):0,L:0):0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,(I:0,M:0)N:0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "(((((((((((D:0,(F:0,O:0):0):0,C:0):0,K:0):0,H:0):0,((I:0)N:0)M:0):0,L:0):0,B:0):0,G:0):0,E:0):0,J:0):0)A:0;",
+                "((((((((((I:0,(M:0)N:0):0,H:0):0,K:0):0,C:0):0,(F:0,O:0):0):0,D:0):0,E:0):0,((B:0,G:0):0,L:0):0):0,J:0):0)A:0;"
+        };
+
+        int bestSize = Integer.MAX_VALUE;
+        List<Node<?>> bestTrees = new ArrayList<>();
+        for (String treeString : treeStrings) {
+            Node<?> root = parser.fromString(treeString);
+            int size = root.size();
+            if (size < bestSize) {
+                bestSize = size;
+                bestTrees.clear();
+                bestTrees.add(root);
+            } else if (size == bestSize) {
+                bestTrees.add(root);
+            }
+        }
+        for (Node<?> tree : bestTrees) {
+            System.out.println(parser.toString(tree, false));
+        }
+        System.out.println(bestSize);
     }
 
     @Test

@@ -301,4 +301,34 @@ public class Parser {
         return node;
     }
 
+    /**
+     * Takes an input list of species and fills a list of nodes representing those species and a world set
+     * for each character's possible states.
+     *
+     * @param input list of a string for each species in the form "L:XYZ" where L is the name and each
+     *              X, Y, and Z is the state of the character at the given position
+     * @param species a list to be filled with nodes
+     * @param worldSet a {@link CharacterList} to be filled with all states for each character
+     */
+    public <S> void speciesList(List<String> input, List<Node<S>> species, List<Set<S>> worldSet) {
+        for (int i = 0; i < input.size(); i++) {
+            String[] sp = input.get(i).split(":");
+            String label = sp[0];
+            String data = sp[1];
+            Node<S> node = new Node<>(label);
+            Node.chars = data.length();
+            node.root = Node.sets();
+
+            char[] chars = data.toCharArray();
+            for (int j = 0; j < chars.length; j++) {
+                if (worldSet.size() <= j) {
+                    worldSet.add(new HashSet<S>());
+                }
+                S state = (S) Character.valueOf(chars[j]);
+                worldSet.get(j).add(state);
+                node.root.get(j).add(state);
+            }
+            species.add(node);
+        }
+    }
 }
