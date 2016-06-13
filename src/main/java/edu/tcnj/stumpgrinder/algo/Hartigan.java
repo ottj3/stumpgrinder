@@ -18,7 +18,7 @@ import java.util.Set;
 public class Hartigan {
     //Performs the calculation of upper and lower sets as well as MP-score.
     // Used in bottom-up of Hartigan's algorithm.
-    private static <S> int hartigan(Node<S> current, List<Set<S>> worldSet) {
+    private static <S> int hartigan(Node<S> current, CharacterList<S> worldSet) {
         int score = 0; //initialize maximum parsimony score of node
 
         current.upper = Node.sets();
@@ -105,7 +105,7 @@ public class Hartigan {
      * @param worldSet this contains all possible character states
      * @return the parsimony score of this subtree
      */
-    public static <S> int bottomUp(Node<S> current, List<Set<S>> worldSet) {
+    public static <S> int bottomUp(Node<S> current, CharacterList<S> worldSet) {
         int score = 0;
 
         //Calculate the score of this node's children (bottom-up recursion)

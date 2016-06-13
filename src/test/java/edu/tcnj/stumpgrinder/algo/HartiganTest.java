@@ -21,7 +21,7 @@ public class HartiganTest {
 
     public ArrayList<String> labels = new ArrayList<>();
     public ArrayList<String> data = new ArrayList<>();
-    public List<Set<Character>> worldSet = new ArrayList<>();
+    public CharacterList<Character> worldSet = new CharacterList<>();
     public List<Node<Character>> species = new ArrayList<>();
     public Node<Character> root = new Node<>("");
     @Test
