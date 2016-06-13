@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 /*******************************************************************************
  * This class contains methods to perform Hartigan's bottom-up and town-down
  * algorithms for species with m characters. It also contains the fastHartigan
@@ -145,30 +144,25 @@ public class Hartigan {
             for (Node<S> child : current.children) {
                 int cost = 0;
 
+                // initialize blank root set for child
+                child.root = Node.sets();
+
                 //for each character in sequence
                 for (int i = 0; i < Node.chars; i++) {
                     //If current's root set is a subset of child's upper set
                     if (child.upper.get(i).containsAll(current.root.get(i))) {
                         //Child's root set = parent's root set for this character
-                        child.root.add(current.root.get(i));
+                        child.root.get(i).addAll(current.root.get(i));
                     } else {
                         //Child's root set = (upper set) union (intersection of current's upper and child's lower)
 
-                        //Make newVU and VL sets for child (becuase retainAll and addAll modify the sets)
-                        CharacterList<S> newVU = new CharacterList<>(),
-                                newVL = new CharacterList<>();
+                        // make a copy of the upper and lower set for this character since we modify them
+                        Set<S> newVL = new HashSet<>(child.lower.get(i));
+                        Set<S> newVU = new HashSet<>(child.upper.get(i));
 
-                        //Copy the child's vu and vl to newVU and newVL
-                        for (Set<S> character : child.upper) {
-                            newVU.add(new HashSet<>(character));
-                        }
-                        for (Set<S> character : child.lower) {
-                            newVL.add(new HashSet<>(character));
-                        }
-
-                        newVL.get(i).retainAll(current.root.get(i)); //Intersection of current's upper and child's lower
-                        newVU.get(i).addAll(newVL.get(i)); //Union of child's upper and the above intersection
-                        child.root.add(newVU.get(i)); //Add this character's root set to the child
+                        newVL.retainAll(current.root.get(i)); //Intersection of current's upper and child's lower
+                        newVU.addAll(newVL); //Union of child's upper and the above intersection
+                        child.root.get(i).addAll(newVU); //Add this character's root set to the child
                     }
 
                     //Calculate the cost of this character
