@@ -293,7 +293,7 @@ public class Parser {
             } catch (ClassCastException e) {
                 throw new IllegalArgumentException("Found non-matchable state types in sets: " + label);
             }
-        } else {
+        } else if (!label.isEmpty()){
             node.label = label;
             node.labelled = true;
         }
