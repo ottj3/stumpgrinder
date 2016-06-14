@@ -19,9 +19,6 @@ import java.util.concurrent.Future;
 
 public class EdgeContractorTest {
 
-    ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-
     //Enumerate all mixed trees
     //All cubic trees
     //(returned: most parsimonious of both)
@@ -43,22 +40,25 @@ public class EdgeContractorTest {
 
             final CharacterList<Character> worldSet;
             final List<Node<Character>> species = new ArrayList<>();
-
             List<Set<Character>> worldSet0 = new ArrayList<>();
             parser.speciesList(lines, species, worldSet0);
             worldSet = new CharacterList<>(worldSet0);
-
-
             callables.add(new Callable<String>() {
                 @Override
                 public String call() throws Exception {
                     return runMixed(species, worldSet);
                 }
             });
+
+            final CharacterList<Character> worldSet1;
+            final List<Node<Character>> species0 = new ArrayList<>();
+            List<Set<Character>> worldSet2 = new ArrayList<>();
+            parser.speciesList(lines, species0, worldSet2);
+            worldSet1 = new CharacterList<>(worldSet2);
             callables.add(new Callable<String>() {
                 @Override
                 public String call() throws Exception {
-                    return runCubic(species, worldSet);
+                    return runCubic(species0, worldSet1);
                 }
             });
         }
@@ -113,33 +113,9 @@ public class EdgeContractorTest {
         int numContractions = 0;
         int mostCompactSize = Integer.MAX_VALUE;
         int initialSize = mostParsimonious.iterator().next().size();
-        List<Callable<Node<Character>>> callables = new ArrayList<>();
-        List<Future<Node<Character>>> futures = new ArrayList<>();
-        int i = 0;
-        for (final Node<Character> tree : mostParsimonious) {
-            final EdgeContractor<Character> edgeContractor = new EdgeContractor<>(worldSet);
-            final int num = i++;
-            callables.add(new Callable<Node<Character>>() {
-                @Override
-                public Node<Character> call() throws Exception {
-                    //System.out.println("Running contractor on tree #" + num);
-                    return edgeContractor.edgeContraction(tree);
-                }
-            });
-        }
-        try {
-            futures = executor.invokeAll(callables);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        for (Future<Node<Character>> nodeFuture : futures) {
-            Node<Character> compactTree;
-            try {
-                compactTree = nodeFuture.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                return "";
-            }
+        for (Node<Character> tree : mostParsimonious) {
+            EdgeContractor<Character> edgeContractor = new EdgeContractor<>(worldSet);
+            Node<Character> compactTree = edgeContractor.edgeContraction(tree);
             int thisSize = compactTree.size();
             if (thisSize <= mostCompactSize) {
                 if (compactTree.size() < mostCompactSize) {
