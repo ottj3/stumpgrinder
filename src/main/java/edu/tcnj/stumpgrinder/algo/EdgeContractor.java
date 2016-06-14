@@ -1,6 +1,5 @@
 package edu.tcnj.stumpgrinder.algo;
 
-import edu.tcnj.stumpgrinder.Parser;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public class EdgeContractor<S> {
     //The smallest size of a tree seen yet
-    private int bestSize = -1;
+    private int bestSize = Integer.MAX_VALUE;
     //The latest tree to be seen of the smallest size
     private Node<S> bestTree = new Node<>("");
     //(Used for Hartigan) the set of all possible character states
@@ -32,7 +31,7 @@ public class EdgeContractor<S> {
      * @return the root of the compacted tree
      */
     public Node<S> edgeContraction(Node<S> root) {
-        bestSize = -1;
+        bestSize = Integer.MAX_VALUE;
         bestTree = new Node<>("");
         Hartigan.bottomUp(root, worldSet);
         edgeContractionRecursive(root);
@@ -42,11 +41,15 @@ public class EdgeContractor<S> {
     private void edgeContractionRecursive(Node<S> root) {
         //get list of zero-cost edges while also calculating the nodes' root sets
         List<List<Node<S>>> edgeList = Hartigan.topDown(root);
+        //bound the method: if the tree can never become the most compact, break out of recursion
+        if(root.size() - edgeList.size() >= bestSize) {
+            return;
+        }
         //if there are no 0 cost edges, edge contraction is done
         if (edgeList.size() == 0) {
             int treeSize = root.size();
             //If the tree size is at least as compact as the best seen so far, set it as bestSize and bestTree
-            if (treeSize <= bestSize || bestSize == -1) {
+            if (treeSize <= bestSize) {
                 bestSize = treeSize;
                 bestTree = root.clone();
             }

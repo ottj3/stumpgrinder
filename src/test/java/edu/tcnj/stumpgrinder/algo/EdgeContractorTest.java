@@ -42,10 +42,10 @@ public class EdgeContractorTest {
         List<Set<Character>> worldSet0 = new ArrayList<>();
         parser.speciesList(lines, species, worldSet0);
         worldSet = new CharacterList<>(worldSet0);
-
-        System.out.println("===========MIXED TREES===========");
+        System.out.print(treeSize + "\t");
+//        System.out.println("===========MIXED TREES===========");
         runMixed();
-        System.out.println("\n===========CUBIC TREES===========");
+//        System.out.println("\n===========CUBIC TREES===========");
         runCubic();
         System.out.println();
     }
@@ -66,15 +66,16 @@ public class EdgeContractorTest {
                 mostCompactSize = thisSize;
             }
         }
-        for (Node<Character> tree : mostCompact) {
-            System.out.println(parser.toString(tree, false)+ " size: " + mostCompactSize);
-        }
-        int parsimonyScore = Hartigan.bottomUp(mostCompact.iterator().next(), worldSet);
-        System.out.println("Found " + mostCompact.size() + " most compact tree(s) from " + mostParsimonious.size()
-                + " mixed MP tree(s)");
-        System.out.println("Parsimony score: " + parsimonyScore);
+//        for (Node<Character> tree : mostCompact) {
+//            System.out.println(parser.toString(tree, false)+ " size: " + mostCompactSize);
+//        }
+//        int parsimonyScore = Hartigan.bottomUp(mostCompact.iterator().next(), worldSet);
+//        System.out.println("Found " + mostCompact.size() + " most compact tree(s) from " + mostParsimonious.size()
+//                + " mixed MP tree(s)");
+//        System.out.println("Parsimony score: " + parsimonyScore);
         long time = System.currentTimeMillis() - before;
-        System.out.println("Took " + time + "ms for mixed trees with " + treeSize + " input species.");
+        System.out.print(time + "\t" + mostCompact.size() + "\t");
+//        System.out.println("Took " + time + "ms for mixed trees with " + treeSize + " input species.");
     }
 
     public void runCubic() {
@@ -82,31 +83,31 @@ public class EdgeContractorTest {
         CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species);
         Set<Node<Character>> mostParsimonious = treeEnumerator.fitchEnumerate();
         List<Node<Character>> mostCompact = new ArrayList<>();
-        List<Integer> numContractions = new ArrayList<>();
-        int mostCompactSize = -1;
+        int numContractions = 0;
+        int mostCompactSize = Integer.MAX_VALUE;
         for (Node<Character> tree : mostParsimonious) {
             EdgeContractor<Character> edgeContractor = new EdgeContractor<>(worldSet);
             Node<Character> compactTree = edgeContractor.edgeContraction(tree);
             int thisSize = compactTree.size();
-            if (thisSize <= mostCompactSize || mostCompactSize == -1) {
-                if (tree.size() < mostCompactSize) {
+            if (thisSize <= mostCompactSize) {
+                if (compactTree.size() < mostCompactSize) {
                     mostCompact.clear();
-                    numContractions.clear();
+                    numContractions = tree.size() - thisSize;
                 }
                 mostCompact.add(compactTree);
-                numContractions.add(tree.size() - compactTree.size());
                 mostCompactSize = thisSize;
             }
         }
-        for (int i = 0; i < mostCompact.size(); i++) {
-            System.out.println(parser.toString(mostCompact.get(i), false)+ " size: " + mostCompactSize +
-                    " after " + numContractions.get(i) + " contractions.");
-        }
-        int parsimonyScore = Hartigan.bottomUp(mostCompact.iterator().next(), worldSet);
-        System.out.println("Found " + mostCompact.size() + " most compact tree(s) from " + mostParsimonious.size()
-                + " cubic MP tree(s)");
-        System.out.println("Parsimony score: " + parsimonyScore);
+//        for (int i = 0; i < mostCompact.size(); i++) {
+//            System.out.println(parser.toString(mostCompact.get(i), false)+ " size: " + mostCompactSize +
+//                    " after " + numContractions + " contractions.");
+//        }
+//        int parsimonyScore = Hartigan.bottomUp(mostCompact.iterator().next(), worldSet);
+//        System.out.println("Found " + mostCompact.size() + " most compact tree(s) from " + mostParsimonious.size()
+//                + " cubic MP tree(s)");
+//        System.out.println("Parsimony score: " + parsimonyScore);
         long time = System.currentTimeMillis() - before;
-        System.out.println("Took " + time + "ms for cubic trees with " + treeSize + " input species.");
+//        System.out.println("Took " + time + "ms for cubic trees with " + treeSize + " input species.");
+        System.out.print(time + "\t" + mostParsimonious.size() + "\t" + mostCompact.size()  + "\t" + numContractions);
     }
 }
