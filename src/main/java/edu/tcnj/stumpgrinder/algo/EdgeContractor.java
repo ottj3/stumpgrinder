@@ -42,7 +42,7 @@ public class EdgeContractor<S> {
         //get list of zero-cost edges while also calculating the nodes' root sets
         List<List<Node<S>>> edgeList = Hartigan.topDown(root);
         //bound the method: if the tree can never become the most compact, break out of recursion
-        if(root.size() - edgeList.size() >= bestSize) {
+        if (root.size() - edgeList.size() >= bestSize) {
             return;
         }
         //if there are no 0 cost edges, edge contraction is done

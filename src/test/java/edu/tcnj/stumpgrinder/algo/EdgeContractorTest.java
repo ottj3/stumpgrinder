@@ -12,9 +12,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @RunWith(Parameterized.class)
 public class EdgeContractorTest {
+
+    ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+
     //Enumerate all mixed trees
     //All cubic trees
     //(returned: most parsimonious of both)
@@ -85,16 +94,41 @@ public class EdgeContractorTest {
         List<Node<Character>> mostCompact = new ArrayList<>();
         int numContractions = 0;
         int mostCompactSize = Integer.MAX_VALUE;
-        for (Node<Character> tree : mostParsimonious) {
-            EdgeContractor<Character> edgeContractor = new EdgeContractor<>(worldSet);
-            Node<Character> compactTree = edgeContractor.edgeContraction(tree);
+        int initialSize = mostParsimonious.iterator().next().size();
+        List<Callable<Node<Character>>> callables = new ArrayList<>();
+        List<Future<Node<Character>>> futures = new ArrayList<>();
+        int i = 0;
+        for (final Node<Character> tree : mostParsimonious) {
+            final EdgeContractor<Character> edgeContractor = new EdgeContractor<>(worldSet);
+            final int num = i++;
+            callables.add(new Callable<Node<Character>>() {
+                @Override
+                public Node<Character> call() throws Exception {
+                    System.out.println("Running contractor on tree #" + num);
+                    return edgeContractor.edgeContraction(tree);
+                }
+            });
+        }
+        try {
+            futures = executor.invokeAll(callables);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (Future<Node<Character>> nodeFuture : futures) {
+            Node<Character> compactTree;
+            try {
+                compactTree = nodeFuture.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                return;
+            }
             int thisSize = compactTree.size();
             if (thisSize <= mostCompactSize) {
                 if (compactTree.size() < mostCompactSize) {
                     mostCompact.clear();
-                    numContractions = tree.size() - thisSize;
                 }
                 mostCompact.add(compactTree);
+                numContractions = initialSize - compactTree.size();
                 mostCompactSize = thisSize;
             }
         }

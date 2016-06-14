@@ -9,6 +9,11 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static edu.tcnj.stumpgrinder.algo.TreeEnumeratorTest.testData;
 
@@ -23,32 +28,57 @@ public class PhylipTest {
         List<Set<Character>> worldSet0 = new ArrayList<>();
         parser.speciesList(testData, species, worldSet0);
         worldSet = new CharacterList<>(worldSet0);
-        EdgeContractor<Character> contractor = new EdgeContractor<>(worldSet);
 
         int bestSize = Integer.MAX_VALUE;
+        List<Node<Character>> initialTrees = new ArrayList<>();
         List<Node<Character>> compactTrees = new ArrayList<>();
-        List<Integer> numContractions = new ArrayList<>();
-        for (int i = 0; i < outtree.length; i++) {
-            Node<Character> treeRoot = parser.fromString(outtree[i]);
-            getDataFromLabel(treeRoot);
 
-            long start = System.currentTimeMillis();
-            Node<Character> contracted = contractor.edgeContraction(treeRoot);
+        List<Callable<Node<Character>>> callables = new ArrayList<>();
+        List<Future<Node<Character>>> futures = new ArrayList<>();
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        for (int i = 0; i < outtree.length; i++) {
+            final Node<Character> treeRoot = parser.fromString(outtree[i]);
+            final EdgeContractor<Character> contractor = new EdgeContractor<>(worldSet);
+            getDataFromLabel(treeRoot);
+            initialTrees.add(treeRoot.clone());
+            final int num = i;
+            callables.add(new Callable<Node<Character>>() {
+                @Override
+                public Node<Character> call() throws Exception {
+                    System.out.println("Compacting tree #" + num);
+                    return contractor.edgeContraction(treeRoot);
+                }
+            });
+        }
+
+        try {
+            futures = executor.invokeAll(callables);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (Future<Node<Character>> future : futures) {
+            Node<Character> contracted = null;
+            try {
+                contracted = future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            if (contracted == null) {
+                System.out.println("Lost a tree");
+                continue;
+            }
             int size = contracted.size();
             if (size < bestSize) {
                 compactTrees.clear();
-                numContractions.clear();
                 bestSize = size;
             }
             compactTrees.add(contracted);
-            numContractions.add(treeRoot.size() - size);
-            System.out.println("Compacted MP tree #" + i + " from size " + treeRoot.size() + " to size " + size +
-                    ", took " + (System.currentTimeMillis() - start) + "ms.");
         }
         for (int i = 0; i < compactTrees.size(); i++) {
-            System.out.println(parser.toString(compactTrees.get(i), false)+ " size: " + bestSize +
-                    " after " + numContractions.get(i) + " contractions.");
+            System.out.println(parser.toString(compactTrees.get(i), true) + " size: " + bestSize +
+                    " after " + (initialTrees.get(i).size() - bestSize) + " contractions.");
         }
+
         int parsimonyScore = Hartigan.bottomUp(compactTrees.iterator().next(), worldSet);
         System.out.println("Found " + compactTrees.size() + " most compact tree(s) from " + outtree.length
                 + " cubic MP tree(s)");
