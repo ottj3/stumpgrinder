@@ -4,8 +4,6 @@ import edu.tcnj.stumpgrinder.Parser;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.HashSet;

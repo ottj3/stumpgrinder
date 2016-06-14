@@ -16,7 +16,7 @@ public class EdgeContractor<S> {
     //The smallest size of a tree seen yet
     private int bestSize = Integer.MAX_VALUE;
     //The latest tree to be seen of the smallest size
-    private Node<S> bestTree = new Node<>("");
+    private Node<S> bestTree;
     //(Used for Hartigan) the set of all possible character states
     private CharacterList<S> worldSet = new CharacterList<>();
 
@@ -32,7 +32,6 @@ public class EdgeContractor<S> {
      */
     public Node<S> edgeContraction(Node<S> root) {
         bestSize = Integer.MAX_VALUE;
-        bestTree = new Node<>("");
         Hartigan.bottomUp(root, worldSet);
         edgeContractionRecursive(root);
         return bestTree;
@@ -45,6 +44,9 @@ public class EdgeContractor<S> {
         if (root.size() - edgeList.size() >= bestSize) {
             return;
         }
+//        if (edgeList.size() + 1 > oldSize) {
+//            System.out.println("Made more 0-cost edges than we had before.");
+//        }
         //if there are no 0 cost edges, edge contraction is done
         if (edgeList.size() == 0) {
             int treeSize = root.size();
