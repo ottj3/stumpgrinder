@@ -79,7 +79,7 @@ public class CubicTreeEnumerator<S> extends TreeEnumerator<S> {
                 //Create an unlabelled node between the current node and its parent, and then add the next
                 //leaf as another child of the new unlabelled node
                 Node<S> internal = new Node<>("");
-                Node<S> leaf = labelledNodes.get(size);
+                Node<S> leaf = labelledNodes.get(size).clone();
                 Node<S> parent = current.parent;
 
                 addNodeToEdge(current, parent, internal, leaf);
@@ -136,7 +136,7 @@ public class CubicTreeEnumerator<S> extends TreeEnumerator<S> {
             //score or if this tree is at least as good as the most parsimonious
             if (current != root && (thisScore <= parsimonyScore || parsimonyScore == -1)) {
                 Node<S> internal = new Node<>("");
-                Node<S> leaf = labelledNodes.get(size);
+                Node<S> leaf = labelledNodes.get(size).clone();
                 Node<S> parent = current.parent;
 
                 addNodeToEdge(current, parent, internal, leaf);
@@ -182,7 +182,7 @@ public class CubicTreeEnumerator<S> extends TreeEnumerator<S> {
             //cannot be a most parsimonious tree. Same as Fitch, but no need to root the tree first
             if (current != root && (Hartigan.bottomUp(root, worldSet) <= parsimonyScore || parsimonyScore == -1)) {
                 Node<S> internal = new Node<>("");
-                Node<S> leaf = labelledNodes.get(size);
+                Node<S> leaf = labelledNodes.get(size).clone();
                 Node<S> parent = current.parent;
 
                 addNodeToEdge(current, parent, internal, leaf);

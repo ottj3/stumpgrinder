@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +17,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-@RunWith(Parameterized.class)
 public class EdgeContractorTest {
 
     ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -29,37 +27,64 @@ public class EdgeContractorTest {
     //(returned: most parsimonious of both)
     //Contract all cubic trees given
     //Compare size to most compact of mixed
-    @Parameterized.Parameters
-    public static Iterable<? extends Object> data() {
-        return Arrays.asList(4, 5, 6, 7, 8, 9, 10/*, 11, 12, 13, 14, 15*/);
-    }
-
-    @Parameterized.Parameter
-    public int treeSize = 0;
-
-    public CharacterList<Character> worldSet;
-    public List<Node<Character>> species = new ArrayList<>();
     public Parser parser = new Parser();
 
     @Test
     public void testContraction() {
-        List<String> lines = new ArrayList<>();
-        for (int i = 0; i < treeSize; i++) {
-            lines.add(TreeEnumeratorTest.testData.get(i));
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<Callable<String>> callables = new ArrayList<>();
+        List<Future<String>> futures;
+        int[] treeSizes = {4, 5, 6, 7, 8, 9/*, 10, 11, 12, 13, 14, 15*/};
+        for (final int treeSize : treeSizes) {
+            List<String> lines = new ArrayList<>();
+            for (int i = 0; i < treeSize; i++) {
+                lines.add(TreeEnumeratorTest.testData.get(i));
+            }
+
+            final CharacterList<Character> worldSet;
+            final List<Node<Character>> species = new ArrayList<>();
+
+            List<Set<Character>> worldSet0 = new ArrayList<>();
+            parser.speciesList(lines, species, worldSet0);
+            worldSet = new CharacterList<>(worldSet0);
+
+
+            callables.add(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    return runMixed(species, worldSet);
+                }
+            });
+            callables.add(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    return runCubic(species, worldSet);
+                }
+            });
         }
 
-        List<Set<Character>> worldSet0 = new ArrayList<>();
-        parser.speciesList(lines, species, worldSet0);
-        worldSet = new CharacterList<>(worldSet0);
-        System.out.print(treeSize + "\t");
-//        System.out.println("===========MIXED TREES===========");
-        runMixed();
-//        System.out.println("\n===========CUBIC TREES===========");
-        runCubic();
-        System.out.println();
+        try {
+            futures = executorService.invokeAll(callables);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        System.out.println("n\tmixed time\t# compact mixed\tcubic time\t# mp cubic\t# compact\t# contractions");
+        for (Future<String> future : futures) {
+            String res = "";
+            try {
+                res = future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            if (!res.isEmpty()) {
+                System.out.print(res);
+            }
+        }
     }
 
-    public void runMixed() {
+    public String runMixed(List<Node<Character>> species, CharacterList<Character> worldSet) {
         long before = System.currentTimeMillis();
         MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
         Set<Node<Character>> mostParsimonious = treeEnumerator.hartiganEnumerate();
@@ -75,19 +100,12 @@ public class EdgeContractorTest {
                 mostCompactSize = thisSize;
             }
         }
-//        for (Node<Character> tree : mostCompact) {
-//            System.out.println(parser.toString(tree, false)+ " size: " + mostCompactSize);
-//        }
-//        int parsimonyScore = Hartigan.bottomUp(mostCompact.iterator().next(), worldSet);
-//        System.out.println("Found " + mostCompact.size() + " most compact tree(s) from " + mostParsimonious.size()
-//                + " mixed MP tree(s)");
-//        System.out.println("Parsimony score: " + parsimonyScore);
+
         long time = System.currentTimeMillis() - before;
-        System.out.print(time + "\t" + mostCompact.size() + "\t");
-//        System.out.println("Took " + time + "ms for mixed trees with " + treeSize + " input species.");
+        return species.size() + "\t" + time + "\t" + mostCompact.size() + "\t";
     }
 
-    public void runCubic() {
+    public String runCubic(List<Node<Character>> species, CharacterList<Character> worldSet) {
         long before = System.currentTimeMillis();
         CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species);
         Set<Node<Character>> mostParsimonious = treeEnumerator.fitchEnumerate();
@@ -104,7 +122,7 @@ public class EdgeContractorTest {
             callables.add(new Callable<Node<Character>>() {
                 @Override
                 public Node<Character> call() throws Exception {
-                    System.out.println("Running contractor on tree #" + num);
+                    //System.out.println("Running contractor on tree #" + num);
                     return edgeContractor.edgeContraction(tree);
                 }
             });
@@ -120,7 +138,7 @@ public class EdgeContractorTest {
                 compactTree = nodeFuture.get();
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
-                return;
+                return "";
             }
             int thisSize = compactTree.size();
             if (thisSize <= mostCompactSize) {
@@ -142,6 +160,6 @@ public class EdgeContractorTest {
 //        System.out.println("Parsimony score: " + parsimonyScore);
         long time = System.currentTimeMillis() - before;
 //        System.out.println("Took " + time + "ms for cubic trees with " + treeSize + " input species.");
-        System.out.print(time + "\t" + mostParsimonious.size() + "\t" + mostCompact.size()  + "\t" + numContractions);
+        return time + "\t" + mostParsimonious.size() + "\t" + mostCompact.size() + "\t" + numContractions + "\n";
     }
 }

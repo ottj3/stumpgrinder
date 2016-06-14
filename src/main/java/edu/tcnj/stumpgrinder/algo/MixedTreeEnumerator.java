@@ -132,7 +132,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
             case2(current.children.get(0), size, isScored);
         }
         if (current != root) {
-            Node<S> internal = labelledNodes.get(size);
+            Node<S> internal = labelledNodes.get(size).clone();
             Node<S> parent = current.parent;
 
             Node.unlinkNodes(parent, current);
@@ -160,7 +160,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
         for (int index = 0; index < current.children.size(); index++) {
             case3(current.children.get(index), size, isScored);
         }
-        Node<S> leaf = labelledNodes.get(size);
+        Node<S> leaf = labelledNodes.get(size).clone();
 
         Node.linkNodes(current, leaf);
 
@@ -182,7 +182,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
             case4(current.children.get(index), size, isScored);
         }
         if (!current.labelled) {
-            Node<S> newNode = labelledNodes.get(size);
+            Node<S> newNode = labelledNodes.get(size).clone();
 
             current.label = newNode.label;
             current.labelled = true;
