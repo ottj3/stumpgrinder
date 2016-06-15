@@ -7,9 +7,12 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+
+
 public class SankoffTest {
     @Test
-    public void testSankoff() {
+    public void testSankoff1() {
         Node.chars = 1;
         Node c1 = new Node("C1", "C");
         Node a1 = new Node("A1", "A");
@@ -29,35 +32,38 @@ public class SankoffTest {
         Node.linkNodes(root, in1);
         Node.linkNodes(root, in3);
 
-        Map<Integer, HashMap<Integer, Double>> weights = new HashMap<>();
-        HashMap<Integer, Double> aWeights = new HashMap<>();
-        aWeights.put(DNABase.A.value, 0.0);
-        aWeights.put(DNABase.C.value, 2.5);
-        aWeights.put(DNABase.G.value, 1.0);
-        aWeights.put(DNABase.T.value, 2.5);
-        weights.put(DNABase.A.value, aWeights);
+        double[][] weights = {
+                {0.0, 1.0, 2.5, 2.5},
+                {1.0, 0.0, 2.5, 2.5},
+                {2.5, 2.5, 0.0, 1.0},
+                {2.5, 2.5, 1.0, 0.0}
+        };
 
-        HashMap<Integer, Double> cWeights = new HashMap<>();
-        cWeights.put(DNABase.A.value, 2.5);
-        cWeights.put(DNABase.C.value, 0.0);
-        cWeights.put(DNABase.G.value, 2.5);
-        cWeights.put(DNABase.T.value, 1.0);
-        weights.put(DNABase.C.value, cWeights);
+        assertEquals("Wrong score", Sankoff.bottomUp(root, weights), 6, 0.01);
+    }
 
-        HashMap<Integer, Double> gWeights = new HashMap<>();
-        gWeights.put(DNABase.A.value, 1.0);
-        gWeights.put(DNABase.C.value, 2.5);
-        gWeights.put(DNABase.G.value, 0.0);
-        gWeights.put(DNABase.T.value, 2.5);
-        weights.put(DNABase.G.value, gWeights);
+    @Test
+    public void testSankoff2() {
+        Node a = new Node("A", "A");
+        Node c = new Node("C", "C");
+        Node t = new Node("T", "T");
+        Node g = new Node("G", "G");
+        Node i1 = new Node("");
+        Node.linkNodes(i1, a);
+        Node.linkNodes(i1, c);
+        Node i2 = new Node("");
+        Node.linkNodes(i2, t);
+        Node.linkNodes(i2, g);
+        Node root = new Node("");
+        Node.linkNodes(root, i1);
+        Node.linkNodes(root, i2);
 
-        HashMap<Integer, Double> tWeights = new HashMap<>();
-        tWeights.put(DNABase.A.value, 2.5);
-        tWeights.put(DNABase.C.value, 1.0);
-        tWeights.put(DNABase.G.value, 2.5);
-        tWeights.put(DNABase.T.value, 0.0);
-        weights.put(DNABase.T.value, tWeights);
-
-        System.out.println(Sankoff.bottomUp(root, weights));
+        double[][] weights = {
+                {0.0, 4.0, 3.0, 9.0},
+                {4.0, 0.0, 2.0, 4.0},
+                {3.0, 2.0, 0.0, 4.0},
+                {9.0, 4.0, 4.0, 0.0}
+        };
+        assertEquals("Wrong score", Sankoff.bottomUp(root, weights), 9, 0.01);
     }
 }

@@ -64,13 +64,11 @@ public class Node implements Cloneable {
     public void setData(String data) {
         initializeCosts();
         for (int i = 0; i < Node.chars; i++) {
-            for (int j = 0; j < DNABase.NUM_BASES; j++) {
-                for (DNABase dnaBase : DNABase.values()) {
-                    if (DNABase.valueOf(data.substring(i, i + 1)) == dnaBase) {
-                        costs.get(i)[dnaBase.value] = 0;
-                    } else {
-                        costs.get(i)[dnaBase.value] = Double.POSITIVE_INFINITY;
-                    }
+            for (DNABase dnaBase : DNABase.values()) {
+                if (DNABase.valueOf(data.substring(i, i + 1)) == dnaBase) {
+                    costs.get(i)[dnaBase.value] = 0;
+                } else {
+                    costs.get(i)[dnaBase.value] = Double.POSITIVE_INFINITY;
                 }
             }
         }
@@ -80,8 +78,8 @@ public class Node implements Cloneable {
     public static List<double[]> initializeCosts() {
         List<double[]> costs = new ArrayList<>(chars);
         for (int i = 0; i < chars; i++) {
-            costs.add(new double[DNABase.NUM_BASES]);
-            for (int j = 0; j < DNABase.NUM_BASES; j++) {
+            costs.add(new double[DNABase.values().length]);
+            for (int j = 0; j < DNABase.values().length; j++) {
                 costs.get(i)[j] = 0;
             }
         }
