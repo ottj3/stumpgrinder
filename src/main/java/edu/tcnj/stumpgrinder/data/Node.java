@@ -21,11 +21,15 @@ public class Node implements Cloneable {
     public String label;
 
     //public DNABase[] data = new DNABase[chars];
-    public CharacterList<DNABase> data = sets();
+    public CharacterList data = sets();
+
+    public double edgeCost = 0;
+
     /**
      * The cost of the node.
      */
     public List<double[]> costs;
+    private boolean initialized;
 
     public List<Set<DNABase>[]> parentFits;
     /**
@@ -49,11 +53,9 @@ public class Node implements Cloneable {
      * @param label a name for the node, or an empty string for an unlabelled node
      */
     public Node(String label) {
-        this.costs = initializeCosts();
         initializeFits();
         this.label = label;
         this.labelled = !label.isEmpty();
-
     }
 
     /**
@@ -80,7 +82,8 @@ public class Node implements Cloneable {
         }
     }
 
-    public static List<double[]> initializeCosts() {
+    public void initializeCosts() {
+        if (initialized) return;
         List<double[]> costs = new ArrayList<>(chars);
         for (int i = 0; i < chars; i++) {
             costs.add(new double[DNABase.values().length]);
@@ -88,7 +91,7 @@ public class Node implements Cloneable {
                 costs.get(i)[j] = 0;
             }
         }
-        return costs;
+        initialized = true;
     }
 
     public void initializeFits() {
@@ -110,12 +113,12 @@ public class Node implements Cloneable {
      *
      * @return an empty but initialized {@link CharacterList} for a node with sets for each character
      */
-    public static <S> CharacterList<S> sets() {
-        List<Set<S>> sets = new ArrayList<>(chars);
+    public static CharacterList sets() {
+        List<Set<DNABase>> sets = new ArrayList<>(chars);
         for (int i = chars; i-- > 0; ) {
-            sets.add(new HashSet<S>());
+            sets.add(new HashSet<DNABase>());
         }
-        return new CharacterList<>(sets);
+        return new CharacterList(sets);
     }
 
     /**
@@ -124,7 +127,7 @@ public class Node implements Cloneable {
      * @param parent the node to be the parent
      * @param child  the node to be the child
      */
-    public static <S> void linkNodes(Node parent, Node child) {
+    public static void linkNodes(Node parent, Node child) {
         parent.children.add(child);
         child.parent = parent;
     }
@@ -135,7 +138,7 @@ public class Node implements Cloneable {
      * @param parent the original parent node
      * @param child  the child node
      */
-    public static <S> void unlinkNodes(Node parent, Node child) {
+    public static void unlinkNodes(Node parent, Node child) {
         parent.children.remove(child);
         if (parent == child.parent) {
             child.parent = null;
@@ -160,7 +163,7 @@ public class Node implements Cloneable {
         }
 
         //System.arraycopy(this.data, 0, newNode.data, 0, this.data.length);
-        newNode.data = new CharacterList<>(this.data);
+        newNode.data = new CharacterList(this.data);
 
         newNode.costs = this.costs;
         return newNode;

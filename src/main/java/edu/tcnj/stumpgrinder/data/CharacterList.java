@@ -19,14 +19,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * copies for each added element. (This can also be done via {@link Node#sets()})</li>
  * </ul>
  *
- * @param <S>
  */
-public class CharacterList<S> extends CopyOnWriteArrayList<Set<S>> {
+public class CharacterList extends CopyOnWriteArrayList<Set<DNABase>> {
 
     public CharacterList() {
     }
 
-    public CharacterList(List<Set<S>> sets) {
+    public CharacterList(List<Set<DNABase>> sets) {
         super(sets);
     }
 }
