@@ -6,6 +6,7 @@ import edu.tcnj.stumpgrinder.data.Node;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,39 +27,44 @@ public class EdgeContractorTest {
 
     @Test
     public void testContraction() {
+        int NUM_TRIALS = 5;
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        List<Callable<String>> callables = new ArrayList<>();
-        List<Future<String>> futures;
-        int[] treeSizes = {4, 5, 6, 7, 8, 9/*, 10, 11, 12, 13, 14, 15*/};
+        List<Callable<long[]>> callables = new ArrayList<>();
+        List<Future<long[]>> futures;
+        int[] treeSizes = {4, 5, 6, 7, 8, 9/*, 10, 11, 12, 13, 14/*, 15*/};
         for (final int treeSize : treeSizes) {
-            List<String> lines = new ArrayList<>();
-            for (int i = 0; i < treeSize; i++) {
-                lines.add(TreeEnumeratorTest.testData.get(i));
+            for (int i = 0; i < NUM_TRIALS; i++) {
+                List<String> lines = new ArrayList<>();
+                Collections.shuffle(TreeEnumeratorTest.testData);
+                for (int i1 = 0; i1 < treeSize; i1++) {
+                    lines.add(TreeEnumeratorTest.testData.get(i1));
+                }
+
+                final CharacterList<Character> worldSet;
+                final List<Node<Character>> species = new ArrayList<>();
+                List<Set<Character>> worldSet0 = new ArrayList<>();
+                parser.speciesList(lines, species, worldSet0);
+                worldSet = new CharacterList<>(worldSet0);
+                callables.add(new Callable<long[]>() {
+                    @Override
+                    public long[] call() throws Exception {
+                        return runMixed(species, worldSet);
+                    }
+                });
+
+                final CharacterList<Character> worldSet1;
+                final List<Node<Character>> species0 = new ArrayList<>();
+                List<Set<Character>> worldSet2 = new ArrayList<>();
+                parser.speciesList(lines, species0, worldSet2);
+                worldSet1 = new CharacterList<>(worldSet2);
+                callables.add(new Callable<long[]>() {
+                    @Override
+                    public long[] call() throws Exception {
+                        return runCubic(species0, worldSet1);
+                    }
+                });
             }
 
-            final CharacterList<Character> worldSet;
-            final List<Node<Character>> species = new ArrayList<>();
-            List<Set<Character>> worldSet0 = new ArrayList<>();
-            parser.speciesList(lines, species, worldSet0);
-            worldSet = new CharacterList<>(worldSet0);
-            callables.add(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    return runMixed(species, worldSet);
-                }
-            });
-
-            final CharacterList<Character> worldSet1;
-            final List<Node<Character>> species0 = new ArrayList<>();
-            List<Set<Character>> worldSet2 = new ArrayList<>();
-            parser.speciesList(lines, species0, worldSet2);
-            worldSet1 = new CharacterList<>(worldSet2);
-            callables.add(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    return runCubic(species0, worldSet1);
-                }
-            });
         }
 
         try {
@@ -68,21 +74,41 @@ public class EdgeContractorTest {
             return;
         }
 
-        System.out.println("n\tmixed time\t# compact mixed\tcubic time\t# mp cubic\t# compact\t# contractions");
-        for (Future<String> future : futures) {
-            String res = "";
+        System.out.println("n\tmixed time\tcubic time\t# compact mixed\t# mp cubic\t# compact\t# contractions");
+        long[][] averageResults = new long[treeSizes.length][7];
+        for (int i = 0; i < futures.size(); i += 2) {
+            long[] res1;
+            long[] res2;
             try {
-                res = future.get();
+                res1 = futures.get(i).get(); //{n, mixed time, # compact mixed}
+                res2 = futures.get(i + 1).get(); //{cubic time, # mp cubic, # compact, # contractions}
+                int treeSize = (int) res1[0];
+                int index = treeSize - treeSizes[0];
+
+                //I'm so sorry.
+                averageResults[index][0] += treeSize; //n
+                averageResults[index][1] += res1[1]; //mixed time
+                averageResults[index][2] += res2[0]; //cubic time
+                averageResults[index][3] += res1[2]; //# compact mixed
+                averageResults[index][4] += res2[1]; //# mp cubic
+                averageResults[index][5] += res2[2]; //# compact
+                averageResults[index][6] += res2[3]; //# contractions
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
-            if (!res.isEmpty()) {
-                System.out.print(res);
+        }
+        for (int i = 0; i < averageResults.length; i++) {
+            for (int i1 = 0; i1 < 3; i1++) {
+                System.out.print(Math.round((float) averageResults[i][i1] / NUM_TRIALS) + "\t");
             }
+            for (int i1 = 3; i1 < averageResults[i].length; i1++) {
+                System.out.print(((float) averageResults[i][i1] / NUM_TRIALS) + "\t");
+            }
+            System.out.println();
         }
     }
 
-    public String runMixed(List<Node<Character>> species, CharacterList<Character> worldSet) {
+    public long[] runMixed(List<Node<Character>> species, CharacterList<Character> worldSet) {
         long before = System.currentTimeMillis();
         MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
         Set<Node<Character>> mostParsimonious = treeEnumerator.hartiganEnumerate();
@@ -100,10 +126,10 @@ public class EdgeContractorTest {
         }
 
         long time = System.currentTimeMillis() - before;
-        return species.size() + "\t" + time + "\t" + mostCompact.size() + "\t";
+        return new long[]{species.size(), time, mostCompact.size()};
     }
 
-    public String runCubic(List<Node<Character>> species, CharacterList<Character> worldSet) {
+    public long[] runCubic(List<Node<Character>> species, CharacterList<Character> worldSet) {
         long before = System.currentTimeMillis();
         CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species);
         Set<Node<Character>> mostParsimonious = treeEnumerator.fitchEnumerate();
@@ -134,6 +160,6 @@ public class EdgeContractorTest {
 //        System.out.println("Parsimony score: " + parsimonyScore);
         long time = System.currentTimeMillis() - before;
 //        System.out.println("Took " + time + "ms for cubic trees with " + treeSize + " input species.");
-        return time + "\t" + mostParsimonious.size() + "\t" + mostCompact.size() + "\t" + numContractions + "\n";
+        return new long[]{time, mostParsimonious.size(), mostCompact.size(), numContractions};
     }
 }
