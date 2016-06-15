@@ -46,15 +46,15 @@ public class Node<S> implements Cloneable {
      * The root set of a node. This may also be used as a label set for known characters,
      * or as the only set when using Fitch's scoring algorithm.
      */
-    public CharacterList<S> root = new CharacterList<>();
+    public CharacterList<S> root;
     /**
      * The upper set of a node. This is generally used in Hartigan's algorithm.
      */
-    public CharacterList<S> upper = new CharacterList<>();
+    public CharacterList<S> upper;
     /**
      * The lower set of a node. This is generally used in Hartigan's algorithm.
      */
-    public CharacterList<S> lower = new CharacterList<>();
+    public CharacterList<S> lower;
 
     /**
      * The parent of this node, or null if this node has no parent.
