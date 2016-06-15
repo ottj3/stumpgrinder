@@ -5,6 +5,7 @@ import edu.tcnj.stumpgrinder.data.Node;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -39,11 +40,14 @@ public class SankoffTest {
                 {2.5, 2.5, 1.0, 0.0}
         };
 
-        assertEquals("Wrong score", Sankoff.bottomUp(root, weights), 6, 0.01);
+        assertEquals("Wrong score", 6, Sankoff.bottomUp(root, weights), 0.01);
+        List<List<Node>> zeroCost = Sankoff.topDown(root);
+        assertEquals("Wrong edge list", 8, zeroCost.size());
     }
 
     @Test
     public void testSankoff2() {
+        Node.chars = 1;
         Node a = new Node("A", "A");
         Node c = new Node("C", "C");
         Node t = new Node("T", "T");
@@ -64,6 +68,8 @@ public class SankoffTest {
                 {3.0, 2.0, 0.0, 4.0},
                 {9.0, 4.0, 4.0, 0.0}
         };
-        assertEquals("Wrong score", Sankoff.bottomUp(root, weights), 9, 0.01);
+        assertEquals("Wrong score", 9, Sankoff.bottomUp(root, weights), 0.01);
+        List<List<Node>> zeroCost = Sankoff.topDown(root);
+        assertEquals("Wrong edge list", 3, zeroCost.size());
     }
 }

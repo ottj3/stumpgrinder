@@ -19,12 +19,15 @@ public class Node implements Cloneable {
      * A "name" string for the node, used purely for humans to identify nodes.
      */
     public String label;
-    public String data;
+
+    //public DNABase[] data = new DNABase[chars];
+    public CharacterList<DNABase> data = sets();
     /**
      * The cost of the node.
      */
     public List<double[]> costs;
 
+    public List<Set<DNABase>[]> parentFits;
     /**
      * Whether this node has a known label. Sometimes useful when running algorithms
      * on nodes that have root sets, but may not be known labelled nodes.
@@ -47,8 +50,10 @@ public class Node implements Cloneable {
      */
     public Node(String label) {
         this.costs = initializeCosts();
+        initializeFits();
         this.label = label;
         this.labelled = !label.isEmpty();
+
     }
 
     /**
@@ -67,12 +72,12 @@ public class Node implements Cloneable {
             for (DNABase dnaBase : DNABase.values()) {
                 if (DNABase.valueOf(data.substring(i, i + 1)) == dnaBase) {
                     costs.get(i)[dnaBase.value] = 0;
+                    this.data.get(i).add(dnaBase);
                 } else {
                     costs.get(i)[dnaBase.value] = Double.POSITIVE_INFINITY;
                 }
             }
         }
-        this.data = data;
     }
 
     public static List<double[]> initializeCosts() {
@@ -84,6 +89,33 @@ public class Node implements Cloneable {
             }
         }
         return costs;
+    }
+
+    public void initializeFits() {
+        parentFits = new ArrayList<>(chars);
+        for (int i = 0; i < chars; i++) {
+            parentFits.add(new HashSet[DNABase.values().length]);
+            //TODO: is this initialization necessary?
+            for (int j = 0; j < parentFits.get(i).length; j++) {
+                parentFits.get(i)[j] = new HashSet<>();
+            }
+        }
+    }
+
+
+    /**
+     * Utility method to generate a list of sets, one set for each Character in a species.
+     * <p>Callers should be responsible for ensuring that {@link #chars} is set before
+     * calling this method.</p>
+     *
+     * @return an empty but initialized {@link CharacterList} for a node with sets for each character
+     */
+    public static <S> CharacterList<S> sets() {
+        List<Set<S>> sets = new ArrayList<>(chars);
+        for (int i = chars; i-- > 0; ) {
+            sets.add(new HashSet<S>());
+        }
+        return new CharacterList<>(sets);
     }
 
     /**
@@ -112,7 +144,7 @@ public class Node implements Cloneable {
 
     /**
      * Clones a Node and all sub-tree nodes as new Objects, but maintains references to
-     * the original {@link CharacterList}s to preserve space.
+     * the original costs to preserve space.
      * <p>This method preserves the entire structure of a tree (or subtree) in the new Node
      * objects by recursively cloning each child node and re-linking the new objects.</p>
      *
@@ -126,6 +158,10 @@ public class Node implements Cloneable {
             newChild.parent = newNode;
             newNode.children.add(newChild);
         }
+
+        //System.arraycopy(this.data, 0, newNode.data, 0, this.data.length);
+        newNode.data = new CharacterList<>(this.data);
+
         newNode.costs = this.costs;
         return newNode;
     }
