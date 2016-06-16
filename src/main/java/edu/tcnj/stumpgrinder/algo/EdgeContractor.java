@@ -1,11 +1,8 @@
 package edu.tcnj.stumpgrinder.algo;
 
-import edu.tcnj.stumpgrinder.data.CharacterList;
-import edu.tcnj.stumpgrinder.data.DNABase;
 import edu.tcnj.stumpgrinder.data.Node;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * A class to contract a given tree to its smallest possible size
@@ -28,6 +25,7 @@ public class EdgeContractor {
     /**
      * A method to contract a cubic tree into the smallest possible mixed tree
      * by contracting edges in every possible order to find the smallest
+     *
      * @param root the root of the tree to be compacted
      * @return the root of the compacted tree
      */
@@ -60,7 +58,6 @@ public class EdgeContractor {
             //else, for every edge in list, contract edge and then recurse
             for (List<Node> edge : edgeList) {
                 contractEdge(edge);
-
                 edgeContractionRecursive(root);
 
                 //undo the contraction to try a different order
@@ -88,7 +85,7 @@ public class EdgeContractor {
             parent.data = child.data;
         }
 
-        while(parent.parent != null) {
+        while (parent.parent != null) {
             parent = parent.parent;
         }
     }
@@ -112,19 +109,12 @@ public class EdgeContractor {
             parent.labelled = false;
             parent.label = "";
             parent.data = Node.sets();
+            parent.costs = null;
             parent.initializeCosts();
         }
 
-        //As with contractEdge, the VU and VL sets of the node and its ancestors must be recalculated.
-//        while (parent != null) {
-//            if (!parent.labelled) {
-//                Hartigan.hartigan(parent, worldSet);
-//            }
-//            parent = parent.parent;
-//        }
-        while(parent.parent != null) {
+        while (parent.parent != null) {
             parent = parent.parent;
         }
-        Sankoff.bottomUp(parent, weights);
     }
 }

@@ -13,8 +13,9 @@ public class Sankoff {
         for (Node child : current.children) {
             bottomUp(child, weights);
         }
+        //Outside the if statement because magic reasons
+        current.initializeCosts();
         if (current.children.size() >= 1) {
-            current.initializeCosts();
             sankoff(current, weights);
         }
         double totalCost = 0;
@@ -98,7 +99,9 @@ public class Sankoff {
                     cost++;
                 }
             }
-            if (cost == 0 && !(current.parent.labelled && current.labelled)) {
+            if (cost == 0
+                    && !(current.parent.labelled && current.labelled)
+                    && (current.labelled && current.parent.parent != null)) {
                 List<Node> newEdge = new ArrayList<>();
                 newEdge.add(current.parent);
                 newEdge.add(current);

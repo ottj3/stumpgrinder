@@ -54,13 +54,20 @@ public class CubicTreeEnumeratorTest extends TreeEnumeratorTest {
         Set<Node> treeList = treeEnumerator.sankoffEnumerate();
 //        System.out.println("Fitch enumerate: ");
         for (Node tree : treeList) {
-            System.out.println(parser.toString(tree) + " Score: " + Sankoff.bottomUp(tree, weights));
+//            System.out.println(parser.toString(tree) + " Score: " + Sankoff.bottomUp(tree, weights));
             EdgeContractor edgeContractor = new EdgeContractor(weights);
             Node compacted = edgeContractor.edgeContraction(tree);
-            System.out.println(parser.toString(compacted) + " Compacted Score: " + Sankoff.bottomUp(compacted, weights));
+//            System.out.println(parser.toString(compacted) + " Compacted Score: " + Sankoff.bottomUp(compacted, weights));
+            assertEquals("Scores differ between:\n" + Parser.toString(tree) + "\n" + Parser.toString(compacted),
+                    Sankoff.bottomUp(tree, weights), Sankoff.bottomUp(compacted, weights), 0.01);
         }
         System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }
 
-
+    @Test
+    public void specificTest() {
+        Node compactedTree = Parser.fromString("((((A:0.0,E:0.0):0.0,(F:0.0)D:0.0):0.0,B:0.0,C:0.0):0.0;");
+        Parser.fillNodes(compactedTree, testData);
+        System.out.println(Sankoff.bottomUp(compactedTree, weights));
+    }
 }
