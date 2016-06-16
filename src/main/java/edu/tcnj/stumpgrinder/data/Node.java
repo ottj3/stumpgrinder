@@ -29,7 +29,6 @@ public class Node implements Cloneable {
      * The cost of the node.
      */
     public List<double[]> costs;
-    private boolean initialized;
 
     public List<Set<DNABase>[]> parentFits;
     /**
@@ -54,6 +53,7 @@ public class Node implements Cloneable {
      */
     public Node(String label) {
         initializeFits();
+        initializeCosts();
         this.label = label;
         this.labelled = !label.isEmpty();
     }
@@ -69,7 +69,6 @@ public class Node implements Cloneable {
     }
 
     public void setData(String data) {
-        initializeCosts();
         for (int i = 0; i < Node.chars; i++) {
             for (DNABase dnaBase : DNABase.values()) {
                 if (DNABase.valueOf(data.substring(i, i + 1)) == dnaBase) {
@@ -83,15 +82,13 @@ public class Node implements Cloneable {
     }
 
     public void initializeCosts() {
-        if (initialized) return;
-        List<double[]> costs = new ArrayList<>(chars);
+        costs = new ArrayList<>(chars);
         for (int i = 0; i < chars; i++) {
             costs.add(new double[DNABase.values().length]);
             for (int j = 0; j < DNABase.values().length; j++) {
                 costs.get(i)[j] = 0;
             }
         }
-        initialized = true;
     }
 
     public void initializeFits() {

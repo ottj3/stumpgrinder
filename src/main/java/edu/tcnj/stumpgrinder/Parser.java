@@ -196,8 +196,8 @@ public class Parser {
             String[] sp = line.split(":");
             String label = sp[0];
             String data = sp[1];
-            Node node = new Node(label);
             Node.chars = data.length();
+            Node node = new Node(label);
             node.setData(data);
             species.add(node);
         }
