@@ -69,6 +69,7 @@ public class Node implements Cloneable {
     }
 
     public void setData(String data) {
+        chars = data.length();
         for (int i = 0; i < Node.chars; i++) {
             for (DNABase dnaBase : DNABase.values()) {
                 if (DNABase.valueOf(data.substring(i, i + 1)) == dnaBase) {
@@ -82,11 +83,19 @@ public class Node implements Cloneable {
     }
 
     public void initializeCosts() {
-        costs = new ArrayList<>(chars);
-        for (int i = 0; i < chars; i++) {
-            costs.add(new double[DNABase.values().length]);
-            for (int j = 0; j < DNABase.values().length; j++) {
-                costs.get(i)[j] = 0;
+        if (costs == null || costs.isEmpty()) {
+            costs = new ArrayList<>(chars);
+            for (int i = 0; i < chars; i++) {
+                costs.add(new double[DNABase.values().length]);
+                for (int j = 0; j < DNABase.values().length; j++) {
+                    costs.get(i)[j] = 0;
+                }
+            }
+        } else {
+            for (int i = 0; i < chars; i++) {
+                for (int j = 0; j < DNABase.values().length; j++) {
+                    if (!Double.valueOf(Double.POSITIVE_INFINITY).equals(costs.get(i)[j])) costs.get(i)[j] = 0;
+                }
             }
         }
     }
@@ -160,9 +169,18 @@ public class Node implements Cloneable {
         }
 
         //System.arraycopy(this.data, 0, newNode.data, 0, this.data.length);
-        newNode.data = new CharacterList(this.data);
+        List<Set<DNABase>> list = new ArrayList<>();
+        for (Set<DNABase> dnaBases : this.data) {
+            list.add(new HashSet<DNABase>(dnaBases));
+        }
+        newNode.data = new CharacterList(list);
 
-        newNode.costs = this.costs;
+        newNode.costs = new ArrayList<>(this.costs.size());
+        for (double[] cost : this.costs) {
+            double[] newCost = new double[cost.length];
+            System.arraycopy(cost, 0, newCost, 0, cost.length);
+            newNode.costs.add(newCost);
+        }
         return newNode;
     }
 

@@ -10,12 +10,12 @@ public abstract class TreeEnumeratorTest {
     public static List testData = new ArrayList();
 
     static {
-        testData.add("B:GAAGATCCCAGATACTTTGCCGGAGAACAA");
         testData.add("A:GAGGACCCCAGATATTACGCGGGTCGAACA");
+        testData.add("B:GAAGATCCCAGATACTTTGCCGGAGAACAA");
         testData.add("C:GAGGATCCGCGTTACTTTAGCGGTATTCAA");
-        testData.add("D:GAGGACCCCCGTTACTTTGCCGGCGAGGCC");
         testData.add("E:GAGGATCCCAGATATTTTGCGGGTGAGGCT");
         testData.add("F:GAAGACCCGCGCTACTTTGCCGGCACCGGC");
+        testData.add("D:GAGGACCCCCGTTACTTTGCCGGCGAGGCC");
 //      testData.add("G:GAAGATCC?CGTTTCTTCGCAGGAGAAGCA"); // true sequence with ? = A or G
 //      testData.add("G:GAAGATCC{AG}CGTTTCTTCGCAGGAGAA"); // original sequence without last three chars
         testData.add("G:GAAGATCCCAGACGTTTCTTCGCAGGAGAA"); // Angela's replaced { with C and } with A

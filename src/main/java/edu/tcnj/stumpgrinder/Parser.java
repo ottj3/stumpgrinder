@@ -3,13 +3,10 @@ package edu.tcnj.stumpgrinder;
 import edu.tcnj.stumpgrinder.data.Node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-<<<<<<< HEAD
-=======
-import java.util.Set;
->>>>>>> 7bae4f2... Re-add parser and make a few tweaks to node.
 
 public class Parser {
 
@@ -216,6 +213,15 @@ public class Parser {
         if (root.labelled && labelToSequence.containsKey(root.label)) {
             root.setData(labelToSequence.get(root.label));
         }
+    }
+
+    public static void fillNodes(Node root, List<String> labelToSequence) {
+        Map<String, String> map = new HashMap<>();
+        for (String l : labelToSequence) {
+            String[] s = l.split(":");
+            map.put(s[0], s[1]);
+        }
+        fillNodes(root, map);
     }
 
 }

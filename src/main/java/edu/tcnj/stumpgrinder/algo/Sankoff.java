@@ -14,7 +14,7 @@ public class Sankoff {
             bottomUp(child, weights);
         }
         if (current.children.size() >= 1) {
-            if (!current.labelled) current.initializeCosts();
+            current.initializeCosts();
             sankoff(current, weights);
         }
         double totalCost = 0;

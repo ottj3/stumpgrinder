@@ -55,8 +55,9 @@ public class CubicTreeEnumeratorTest extends TreeEnumeratorTest {
 //        System.out.println("Fitch enumerate: ");
         for (Node tree : treeList) {
             System.out.println(parser.toString(tree) + " Score: " + Sankoff.bottomUp(tree, weights));
-//            EdgeContractor edgeContractor = new EdgeContractor(worldSet);
-//            System.out.println("Old size: " + tree.size() + ", new size: " + edgeContractor.edgeContraction(tree).size());
+            EdgeContractor edgeContractor = new EdgeContractor(weights);
+            Node compacted = edgeContractor.edgeContraction(tree);
+            System.out.println(parser.toString(compacted) + " Compacted Score: " + Sankoff.bottomUp(compacted, weights));
         }
         System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }
