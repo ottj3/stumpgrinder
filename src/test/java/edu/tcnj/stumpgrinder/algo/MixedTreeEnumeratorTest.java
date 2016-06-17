@@ -6,6 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,14 +52,54 @@ public class MixedTreeEnumeratorTest extends TreeEnumeratorTest {
     public void testSankoff() {
         long start = System.currentTimeMillis();
         getData(treeSize);
-        Parser parser = new Parser();
         MixedTreeEnumerator treeEnumerator = new MixedTreeEnumerator(species, weights);
         Set<Node> treeList = treeEnumerator.sankoffEnumerate();
 //        System.out.println("Hartigan enumerate: ");
         for (Node tree : treeList) {
-            System.out.println(parser.toString(tree) + " Score: " + Sankoff.bottomUp(tree, weights) + " Size: " + tree.size());
+            System.out.println(Parser.toString(tree) + " Score: " + Sankoff.bottomUp(tree, weights) + " Size: " + tree.size());
         }
         System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }
 
+    public List<Node> nodes = new ArrayList<>();
+    @Test
+    public void testRooting() {
+        long start = System.currentTimeMillis();
+        getData(treeSize);
+        MixedTreeEnumerator treeEnumerator = new MixedTreeEnumerator(species, weights);
+        Set<Node> treeList = treeEnumerator.sankoffEnumerate();
+        for (Node tree : treeList) {
+//            System.out.println("Working on: " + Parser.toString(tree));
+            double score = Sankoff.bottomUp(tree, weights);
+            nodes.clear();
+            getNodes(tree);
+            for (Node node : nodes) {
+                reroot(node);
+//                System.out.println(Parser.toString(node));
+                assertEquals("Scores differ between:\n" + Parser.toString(tree) + "\n" + Parser.toString(node),
+                        score, Sankoff.bottomUp(node, weights), 0.01);
+            }
+        }
+        System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
+    }
+    public void getNodes(Node current) {
+        nodes.add(current);
+        for (Node child : current.children) {
+            getNodes(child);
+        }
+    }
+    public void reroot(Node current) {
+        List<Node> nodesToRoot = new ArrayList<>();
+        while(current != null) {
+            nodesToRoot.add(current);
+            current = current.parent;
+        }
+
+        for (int i = nodesToRoot.size()-2; i >= 0; i--) {
+            Node child = nodesToRoot.get(i);
+            Node ancestor = nodesToRoot.get(i+1);
+            Node.unlinkNodes(ancestor, child);
+            Node.linkNodes(child, ancestor);
+        }
+    }
 }

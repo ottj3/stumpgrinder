@@ -2,7 +2,6 @@ package edu.tcnj.stumpgrinder.algo;
 
 import edu.tcnj.stumpgrinder.data.Node;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -107,13 +106,13 @@ public class MixedTreeEnumerator extends TreeEnumerator {
     /***************************************************************************
      * Case 1: Enumerates bifurcating trees.
      **************************************************************************/
-    private <T> void case1(Node current, int size, boolean isScored) {
+    private void case1(Node current, int size, boolean isScored) {
         for (int index = 0; index < current.children.size(); index++) {
             case1(current.children.get(0), size, isScored);
         }
         if (current != root) {
             Node internal = new Node("");
-            Node leaf = labelledNodes.get(size);
+            Node leaf = labelledNodes.get(size).clone();
             Node parent = current.parent;
 
             addNodeToEdge(current, parent, internal, leaf);
@@ -132,7 +131,7 @@ public class MixedTreeEnumerator extends TreeEnumerator {
      * Case 2: Enumerates multifurcating trees. Inserts a labelled node into any
      * edge.
      **************************************************************************/
-    private <T> void case2(Node current, int size, boolean isScored) {
+    private void case2(Node current, int size, boolean isScored) {
         for (int index = 0; index < current.children.size(); index++) {
             case2(current.children.get(0), size, isScored);
         }
@@ -161,7 +160,7 @@ public class MixedTreeEnumerator extends TreeEnumerator {
      * labelled or unlabelled node (including the root).
      **************************************************************************/
 
-    private <T> void case3(Node current, int size, boolean isScored) {
+    private void case3(Node current, int size, boolean isScored) {
         for (int index = 0; index < current.children.size(); index++) {
             case3(current.children.get(index), size, isScored);
         }
@@ -182,14 +181,13 @@ public class MixedTreeEnumerator extends TreeEnumerator {
     /***************************************************************************
      * Enumerates multifurcating trees. Labels any unlabelled node but the root.
      **************************************************************************/
-    private <T> void case4(Node current, int size, boolean isScored) {
+    private void case4(Node current, int size, boolean isScored) {
         for (int index = 0; index < current.children.size(); index++) {
             case4(current.children.get(index), size, isScored);
         }
         if (!current.labelled && current.parent != null) {
             Node newNode = labelledNodes.get(size).clone();
 
-            //TODO: this method is prolly gonna break shit
             current.label = newNode.label;
             current.labelled = true;
             current.data = newNode.data;
@@ -202,7 +200,7 @@ public class MixedTreeEnumerator extends TreeEnumerator {
             }
 
             current.data = Node.sets();
-            current.initializeCosts();
+            current.costs = null;
             current.labelled = false;
             current.label = "";
         }

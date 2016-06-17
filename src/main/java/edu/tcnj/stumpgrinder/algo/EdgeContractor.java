@@ -113,7 +113,6 @@ public class EdgeContractor {
             parent.label = "";
             parent.data = Node.sets();
             parent.costs = null;
-            parent.initializeCosts();
         }
 
         //Find the root, call bottom up to fix all the scores/parentFits

@@ -48,7 +48,6 @@ public class CubicTreeEnumeratorTest extends TreeEnumeratorTest {
     public void testSankoff() {
         long start = System.currentTimeMillis();
         getData(treeSize);
-        Parser parser = new Parser();
         CubicTreeEnumerator treeEnumerator = new CubicTreeEnumerator(species, weights);
         Set<Node> treeList = treeEnumerator.sankoffEnumerate();
 //        System.out.println("Fitch enumerate: ");
@@ -56,7 +55,7 @@ public class CubicTreeEnumeratorTest extends TreeEnumeratorTest {
 //            System.out.println(parser.toString(tree) + " Score: " + Sankoff.bottomUp(tree, weights));
             EdgeContractor edgeContractor = new EdgeContractor(weights);
             Node compacted = edgeContractor.edgeContraction(tree);
-//            System.out.println(parser.toString(compacted) + " Compacted Score: " + Sankoff.bottomUp(compacted, weights));
+            System.out.println(Parser.toString(compacted) + " Compacted Score: " + Sankoff.bottomUp(compacted, weights));
             assertEquals("Scores differ between:\n" + Parser.toString(tree) + "\n" + Parser.toString(compacted),
                     Sankoff.bottomUp(tree, weights), Sankoff.bottomUp(compacted, weights), 0.01);
             assertEquals("Still more zero-cost edges in:\n" + Parser.toString(compacted), 0, Sankoff.topDown(compacted).size());
@@ -66,7 +65,8 @@ public class CubicTreeEnumeratorTest extends TreeEnumeratorTest {
 
     @Test
     public void specificTest() {
-        Node compactedTree = Parser.fromString("((((A:0.0,E:0.0):0.0,(F:0.0)D:0.0):0.0,B:0.0,C:0.0):0.0;");
+        //[A-Za-z0-9:;.,\(\) ]*
+        Node compactedTree = Parser.fromString("((((B:0.0,C:0.0):0.0,(F:0.0)D:0.0):0.0,E:0.0):0.0)A:0.0;");
         Parser.fillNodes(compactedTree, testData);
         System.out.println(Sankoff.bottomUp(compactedTree, weights));
     }
