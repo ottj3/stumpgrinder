@@ -180,13 +180,13 @@ public class MixedTreeEnumerator extends TreeEnumerator {
     }
 
     /***************************************************************************
-     * Enumerates multifurcating trees. Labels any unlabelled node.
+     * Enumerates multifurcating trees. Labels any unlabelled node but the root.
      **************************************************************************/
     private <T> void case4(Node current, int size, boolean isScored) {
         for (int index = 0; index < current.children.size(); index++) {
             case4(current.children.get(index), size, isScored);
         }
-        if (!current.labelled) {
+        if (!current.labelled && current.parent != null) {
             Node newNode = labelledNodes.get(size).clone();
 
             //TODO: this method is prolly gonna break shit

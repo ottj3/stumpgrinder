@@ -20,17 +20,32 @@ public class Node implements Cloneable {
      */
     public String label;
 
-    //public DNABase[] data = new DNABase[chars];
+    /**
+     * The sets assigned to a node during top down (or during node creation for a labelled node)
+     * that function similarly to hartigan's root sets with regards to finding zero-cost edges
+     */
     public CharacterList data = sets();
-
-    public double edgeCost = 0;
 
     /**
      * The cost of the node.
      */
+    public double edgeCost = 0;
+
+    /**
+     * The running costs for every character state of this node
+     * (based on its children's costs + mutation costs)
+     */
     public List<double[]> costs;
 
+    /**
+     * (Used in Sankoff's top-down)
+     * The bases selected to contribute to a parent's base costs
+     * The array is indexed by the parent's base, and the set at
+     * each index is the set of all of the current node's bases
+     * that yielded the minimum cost for the parent's base
+     */
     public List<Set<DNABase>[]> parentFits;
+
     /**
      * Whether this node has a known label. Sometimes useful when running algorithms
      * on nodes that have root sets, but may not be known labelled nodes.
@@ -41,6 +56,7 @@ public class Node implements Cloneable {
      * The parent of this node, or null if this node has no parent.
      */
     public Node parent;
+
     /**
      * A list of this node's children. This should never be null, although may be empty for leaves.
      */
@@ -68,6 +84,11 @@ public class Node implements Cloneable {
         this.setData(data);
     }
 
+    /**
+     * For a labelled node, set its data from the given tree. Also set its costs to zero
+     * for whatever base it has at the current character, or infinity for the other bases
+     * @param data
+     */
     public void setData(String data) {
         chars = data.length();
         for (int i = 0; i < Node.chars; i++) {
@@ -82,6 +103,11 @@ public class Node implements Cloneable {
         }
     }
 
+    /**
+     * Reset the costs that are generated in Sankoff's bottom-up.
+     * If costs is null or empty, initialize it, otherwise set all
+     * non-infinite values to zero.
+     */
     public void initializeCosts() {
         if (costs == null || costs.isEmpty()) {
             costs = new ArrayList<>(chars);
@@ -100,6 +126,9 @@ public class Node implements Cloneable {
         }
     }
 
+    /**
+     * Initialize the parentFits of a node to an empty list
+     */
     public void initializeFits() {
         parentFits = new ArrayList<>(chars);
         for (int i = 0; i < chars; i++) {
@@ -168,13 +197,14 @@ public class Node implements Cloneable {
             newNode.children.add(newChild);
         }
 
-        //System.arraycopy(this.data, 0, newNode.data, 0, this.data.length);
+        //Copy the data rather than referencing the same list
         List<Set<DNABase>> list = new ArrayList<>();
         for (Set<DNABase> dnaBases : this.data) {
-            list.add(new HashSet<DNABase>(dnaBases));
+            list.add(new HashSet<>(dnaBases));
         }
         newNode.data = new CharacterList(list);
 
+        //Copy the costs rather than referencing the same list
         newNode.costs = new ArrayList<>(this.costs.size());
         for (double[] cost : this.costs) {
             double[] newCost = new double[cost.length];

@@ -60,6 +60,7 @@ public class CubicTreeEnumeratorTest extends TreeEnumeratorTest {
 //            System.out.println(parser.toString(compacted) + " Compacted Score: " + Sankoff.bottomUp(compacted, weights));
             assertEquals("Scores differ between:\n" + Parser.toString(tree) + "\n" + Parser.toString(compacted),
                     Sankoff.bottomUp(tree, weights), Sankoff.bottomUp(compacted, weights), 0.01);
+            assertEquals("Still more zero-cost edges in:\n" + Parser.toString(compacted), 0, Sankoff.topDown(compacted).size());
         }
         System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }
