@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TreeEnumeratorTest {
-    public static List testData = new ArrayList();
+    public static List<String> testData = new ArrayList<>();
 
     static {
         testData.add("A:GAGGACCCCAGATATTACGCGGGTCGAACA");

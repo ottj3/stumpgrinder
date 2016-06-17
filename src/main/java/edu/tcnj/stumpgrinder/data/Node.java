@@ -87,7 +87,7 @@ public class Node implements Cloneable {
     /**
      * For a labelled node, set its data from the given tree. Also set its costs to zero
      * for whatever base it has at the current character, or infinity for the other bases
-     * @param data
+     * @param data A string of character states from some known species
      */
     public void setData(String data) {
         chars = data.length();
@@ -133,10 +133,10 @@ public class Node implements Cloneable {
         parentFits = new ArrayList<>(chars);
         for (int i = 0; i < chars; i++) {
             parentFits.add(new HashSet[DNABase.values().length]);
-            //TODO: is this initialization necessary?
-            for (int j = 0; j < parentFits.get(i).length; j++) {
-                parentFits.get(i)[j] = new HashSet<>();
-            }
+//            TODO: is this initialization necessary?
+//            for (int j = 0; j < parentFits.get(i).length; j++) {
+//                parentFits.get(i)[j] = new HashSet<>();
+//            }
         }
     }
 
