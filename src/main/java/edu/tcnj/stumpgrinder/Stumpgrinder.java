@@ -26,11 +26,11 @@ public class Stumpgrinder {
     }
     public void testContraction() {
         long startTime = System.currentTimeMillis();
-        int NUM_TRIALS = 5;
+        int NUM_TRIALS = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Callable<long[]>> callables = new ArrayList<>();
         List<Future<long[]>> futures;
-        int[] treeSizes = {4, 5, 6, 7, 8, 9, 10, 11/*, 12, 13, 14/*, 15*/};
+        int[] treeSizes = {4, 5, 6, 7, 8, 9/*, 10, 11, 12, 13, 14/*, 15*/};
         for (final int treeSize : treeSizes) {
             for (int i = 0; i < NUM_TRIALS; i++) {
                 List<String> lines = new ArrayList<>();

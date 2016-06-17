@@ -2,12 +2,9 @@ package edu.tcnj.stumpgrinder.algo;
 
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
+import edu.tcnj.stumpgrinder.data.WordCountMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /*******************************************************************************
  * This class contains methods to perform Hartigan's bottom-up and town-down
@@ -15,6 +12,7 @@ import java.util.Set;
  * method for performing Hartigan's algorithm with labelled internal nodes.
  *******************************************************************************/
 public class Hartigan {
+
     //Performs the calculation of upper and lower sets as well as MP-score.
     // Used in bottom-up of Hartigan's algorithm.
     public static <S> int hartigan(Node<S> current, CharacterList<S> worldSet) {
@@ -24,18 +22,19 @@ public class Hartigan {
         current.lower = Node.sets();//create upper and lower sets for each char of node
 
         //array to store count of each char as it appears in current's children
-        ArrayList<HashMap<S, Integer>> count = new ArrayList<>(Node.chars);
+        List<WordCountMap<S>> count = new ArrayList<>(Node.chars);
 
         //Store the maximum count of states for each char
-        List<Integer> kOccurrences = new ArrayList<>(Node.chars);
+        int[] kOccurrences = new int[Node.chars];
 
         //Initialize empty hashmap for each character in alignment
         for (int index = 0; index < Node.chars; index++) {
-            count.add(new HashMap<S, Integer>());
-            for (S state : worldSet.get(index)) {
-                count.get(index).put(state, 0);
+            WordCountMap<S> map = WordCountMap.withExpectedSize(4);
+            for (S s : worldSet.get(index)) {
+                map.addValue(s, 0);
             }
-            kOccurrences.add(-1);
+            count.add(map);
+            kOccurrences[index] = -1;
         }
 
         //for each child
@@ -45,12 +44,11 @@ public class Hartigan {
                 //for each character state in the child's upper set
                 for (S state : child.upper.get(index)) {
                     //if alignment position contains the state, increase the count
-                    int newCount = count.get(index).get(state) + 1;
-                    count.get(index).put(state, newCount);
+                    int newCount = count.get(index).addValue(state, 1);
 
                     //if state appears more frequently than the current max, update kOccurrences
-                    if (newCount > kOccurrences.get(index)) {
-                        kOccurrences.set(index, newCount);
+                    if (newCount > kOccurrences[index]) {
+                        kOccurrences[index] = newCount;
                     }
                 }
             }
@@ -59,16 +57,16 @@ public class Hartigan {
         //Find all states that occur K or K-1 times, add to VU or VL respectively
         for (int index = 0; index < Node.chars; index++) {
             for (S state : count.get(index).keySet()) {
-                int occurrences = count.get(index).get(state);
-                if (occurrences == kOccurrences.get(index)) {
+                int occurrences = count.get(index).getInt(state);
+                if (occurrences == kOccurrences[index]) {
                     current.upper.get(index).add(state);
-                } else if (occurrences == kOccurrences.get(index) - 1) {
+                } else if (occurrences == kOccurrences[index] - 1) {
                     current.lower.get(index).add(state);
                 }
             }
             //Update parsimony score: K children have this state, so
             //((# total children) - K) children each add +1 to this node's parsimony score
-            score += current.children.size() - kOccurrences.get(index);
+            score += current.children.size() - kOccurrences[index];
         }
         return score;
     }

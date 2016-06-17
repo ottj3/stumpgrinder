@@ -5,6 +5,8 @@ repositories {
 }
 
 dependencies {
+    compile 'com.koloboke:koloboke-compile:0.5.1'
+    compile 'com.koloboke:koloboke-impl-common-jdk6-7:1.0.0'
     testCompile 'junit:junit:4.12'
 }
 
