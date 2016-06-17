@@ -1,6 +1,5 @@
 package edu.tcnj.stumpgrinder.algo;
 
-import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
 import java.util.ArrayList;

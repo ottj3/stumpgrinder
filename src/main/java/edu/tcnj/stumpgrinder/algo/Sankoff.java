@@ -119,7 +119,7 @@ public class Sankoff {
             for (int i = 0; i < Node.chars; i++) {
                 Set<DNABase> parentSet = current.parent.data.get(i);
                 for (DNABase dnaBase : parentSet) {
-                    current.data.get(i).addAll(current.parentFits.get(i)[dnaBase.value]);
+                    current.data.set(i, current.parentFits.get(i)[dnaBase.value]);
                 }
                 //Check for zero-cost edges: if the parent and child have some states in common for this character,
                 //then the edge could still be zero cost. Otherwise, increase the cost.
@@ -130,15 +130,10 @@ public class Sankoff {
                 }
             }
             //If the edge is zero cost, add it to the list of edges returned.
-            //Exceptions: do not count two labelled nodes as a zero cost edge,
-            //and do not count a labelled node and the root as zero cost edge.
-            //The first exception shouldn't happen, as all species should be
+            //Exceptions: do not count two labelled nodes as a zero cost edge.
+            //This shouldn't ever happen, as all species should be
             //unique, unless only part of their dna sequences are used.
-            //The second case seems to change the score of the tree, so it
-            //would not be a proper zero-cost edge.
-            if (cost == 0
-                    && !(current.parent.labelled && current.labelled)
-                    && (current.labelled && current.parent.parent != null)) {
+            if (cost == 0 && !(current.parent.labelled && current.labelled)) {
                 List<Node> newEdge = new ArrayList<>();
                 newEdge.add(current.parent);
                 newEdge.add(current);

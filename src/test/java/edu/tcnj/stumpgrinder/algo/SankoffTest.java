@@ -1,12 +1,9 @@
 package edu.tcnj.stumpgrinder.algo;
 
-import edu.tcnj.stumpgrinder.data.DNABase;
 import edu.tcnj.stumpgrinder.data.Node;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -43,6 +40,8 @@ public class SankoffTest {
         assertEquals("Wrong score", 6, Sankoff.bottomUp(root, weights), 0.01);
         List<List<Node>> zeroCost = Sankoff.topDown(root);
         assertEquals("Wrong edge list", 8, zeroCost.size());
+        EdgeContractor edgeContractor = new EdgeContractor(weights);
+        Node compacted = edgeContractor.edgeContraction(root);
     }
 
     @Test
@@ -71,5 +70,7 @@ public class SankoffTest {
         assertEquals("Wrong score", 9, Sankoff.bottomUp(root, weights), 0.01);
         List<List<Node>> zeroCost = Sankoff.topDown(root);
         assertEquals("Wrong edge list", 3, zeroCost.size());
+        EdgeContractor edgeContractor = new EdgeContractor(weights);
+        Node compacted = edgeContractor.edgeContraction(root);
     }
 }

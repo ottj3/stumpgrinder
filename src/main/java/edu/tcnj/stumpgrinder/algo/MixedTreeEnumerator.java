@@ -1,13 +1,9 @@
 package edu.tcnj.stumpgrinder.algo;
 
-import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
 public class MixedTreeEnumerator extends TreeEnumerator {
@@ -92,6 +88,10 @@ public class MixedTreeEnumerator extends TreeEnumerator {
         //Same as enumerateRecursive, but bounded using hartigan to score the trees in-progress
         if (size == labelledNodes.size()) {
             double score = Sankoff.bottomUp(root, weights);
+//            double score = Sankoff.bottomUp(rootAtUnlabelled(), weights);
+//            if (normalScore != score) {
+//                System.out.println(normalScore + " " + score);
+//            }
             updateMPlist(score);
         } else if (Sankoff.bottomUp(root, weights) <= parsimonyScore || parsimonyScore == -1) {
             case1(current, size, true);
@@ -207,4 +207,34 @@ public class MixedTreeEnumerator extends TreeEnumerator {
             current.label = "";
         }
     }
+
+//    private Node rootAtUnlabelled() {
+//        Node current = root.clone();
+//        current = findUnlabelled(current);
+//        List<Node> nodesToRoot = new ArrayList<>();
+//        while(current != null) {
+//            nodesToRoot.add(current);
+//            current = current.parent;
+//        }
+//
+//        for (int i = nodesToRoot.size()-2; i >= 0; i--) {
+//            Node child = nodesToRoot.get(i);
+//            Node ancestor = nodesToRoot.get(i+1);
+//            Node.unlinkNodes(ancestor, child);
+//            Node.linkNodes(child, ancestor);
+//        }
+//        if (nodesToRoot.isEmpty()) return root;
+//        else return nodesToRoot.get(0);
+//    }
+//    private Node findUnlabelled(Node current) {
+//        if(current.labelled) {
+//            for (Node child : current.children) {
+//                Node unlabelled = findUnlabelled(child);
+//                if (unlabelled != null) return unlabelled;
+//            }
+//            return null;
+//        } else {
+//            return current;
+//        }
+//    }
 }

@@ -2,7 +2,6 @@ package edu.tcnj.stumpgrinder.algo;
 
 import edu.tcnj.stumpgrinder.Parser;
 import edu.tcnj.stumpgrinder.data.Node;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
