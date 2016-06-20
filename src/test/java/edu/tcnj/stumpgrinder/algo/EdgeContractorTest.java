@@ -27,11 +27,11 @@ public class EdgeContractorTest {
 
     @Test
     public void testContraction() {
-        int NUM_TRIALS = 5;
+        int NUM_TRIALS = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Callable<long[]>> callables = new ArrayList<>();
         List<Future<long[]>> futures;
-        int[] treeSizes = {4, 5, 6, 7, 8, 9/*, 10, 11, 12, 13, 14/*, 15*/};
+        int[] treeSizes = {/*4, 5, 6, 7, 8, 9, 10, 11,*/ 12/*, 13, 14/*, 15*/};
         for (final int treeSize : treeSizes) {
             for (int i = 0; i < NUM_TRIALS; i++) {
                 List<String> lines = new ArrayList<>();
@@ -74,8 +74,9 @@ public class EdgeContractorTest {
             return;
         }
 
-        System.out.println("n\tmixed time\tcubic time\t# compact mixed\t# mp cubic\t# compact\t# contractions");
-        long[][] averageResults = new long[treeSizes.length][7];
+        System.out.println("n\tmixed time\tmixed var\tcubic time\tcubic var\t# compact mixed\t# mp cubic\t# compact\t# contractions");
+        long[][] totalResults = new long[treeSizes.length][7];
+        long[][][] deviation = new long[treeSizes.length][NUM_TRIALS][2];
         for (int i = 0; i < futures.size(); i += 2) {
             long[] res1;
             long[] res2;
@@ -86,23 +87,43 @@ public class EdgeContractorTest {
                 int index = treeSize - treeSizes[0];
 
                 //I'm so sorry.
-                averageResults[index][0] += treeSize; //n
-                averageResults[index][1] += res1[1]; //mixed time
-                averageResults[index][2] += res2[0]; //cubic time
-                averageResults[index][3] += res1[2]; //# compact mixed
-                averageResults[index][4] += res2[1]; //# mp cubic
-                averageResults[index][5] += res2[2]; //# compact
-                averageResults[index][6] += res2[3]; //# contractions
+                totalResults[index][0] += treeSize; //n
+                totalResults[index][1] += res1[1]; //mixed time
+                deviation[index][(i/2)%NUM_TRIALS][0] = res1[1];
+                totalResults[index][2] += res2[0]; //cubic time
+                deviation[index][(i/2)%NUM_TRIALS][1] = res2[0];
+                totalResults[index][3] += res1[2]; //# compact mixed
+                totalResults[index][4] += res2[1]; //# mp cubic
+                totalResults[index][5] += res2[2]; //# compact
+                totalResults[index][6] += res2[3]; //# contractions
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }
-        for (int i = 0; i < averageResults.length; i++) {
-            for (int i1 = 0; i1 < 3; i1++) {
-                System.out.print(Math.round((float) averageResults[i][i1] / NUM_TRIALS) + "\t");
+        for (int i = 0; i < deviation.length; i++) {
+            long mixedDeviation = 0;
+            long cubicDeviation = 0;
+//            System.out.println("Size: " + (i+treeSizes[0]));
+            for (int j = 0; j < deviation[i].length; j++) {
+//                System.out.print(deviation[i][j][0] + " " + deviation[i][j][1] + "\n");
+                deviation[i][j][0] -= totalResults[i][1]/NUM_TRIALS;
+                mixedDeviation += Math.pow(deviation[i][j][0],2);
+                deviation[i][j][1] -= totalResults[i][2]/NUM_TRIALS;
+                cubicDeviation += Math.pow(deviation[i][j][1],2);
             }
-            for (int i1 = 3; i1 < averageResults[i].length; i1++) {
-                System.out.print(((float) averageResults[i][i1] / NUM_TRIALS) + "\t");
+            mixedDeviation /= NUM_TRIALS;
+            cubicDeviation /= NUM_TRIALS;
+            deviation[i][0][0] = (long)Math.sqrt(mixedDeviation);
+            deviation[i][0][1] = (long)Math.sqrt(cubicDeviation);
+        }
+        for (int i = 0; i < totalResults.length; i++) {
+            System.out.print(Math.round((float) totalResults[i][0] / NUM_TRIALS) + "\t");
+            for (int i1 = 1; i1 < 3; i1++) {
+                System.out.print(Math.round((float) totalResults[i][i1] / NUM_TRIALS) + "\t");
+                System.out.print(deviation[i][0][i1-1] + "\t");
+            }
+            for (int i1 = 3; i1 < totalResults[i].length; i1++) {
+                System.out.print(((float) totalResults[i][i1] / NUM_TRIALS) + "\t");
             }
             System.out.println();
         }
@@ -126,6 +147,7 @@ public class EdgeContractorTest {
         }
 
         long time = System.currentTimeMillis() - before;
+        System.out.println("Mixed\t" + species.size() + "\t" + time + "\t" + mostCompact.size());
         return new long[]{species.size(), time, mostCompact.size()};
     }
 
@@ -160,6 +182,8 @@ public class EdgeContractorTest {
 //        System.out.println("Parsimony score: " + parsimonyScore);
         long time = System.currentTimeMillis() - before;
 //        System.out.println("Took " + time + "ms for cubic trees with " + treeSize + " input species.");
+        System.out.println("Cubic\t" + species.size() + "\t" + time + "\t" + mostParsimonious.size() +
+                "\t" + mostCompact.size() + "\t" + numContractions);
         return new long[]{time, mostParsimonious.size(), mostCompact.size(), numContractions};
     }
 }
