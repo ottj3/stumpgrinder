@@ -31,19 +31,20 @@ public class EdgeContractorTest {
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Callable<long[]>> callables = new ArrayList<>();
         List<Future<long[]>> futures;
-        int[] treeSizes = {/*4, 5, 6, 7, 8, 9, 10, 11,*/ 12/*, 13, 14/*, 15*/};
+        int[] treeSizes = {4, 5, 6, 7, 8, 9, 10, 11/*, 12/*, 13, 14/*, 15*/};
+
+        List<List<String>> dataPerTrial = new ArrayList<>();
+        for (int i = 0; i < NUM_TRIALS; i++) {
+            Collections.shuffle(TreeEnumeratorTest.testData);
+            dataPerTrial.add(new ArrayList<>(TreeEnumeratorTest.testData));
+        }
+
         for (final int treeSize : treeSizes) {
             for (int i = 0; i < NUM_TRIALS; i++) {
-                List<String> lines = new ArrayList<>();
-                Collections.shuffle(TreeEnumeratorTest.testData);
-                for (int i1 = 0; i1 < treeSize; i1++) {
-                    lines.add(TreeEnumeratorTest.testData.get(i1));
-                }
-
                 final CharacterList<Character> worldSet;
                 final List<Node<Character>> species = new ArrayList<>();
                 List<Set<Character>> worldSet0 = new ArrayList<>();
-                parser.speciesList(lines, species, worldSet0);
+                parser.speciesList(dataPerTrial.get(i).subList(0, treeSize), species, worldSet0);
                 worldSet = new CharacterList<>(worldSet0);
                 callables.add(new Callable<long[]>() {
                     @Override
@@ -55,7 +56,7 @@ public class EdgeContractorTest {
                 final CharacterList<Character> worldSet1;
                 final List<Node<Character>> species0 = new ArrayList<>();
                 List<Set<Character>> worldSet2 = new ArrayList<>();
-                parser.speciesList(lines, species0, worldSet2);
+                parser.speciesList(dataPerTrial.get(i).subList(0, treeSize), species0, worldSet2);
                 worldSet1 = new CharacterList<>(worldSet2);
                 callables.add(new Callable<long[]>() {
                     @Override
