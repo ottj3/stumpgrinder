@@ -26,7 +26,7 @@ public abstract class TreeEnumeratorTest {
         testData.add("K:GAGGATCCGCGCTACTTTGCCGGCCCGCAG");
         testData.add("L:GAAGACCCGCGATATTTTGCCGGAGAATCA");
         testData.add("M:GAAGATCCTCGATATTTTGCCGGTCCGCAA");
-        testData.add("N:GAAGATCCTCGATATTTTGCCGGTCCGCAA");
+        testData.add("N:GAGGACCCGCGCTACTTTGCCGGCGAGGCC"); // #28 AcjaGV835 - since the original #14 shared first 30 chars with #13
         testData.add("O:GAAGACCCGCGTTATTTTGCCGGTACCAGC");
         testData.add("P:GAGGACCCGAGAATGTTCGCTGGCGTTGCC");
         testData.add("Q:GAGGATCCTAGGTTTTATGCGGGCGAGGGC");
