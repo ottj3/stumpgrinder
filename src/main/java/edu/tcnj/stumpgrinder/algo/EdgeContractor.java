@@ -1,9 +1,12 @@
 package edu.tcnj.stumpgrinder.algo;
 
+import com.koloboke.collect.set.hash.HashObjSet;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A class to contract a given tree to its smallest possible size
@@ -16,7 +19,7 @@ public class EdgeContractor<S> {
     //The smallest size of a tree seen yet
     private int bestSize = Integer.MAX_VALUE;
     //The latest tree to be seen of the smallest size
-    private Node<S> bestTree;
+    private Set<Node<S>> bestTree;
     //(Used for Hartigan) the set of all possible character states
     private CharacterList<S> worldSet = new CharacterList<>();
 
@@ -30,8 +33,9 @@ public class EdgeContractor<S> {
      * @param root the root of the tree to be compacted
      * @return the root of the compacted tree
      */
-    public Node<S> edgeContraction(Node<S> root) {
+    public Set<Node<S>> edgeContraction(Node<S> root) {
         bestSize = Integer.MAX_VALUE;
+        bestTree = new HashSet<>();
         Hartigan.bottomUp(root, worldSet);
         edgeContractionRecursive(root);
         return bestTree;
@@ -41,7 +45,7 @@ public class EdgeContractor<S> {
         //get list of zero-cost edges while also calculating the nodes' root sets
         List<List<Node<S>>> edgeList = Hartigan.topDown(root);
         //bound the method: if the tree can never become the most compact, break out of recursion
-        if (root.size() - edgeList.size() >= bestSize) {
+        if (root.size() - edgeList.size() > bestSize) {
             return;
         }
 //        if (edgeList.size() + 1 > oldSize) {
@@ -51,9 +55,12 @@ public class EdgeContractor<S> {
         if (edgeList.size() == 0) {
             int treeSize = root.size();
             //If the tree size is at least as compact as the best seen so far, set it as bestSize and bestTree
-            if (treeSize <= bestSize) {
+            if (treeSize == bestSize) {
+                bestTree.add(root.clone());
+            } else if (treeSize < bestSize) {
+                bestTree.clear();
+                bestTree.add(root.clone());
                 bestSize = treeSize;
-                bestTree = root.clone();
             }
         } else {
             //else, for every edge in list, contract edge and then recurse

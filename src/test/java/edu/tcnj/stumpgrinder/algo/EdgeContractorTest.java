@@ -5,6 +5,9 @@ import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 import org.junit.Test;
 
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,10 +31,10 @@ public class EdgeContractorTest {
     @Test
     public void testContraction() {
         int NUM_TRIALS = 10;
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
         List<Callable<long[]>> callables = new ArrayList<>();
         List<Future<long[]>> futures;
-        int[] treeSizes = {4, 5, 6, 7, 8, 9, 10, 11/*, 12/*, 13, 14/*, 15*/};
+        int[] treeSizes = {4, 5, 6, 7, 8/*, 9, 10, 11, 12/*, 13, 14/*, 15*/};
 
         List<List<String>> dataPerTrial = new ArrayList<>();
         for (int i = 0; i < NUM_TRIALS; i++) {
@@ -41,6 +44,7 @@ public class EdgeContractorTest {
 
         for (final int treeSize : treeSizes) {
             for (int i = 0; i < NUM_TRIALS; i++) {
+                final int trialNum = i;
                 final CharacterList<Character> worldSet;
                 final List<Node<Character>> species = new ArrayList<>();
                 List<Set<Character>> worldSet0 = new ArrayList<>();
@@ -49,7 +53,7 @@ public class EdgeContractorTest {
                 callables.add(new Callable<long[]>() {
                     @Override
                     public long[] call() throws Exception {
-                        return runMixed(species, worldSet);
+                        return runMixed(species, worldSet, trialNum);
                     }
                 });
 
@@ -61,7 +65,7 @@ public class EdgeContractorTest {
                 callables.add(new Callable<long[]>() {
                     @Override
                     public long[] call() throws Exception {
-                        return runCubic(species0, worldSet1);
+                        return runCubic(species0, worldSet1, trialNum);
                     }
                 });
             }
@@ -75,7 +79,7 @@ public class EdgeContractorTest {
             return;
         }
 
-        System.out.println("n\tmixed time\tmixed var\tcubic time\tcubic var\t# compact mixed\t# mp cubic\t# compact\t# contractions");
+        System.out.println("n\tmixed time\tmixed stddev\tcubic time\tcubic stddev\t# compact mixed\t# mp cubic\t# compact\t# contractions");
         long[][] totalResults = new long[treeSizes.length][7];
         long[][][] deviation = new long[treeSizes.length][NUM_TRIALS][2];
         for (int i = 0; i < futures.size(); i += 2) {
@@ -130,7 +134,7 @@ public class EdgeContractorTest {
         }
     }
 
-    public long[] runMixed(List<Node<Character>> species, CharacterList<Character> worldSet) {
+    public long[] runMixed(List<Node<Character>> species, CharacterList<Character> worldSet, int trialNum) {
         long before = System.currentTimeMillis();
         MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
         Set<Node<Character>> mostParsimonious = treeEnumerator.hartiganEnumerate();
@@ -148,11 +152,15 @@ public class EdgeContractorTest {
         }
 
         long time = System.currentTimeMillis() - before;
-        System.out.println("Mixed\t" + species.size() + "\t" + time + "\t" + mostCompact.size());
+//        for (Node<Character> tree : mostCompact) {
+//            String out = "Mixed #" + species.size() + "-" + trialNum + new Parser().toString(tree, false);
+//            System.out.println(out);
+//        }
+        System.out.println("Mixed #" + species.size() + "-" + trialNum + "\t" + species.size() + "\t" + time + "\t" + mostCompact.size());
         return new long[]{species.size(), time, mostCompact.size()};
     }
 
-    public long[] runCubic(List<Node<Character>> species, CharacterList<Character> worldSet) {
+    public long[] runCubic(List<Node<Character>> species, CharacterList<Character> worldSet, int trialNum) {
         long before = System.currentTimeMillis();
         CubicTreeEnumerator<Character> treeEnumerator = new CubicTreeEnumerator<>(species);
         Set<Node<Character>> mostParsimonious = treeEnumerator.fitchEnumerate();
@@ -162,15 +170,16 @@ public class EdgeContractorTest {
         int initialSize = mostParsimonious.iterator().next().size();
         for (Node<Character> tree : mostParsimonious) {
             EdgeContractor<Character> edgeContractor = new EdgeContractor<>(worldSet);
-            Node<Character> compactTree = edgeContractor.edgeContraction(tree);
-            int thisSize = compactTree.size();
-            if (thisSize <= mostCompactSize) {
-                if (compactTree.size() < mostCompactSize) {
-                    mostCompact.clear();
+            for (Node<Character> compactTree : edgeContractor.edgeContraction(tree)) {
+                int thisSize = compactTree.size();
+                if (thisSize <= mostCompactSize) {
+                    if (compactTree.size() < mostCompactSize) {
+                        mostCompact.clear();
+                    }
+                    mostCompact.add(compactTree);
+                    numContractions = initialSize - compactTree.size();
+                    mostCompactSize = thisSize;
                 }
-                mostCompact.add(compactTree);
-                numContractions = initialSize - compactTree.size();
-                mostCompactSize = thisSize;
             }
         }
 //        for (int i = 0; i < mostCompact.size(); i++) {
@@ -182,8 +191,12 @@ public class EdgeContractorTest {
 //                + " cubic MP tree(s)");
 //        System.out.println("Parsimony score: " + parsimonyScore);
         long time = System.currentTimeMillis() - before;
+//        for (Node<Character> tree : mostCompact) {
+//            String out = "Cubic #" + species.size() + "-" + trialNum + new Parser().toString(tree, false);
+//            System.out.println(out);
+//        }
 //        System.out.println("Took " + time + "ms for cubic trees with " + treeSize + " input species.");
-        System.out.println("Cubic\t" + species.size() + "\t" + time + "\t" + mostParsimonious.size() +
+        System.out.println("Cubic #" + species.size() + "-" + trialNum + "\t" + species.size() + "\t" + time + "\t" + mostParsimonious.size() +
                 "\t" + mostCompact.size() + "\t" + numContractions);
         return new long[]{time, mostParsimonious.size(), mostCompact.size(), numContractions};
     }

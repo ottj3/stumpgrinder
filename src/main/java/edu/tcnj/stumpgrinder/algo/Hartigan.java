@@ -187,7 +187,7 @@ public class Hartigan {
                 // sequences of two different species at the same 30 identical characters
                 // this check is specifically for that "edge" case...
                 if (cost == 0 && !(current.labelled && child.labelled)) {
-                    List<Node<S>> newEdge = new ArrayList<>();
+                    List<Node<S>> newEdge = new ArrayList<>(2);
                     newEdge.add(current);
                     newEdge.add(child);
 
