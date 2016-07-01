@@ -342,6 +342,7 @@ public class Parser {
 //        for (String s : data) {
 //            System.out.println(s);
 //        }
+        int sizeBefore = data.get(0).length();
         for (int i = data.get(0).length() - 1; i >= 0; i--) {
             boolean allMatch = true;
             char match = data.get(0).charAt(i);
@@ -358,6 +359,8 @@ public class Parser {
                 }
             }
         }
+        int sizeAfter = data.get(0).length();
+        System.out.println("Removed " + (sizeBefore - sizeAfter) + " uninformative characters.");
 //        for (String s : data) {
 //            System.out.println(s);
 //        }
