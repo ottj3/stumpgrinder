@@ -311,15 +311,20 @@ public class Parser {
      * @param worldSet a {@link CharacterList} to be filled with all states for each character
      */
     public <S> void speciesList(List<String> input, List<Node<S>> species, List<Set<S>> worldSet) {
+        List<String> labels = new ArrayList<>();
+        List<String> data = new ArrayList<>();
+        for (String s : input) {
+            String[] sp = s.split(":");
+            labels.add(sp[0]);
+            data.add(sp[1]);
+        }
+        removeAllUninformative(data);
         for (int i = 0; i < input.size(); i++) {
-            String[] sp = input.get(i).split(":");
-            String label = sp[0];
-            String data = sp[1];
-            Node<S> node = new Node<>(label);
-            Node.chars = data.length();
+            Node<S> node = new Node<>(labels.get(i));
+            Node.chars = data.get(i).length();
             node.root = Node.sets();
 
-            char[] chars = data.toCharArray();
+            char[] chars = data.get(i).toCharArray();
             for (int j = 0; j < chars.length; j++) {
                 if (worldSet.size() <= j) {
                     worldSet.add(new HashSet<S>());
@@ -330,5 +335,31 @@ public class Parser {
             }
             species.add(node);
         }
+    }
+
+    private void removeAllUninformative(List<String> data) {
+        if (data == null || data.isEmpty()) return;
+//        for (String s : data) {
+//            System.out.println(s);
+//        }
+        for (int i = data.get(0).length() - 1; i >= 0; i--) {
+            boolean allMatch = true;
+            char match = data.get(0).charAt(i);
+            for (String s : data) {
+                if (s.charAt(i) != match) {
+                    allMatch = false;
+                    break;
+                }
+            }
+            if (allMatch) {
+                for (int j = 0; j < data.size(); j++) {
+                    String current = data.get(j);
+                    data.set(j, current.substring(0,i) + current.substring(i+1));
+                }
+            }
+        }
+//        for (String s : data) {
+//            System.out.println(s);
+//        }
     }
 }
