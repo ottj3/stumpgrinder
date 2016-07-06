@@ -50,12 +50,12 @@ public class EdgeContractorTest {
                 List<Set<Character>> worldSet0 = new ArrayList<>();
                 parser.speciesList(dataPerTrial.get(i).subList(0, treeSize), species, worldSet0);
                 worldSet = new CharacterList<>(worldSet0);
-                callables.add(new Callable<long[]>() {
-                    @Override
-                    public long[] call() throws Exception {
-                        return runMixed(species, worldSet, trialNum);
-                    }
-                });
+//                callables.add(new Callable<long[]>() {
+//                    @Override
+//                    public long[] call() throws Exception {
+//                        return runMixed(species, worldSet, trialNum);
+//                    }
+//                });
 
                 final CharacterList<Character> worldSet1;
                 final List<Node<Character>> species0 = new ArrayList<>();
@@ -134,31 +134,31 @@ public class EdgeContractorTest {
         }
     }
 
-    public long[] runMixed(List<Node<Character>> species, CharacterList<Character> worldSet, int trialNum) {
-        long before = System.currentTimeMillis();
-        MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
-        Set<Node<Character>> mostParsimonious = treeEnumerator.hartiganEnumerate();
-        Set<Node<Character>> mostCompact = new HashSet<>();
-        int mostCompactSize = -1;
-        for (Node<Character> tree : mostParsimonious) {
-            int thisSize = tree.size();
-            if (thisSize <= mostCompactSize || mostCompactSize == -1) {
-                if (tree.size() < mostCompactSize) {
-                    mostCompact.clear();
-                }
-                mostCompact.add(tree);
-                mostCompactSize = thisSize;
-            }
-        }
-
-        long time = System.currentTimeMillis() - before;
-//        for (Node<Character> tree : mostCompact) {
-//            String out = "Mixed #" + species.size() + "-" + trialNum + new Parser().toString(tree, false);
-//            System.out.println(out);
+//    public long[] runMixed(List<Node<Character>> species, CharacterList<Character> worldSet, int trialNum) {
+//        long before = System.currentTimeMillis();
+//        MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
+//        Set<Node<Character>> mostParsimonious = treeEnumerator.hartiganEnumerate();
+//        Set<Node<Character>> mostCompact = new HashSet<>();
+//        int mostCompactSize = -1;
+//        for (Node<Character> tree : mostParsimonious) {
+//            int thisSize = tree.size();
+//            if (thisSize <= mostCompactSize || mostCompactSize == -1) {
+//                if (tree.size() < mostCompactSize) {
+//                    mostCompact.clear();
+//                }
+//                mostCompact.add(tree);
+//                mostCompactSize = thisSize;
+//            }
 //        }
-        System.out.println("Mixed #" + species.size() + "-" + trialNum + "\t" + species.size() + "\t" + time + "\t" + mostCompact.size());
-        return new long[]{species.size(), time, mostCompact.size()};
-    }
+//
+//        long time = System.currentTimeMillis() - before;
+////        for (Node<Character> tree : mostCompact) {
+////            String out = "Mixed #" + species.size() + "-" + trialNum + new Parser().toString(tree, false);
+////            System.out.println(out);
+////        }
+//        System.out.println("Mixed #" + species.size() + "-" + trialNum + "\t" + species.size() + "\t" + time + "\t" + mostCompact.size());
+//        return new long[]{species.size(), time, mostCompact.size()};
+//    }
 
     public long[] runCubic(List<Node<Character>> species, CharacterList<Character> worldSet, int trialNum) {
         long before = System.currentTimeMillis();

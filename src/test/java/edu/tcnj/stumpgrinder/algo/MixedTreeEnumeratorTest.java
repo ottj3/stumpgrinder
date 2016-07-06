@@ -7,10 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RunWith(Parameterized.class)
 public class MixedTreeEnumeratorTest extends TreeEnumeratorTest {
@@ -53,10 +50,12 @@ public class MixedTreeEnumeratorTest extends TreeEnumeratorTest {
         getData(treeSize);
         Parser parser = new Parser();
         MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet);
-        Set<Node<Character>> treeList = treeEnumerator.hartiganEnumerate();
+        Map<Integer, Set<Node<Character>>> treeList = treeEnumerator.hartiganEnumerate();
 //        System.out.println("Hartigan enumerate: ");
-        for (Node<Character> tree : treeList) {
-            System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet) + " Size: " + tree.size());
+        for (Map.Entry<Integer, Set<Node<Character>>> entry : treeList.entrySet()) {
+            for (Node<Character> tree : entry.getValue()) {
+                System.out.println(parser.toString(tree, false) + " Score: " + Hartigan.bottomUp(tree, worldSet) + " Size: " + tree.size());
+            }
         }
         System.out.println("Took " + (System.currentTimeMillis() - start) + "ms for trees of size " + treeSize + ".");
     }

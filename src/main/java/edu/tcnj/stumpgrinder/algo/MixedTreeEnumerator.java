@@ -3,12 +3,42 @@ package edu.tcnj.stumpgrinder.algo;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
 
     private int numUnlabelled = -1;
+
+    private Map<Integer, Set<Node<S>>> treesBySize = new HashMap<>();
+    private Map<Integer, Integer> parsimonyBySize = new HashMap<>();
+    int mostParsimoniousSize = Integer.MAX_VALUE;
+
+    //Keep only the most parsimonious trees found so far (by size)
+    @Override
+    protected void updateMPlist(int thisParsimonyScore) {
+        int thisSize = root.size();
+        if (thisParsimonyScore < parsimonyScore || parsimonyScore == -1) {
+            //Clear the list if a new best parsimony score is found
+            mostParsimoniousSize = thisSize;
+            parsimonyScore = thisParsimonyScore;
+        }
+        //Add the tree if it matches the current best parsimony score
+        if (!treesBySize.containsKey(thisSize)) {
+            treesBySize.put(thisSize, new HashSet<Node<S>>());
+            treesBySize.get(thisSize).add(root.clone());
+            parsimonyBySize.put(thisSize, thisParsimonyScore);
+        } else {
+            if (thisParsimonyScore <= parsimonyBySize.get(thisSize)) {
+                if (thisParsimonyScore < parsimonyBySize.get(thisSize)) {
+                    treesBySize.get(thisSize).clear();
+                    parsimonyBySize.put(thisSize, thisParsimonyScore);
+                }
+                treesBySize.get(thisSize).add(root.clone());
+            }
+
+        }
+
+    }
 
     public MixedTreeEnumerator(List<Node<S>> labelledNodes) {
         this.labelledNodes = labelledNodes;
@@ -80,7 +110,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
      *
      * @return a set of root nodes of all most parsimonious trees
      */
-    public Set<Node<S>> hartiganEnumerate() {
+    public Map<Integer, Set<Node<S>>> hartiganEnumerate() {
         parsimonyScore = -1;
         initializeTree();
         if (labelledNodes.size() <= 2) {
@@ -88,7 +118,7 @@ public class MixedTreeEnumerator<S> extends TreeEnumerator<S> {
         } else {
             hartiganEnumerateRecursive(root, 2);
         }
-        return trees;
+        return treesBySize;
     }
 
     protected void hartiganEnumerateRecursive(Node<S> current, int size) {

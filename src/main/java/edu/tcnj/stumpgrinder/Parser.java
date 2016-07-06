@@ -3,18 +3,38 @@ package edu.tcnj.stumpgrinder;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
 
 public class Parser {
 
     private static final String SPECIALS = "():,;";
 
     public Parser() {
+    }
+
+    public static String rawToNexus(String raw, List<Map<Character, String>> nexusInfo, List<Character> nextChars, String delimiter) {
+        String[] split = raw.split(delimiter);
+        String nexus = "";
+        for (int i = 0; i < split.length; i++) {
+            if (i >= nexusInfo.size()) break;
+            Map<Character, String> nexusMap = nexusInfo.get(i);
+            boolean matchesAny = false;
+            for (Map.Entry<Character, String> entry : nexusMap.entrySet()) {
+                if (entry.getValue().equals(split[i])) {
+                    nexus += entry.getKey();
+                    matchesAny = true;
+                    break;
+                }
+            }
+            if (!matchesAny) {
+                char nextChar = nextChars.get(i);
+                nextChar++;
+                nextChars.set(i, nextChar);
+                nexusMap.put(nextChar, split[i]);
+                nexus += nextChar;
+            }
+        }
+        return nexus;
     }
 
     private static <S> CharacterList<S> charactersFromString(String s) {

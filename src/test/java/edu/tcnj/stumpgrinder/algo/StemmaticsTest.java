@@ -5,11 +5,11 @@ import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -25,7 +25,6 @@ public class StemmaticsTest {
     //Compare size to most compact of mixed
     public Parser parser = new Parser();
     static List<String> testData = new ArrayList<>();
-
     static {
         testData.add("p12:ABAAAA?AAAAAAAAAAAAAAAAACABAAAAAAAABAABAAAAAAABAAAAAAAABAAAAAAABAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABBABABCBABAAAAAAAAAAAAAAAAAAAAAAAAAAABAAACAAAAAABAAAABAAAAAAAAAA?AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?ABABBAAABBBAAAAAAAABBAACAAAABAAAAAAAAAAAAAAAAABAABAAAABCAAAAAABAAAAAAAAB?AAAAADAABACAAAAAAAAABAAABAAAAAAAAAAAAAAAAAAAA?AAAAAAAABBBBAABAAABABAAABAAABAAAABAAABBAAAAAABAAAAAAAAAAAABAAAAABAAAAAA?AB?AAAAAAAAABAAAAABAABAAAAAAAAAAAAAAAAAAAAAAABAAAABBAAAABAA?AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAABBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AAAAAB?AAAABAAAABAAAAAAAAAAAAAAAABBAABAAAABAAAAAAAAAAAABBBAC?AA?AAAAC?AAAAAABAC?AAAAAAAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAAACABACAAAABAAAAAAAAAAAAAAAAAAAAABBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAAAABBAAACAAABBAAAAAAAAAAAAACABACAAAABAAAAABAAAAAAAADCAAABAAABBBAAACAAAAAAAAAAABB");
         testData.add("p13:ABAAAA?AAAAAAAAAAABAAAAACABAAAAAAAABAABAAAAAAABAAAAAAAABAAAAAAABAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABBAAABCBABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAABAAAABAAAAAAAAAA?AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?AAABBAAABBBAAAAAAAABBAACAAAABAAAAAAAAAAAAAAAAABAABAAAABCAAAAAABAAAAAAAAB?AAAAADAABACAAAAABAAABAAAAAAAAAAAAAAAAAAAAAAAA?BAAAAAAABBBBAABAAABBAAAAAAAABAAAABAAABBAAAAAABAAAAAAAAABAABAAAAABAAAAAA?AB?AAAAAAAAABAAAAABAABAAAAAAAAAAAAAAAAAAAAAAABAAAABBAAAABAA?AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAAAAABBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AAAAAB?AAAABAAAABAAAAAAAAAAAAAAAACAAABAAAABAAAAAAAAAAAABBBAC?AA?AAAAC?AAAAAABAC?AAAC?AAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAAACABACAAAABAAAAAAAAAAAAAAAAAAAABBBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAAAABBAAACAAABAAAAAAAAAAAAAACABACAAAAAAAAAABAAAAAAAACCAAABAAABBBAAACAAAAAAAAAAABB");
@@ -45,7 +44,6 @@ public class StemmaticsTest {
         testData.add("p7:ABAAAC?AAAAAAAACAABAAAAABABAAAAAAAABAABAAAAAAABAAAAAA?ABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAABBDAABCBABAAAAAAAABAAAAAAAAAAAAAAABAAAAAACAAAAAABAAAABAAAAAAAAAA?AAAAAAAAAAAAAAAAAAAAAAA?AAAAAAAAAAAAAAAAAAAAABABBAAABBBAAAAAAAABCAACAABABAAAAAAAAAAAAAAAAABAABABAACCAAAAAABAAAAAAAAB?AAAAACAABACAAAAABAAABAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABBBBAABAAABBAAAAAAAABAAAABAAAABAAAAAABAAAAAAAAABAABAAAAABAAAAAA?AB?AAAAAAAAABAAAAABABBAAAAAAAAAAAAAAAAAAAAAAABAAAABAAAAABAA?AA?CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAAAAABABAAAAAAAAAAAABAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AAAAAAAAAAABAAAABAAAAAAAAAAAAAAAACAAABAAAAAAAAAAAAAAAAABBBAC?AA?AAAABABAACAACAC?AAAC?BAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAABBABDCAAAABAAAABAAAAAAAAAAAAAAABBBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAACABBAAACAAABAAAAAAAA?AAAAACABACAAAABAAAAABAAAAAAAACCAAABAABBBBAAAAAAAAAAAAAAABB");
         testData.add("p4:AAAAAB?AAABAAAABBABAAAAACABAAAAAAAABAAAAAAAAAABAAAAAAAABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAABADAABCBABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAABAAAABAAAAAAAAAA?ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?ABABBAAABBBAAAAAAAAABAABAABABAAAAAAAAAAAAAAAAABAAAAAAABBAAAAAABAAAAAAAAB?AAAAAAAAAACAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA?BAAAAAAABBBBAABAAABBAAAAAAAABAAAABAAABBAAAAAABAAAAAAAAAAAABAAAAABAAAAAA?AB?AAAAAAABABAAAAABABBAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAABAA?AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAABAAAAAAAAAABAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AAAAAB?AAAABAAAABAAAAAAAAAAAAAAAACAAABAAAABAAAAAAAAAAAABBBAC?AAAAAAABABAACAACBC?AAAC?AAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAAACABABAAAABAAAABAAAAAAAAAAAAAAABBBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAACABBAAABAAABAAAAAAAAAAAAAABABABAAAABAAACABAAAAAAAABAAAABAAABBAAAACAAAAAAAAAAABB");
         testData.add("p1:AAAAAB?AAABAAAABBABAAAAACAAAAAAAAAABAAAAAAAAAABAAAAAAAABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAABBDAABCBABAAAAAAAABAAAAAAAAAAAAAAAAAAAAAADAAAAAABAAAABAAAAAAAAAA?ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?ABABBAAABBBAAAAAAAABBAABAABABAAAAAAAAAAAAAAAAABAAAAAAABCAAAAAABAAAAAAAAB?AAAAAAAABACAAAAABAAABAAAAAAAAAAAAAAAAA??????????AAAAAABBBBAABAAABBAAAAAAAABAAAABAAABBAAAAAABAAAAAAAAAAAABAAAAABAAAAAA?AB?AAAAAAAAABAAAAABABBAAAAAAAAAAAAAAAAAAAAAAABAAAACAAAAABAA?AAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAABAAAAAAAAAABAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AABAAB?AAAABAAAABABAAAAAAAAAAAAAACAAABAAAABAAAAAAAAAAAABBBAC?AAAAAAABABAACAACBC?AAAC?AAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAAAAABABAAAABAAAABAAAAAAAAAAAAAAABBBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAABABBAAABAAABAAAAAAAAAAAAAACABACAAAABABACABAAAAAAAABCAAABAAABBAAAACAAAAAAAAAAABB");
-
     }
 
     @Test
@@ -66,7 +64,7 @@ public class StemmaticsTest {
                 @Override
                 public long[] call() throws Exception {
                     Node.chars = species.get(0).root.size();
-                    return runMixed(species, worldSet, trialNum);
+                    return runMixed(species, worldSet, trialNum, -1);
                 }
             });
 
@@ -147,27 +145,30 @@ public class StemmaticsTest {
         }*/
     }
 
-    public long[] runMixed(List<Node<Character>> species, CharacterList<Character> worldSet, int trialNum) {
+    public long[] runMixed(List<Node<Character>> species, CharacterList<Character> worldSet, int trialNum, int numUnlabelled) {
         long before = System.currentTimeMillis();
-        MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet, 3);
-        Set<Node<Character>> mostParsimonious = treeEnumerator.hartiganEnumerate();
+        MixedTreeEnumerator<Character> treeEnumerator = new MixedTreeEnumerator<>(species, worldSet, numUnlabelled);
+        Map<Integer, Set<Node<Character>>> mostParsimonious = treeEnumerator.hartiganEnumerate();
         Set<Node<Character>> mostCompact = new HashSet<>();
-        int mostCompactSize = -1;
-        for (Node<Character> tree : mostParsimonious) {
-            int thisSize = tree.size();
-            if (thisSize <= mostCompactSize || mostCompactSize == -1) {
-                if (tree.size() < mostCompactSize) {
-                    mostCompact.clear();
-                }
-                mostCompact.add(tree);
-                mostCompactSize = thisSize;
-            }
-        }
+//        int mostCompactSize = -1;
+//        for (Node<Character> tree : mostParsimonious) {
+//            int thisSize = tree.size();
+//            if (thisSize <= mostCompactSize || mostCompactSize == -1) {
+//                if (tree.size() < mostCompactSize) {
+//                    mostCompact.clear();
+//                }
+//                mostCompact.add(tree);
+//                mostCompactSize = thisSize;
+//            }
+//        }
 
         long time = System.currentTimeMillis() - before;
-        for (Node<Character> tree : mostCompact) {
-            String out = "Mixed #" + species.size() + " " + new Parser().toString(tree, false) + " " + Hartigan.bottomUp(tree, worldSet);
-            System.out.println(out);
+//        for (Node<Character> tree : mostCompact) {
+//            String out = "Mixed #" + species.size() + " " + new Parser().toString(tree, false) + " " + Hartigan.bottomUp(tree, worldSet);
+//            System.out.println(out);
+//        }
+        for (Map.Entry<Integer, Set<Node<Character>>> entry : mostParsimonious.entrySet()) {
+            System.out.println("Size: " + entry.getKey() + ", score: " + Hartigan.bottomUp(entry.getValue().iterator().next(), worldSet));
         }
 //        System.out.println("Mixed #" + species.size() + "-" + trialNum + "\t" + species.size() + "\t" + time + "\t" + mostCompact.size());
         return new long[]{species.size(), time, mostCompact.size()};
@@ -212,5 +213,85 @@ public class StemmaticsTest {
 //        System.out.println("Cubic #" + species.size() + "-" + trialNum + "\t" + species.size() + "\t" + time + "\t" + mostParsimonious.size() +
 //                "\t" + mostCompact.size() + "\t" + numContractions);
         return new long[]{time, mostParsimonious.size(), mostCompact.size(), numContractions};
+    }
+
+    @Test
+    public void testByDelimeter() throws Exception{
+        String[] nodes = {
+//                "p1:",
+                "p3:",
+//                "p4:",
+                "p7:",
+                "p9:",
+
+//                "p5:",
+//                "p6:",
+//                "p8:",
+//                "p10:",
+//                "p11:",
+//                "p14:",
+
+                "p2:",
+                "p12:",
+                "p13:",
+                "p15:",
+                "p16:",
+        };
+        int internalNodes = -1;
+        String delim = "\n";
+        List<String> nexusData = getNexusFromFiles(delim);
+        List<String> filteredData = new ArrayList<>();
+        for (String node : nodes) {
+            for (String s : nexusData) {
+                if (s.contains(node)) filteredData.add(s);
+            }
+        }
+
+        final CharacterList<Character> worldSet;
+        final List<Node<Character>> species = new ArrayList<>();
+        List<Set<Character>> worldSet0 = new ArrayList<>();
+        parser.speciesList(filteredData, species, worldSet0);
+        worldSet = new CharacterList<>(worldSet0);
+        runMixed(species, worldSet, 0, internalNodes);
+
+
+        final CharacterList<Character> worldSet1;
+        final List<Node<Character>> species0 = new ArrayList<>();
+        List<Set<Character>> worldSet2 = new ArrayList<>();
+        parser.speciesList(filteredData, species0, worldSet2);
+        worldSet1 = new CharacterList<>(worldSet2);
+        runCubic(species0, worldSet1, 0);
+    }
+    public List<String> getNexusFromFiles(String delim) throws Exception {
+        List<String> nexusData = new ArrayList<>();
+        List<String> raws = new ArrayList<>();
+        int chars = 0;
+        for (int i = 1; i <= 16; i++) {
+            String fileName = "p" + i + ".txt";
+            File inputFile = new File(fileName);
+            FileInputStream fis = new FileInputStream(inputFile);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            String line;
+            String raw = "";
+            while ((line = br.readLine()) != null) {
+                raw += line + "\n";
+            }
+            raw = raw.substring(0, raw.lastIndexOf('\n'));
+            raws.add(raw);
+        }
+        chars = raws.get(0).split(delim).length;
+        List<Map<Character,String>> nexusInfo = new ArrayList<>(chars);
+        List<Character> nextChars = new ArrayList<>(chars);
+        for (int i = 0; i < chars; i++) {
+            nextChars.add((char) ('A' - 1));
+            nexusInfo.add(new HashMap<Character, String>());
+        }
+        for (int i = 0; i < raws.size(); i++) {
+            nexusData.add("p" + (i + 1) + ":" + Parser.rawToNexus(raws.get(i), nexusInfo, nextChars, delim));
+        }
+//        for (String s : nexusData) {
+//            System.out.println(s + "; " + s.length());
+//        }
+        return nexusData;
     }
 }
