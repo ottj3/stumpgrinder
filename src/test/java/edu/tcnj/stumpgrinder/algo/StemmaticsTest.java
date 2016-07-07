@@ -278,6 +278,7 @@ public class StemmaticsTest {
             }
             raw = raw.substring(0, raw.lastIndexOf('\n'));
             raws.add(raw);
+            br.close();
         }
         chars = raws.get(0).split(delim).length;
         List<Map<Character,String>> nexusInfo = new ArrayList<>(chars);
@@ -293,5 +294,24 @@ public class StemmaticsTest {
 //            System.out.println(s + "; " + s.length());
 //        }
         return nexusData;
+    }
+
+    @Test
+    public void getAdjMat() {
+        String fName = "correct.txt";
+        File file = new File(fName);
+        Parser parser = new Parser();
+        Node<Character> root = parser.fromAdjacencyMatrix(file);
+
+        /*
+        List<String> filteredData = testData;
+        final List<Node<Character>> species = new ArrayList<>();
+        List<Set<Character>> worldSet0 = new ArrayList<>();
+        parser.speciesList(filteredData, species, worldSet0);
+        parser.fillNodes(root, species);
+        */
+
+        String newick = parser.toString(root, false);
+        System.out.println(newick);
     }
 }

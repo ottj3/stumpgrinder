@@ -3,6 +3,11 @@ package edu.tcnj.stumpgrinder;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Parser {
@@ -384,5 +389,57 @@ public class Parser {
 //        for (String s : data) {
 //            System.out.println(s);
 //        }
+    }
+
+    public <S> Node<S> fromAdjacencyMatrix(File inp) {
+        try {
+            FileInputStream fis = new FileInputStream(inp);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            int nodeCount = Integer.valueOf(br.readLine());
+            List<Node<S>> nodes = new ArrayList<>();
+            for (int i = 0; i < nodeCount; i++) {
+                nodes.add(new Node<S>(br.readLine()));
+            }
+            for (int i = 0; i < nodeCount; i++) {
+                String line = br.readLine();
+                String[] adjLine = line.split(" ");
+                for (int j = 0; j < adjLine.length; j++) {
+                    int link = Integer.valueOf(adjLine[j]);
+                    if (link == 0) {
+                        continue; // break;
+                    } else if (link == 1) {
+                        if (nodes.get(j).parent != null) {
+                            System.out.println("multiple parents!");
+                            System.out.println("child: " + nodes.get(j).label);
+                            System.out.println("old parent: " + nodes.get(j).parent.label);
+                            System.out.println("new parent: " + nodes.get(i).label);
+                        }
+                        nodes.get(i).children.add(nodes.get(j));
+                        nodes.get(j).parent = nodes.get(i);
+                    } else if (link == -1) {
+                        continue;
+                    }
+                }
+            }
+            br.close();
+            return nodes.get(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public <S> void fillNodes(Node<S> root, List<Node<S>> species) {
+        for (Node<S> child : root.children) {
+            fillNodes(child, species);
+        }
+        if (root.labelled) {
+            for (Node<S> specy : species) {
+                if (specy.label.equals(root.label)) {
+                    root.root = specy.root;
+                    break;
+                }
+            }
+        }
     }
 }
