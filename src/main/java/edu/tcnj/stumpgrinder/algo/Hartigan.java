@@ -186,7 +186,7 @@ public class Hartigan {
                 // a 0-cost edge between two labelled nodes should never happen - unless your data set truncates dna
                 // sequences of two different species at the same 30 identical characters
                 // this check is specifically for that "edge" case...
-                if (cost == 0 && !(current.labelled && child.labelled)) {
+                if (cost <= 9 && !(current.labelled && child.labelled)) {
                     List<Node<S>> newEdge = new ArrayList<>(2);
                     newEdge.add(current);
                     newEdge.add(child);

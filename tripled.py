@@ -157,8 +157,7 @@ def findScore(f1, f2, verbose):
     # printdot(ntrue,labtrue,edgetrue,depthtrue)
     # printdot(nprop,labprop,edgeprop,depthprop)
 
-    print "average sign distance for skeleton %.3f%%" % (100.0 * score1 / total1)
-    print "average sign distance for orientation %.3f%%" % (100.0 * score2 / total2)
+    return 100.0 * score1 / total1
 
 # if __name__ == "__main__":
 #     findScore(sys.argv[1], sys.argv[2], False)
