@@ -270,17 +270,21 @@ public class StemmaticsTest {
     @Test
     public void contractPaup() {
         Parser parser = new Parser();
+        String originalParzival = "(((p3:0)p7:0,(p1:0,p4:0):0)p9:0,((p5:0,p10:0):0,p11:0,(p14:0,p6:0)p8:0):0,(p2:0,p16:0,p15:0,(p12:0)p13:0):0):0;";
+        Node<Character> origRoot = parser.fromString(originalParzival);
+        parser.toAdjacencyMatrix(origRoot, new File("correct.txt"));
         String tree3 = "(p1:0,((((p2:0,((p12:0,p13:0):0,(p15:0,p16:0):0):0):0,((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;";
-        Node<Character> root = parser.fromString(tree3);
+        Node<Character> estRoot = parser.fromString(tree3);
+
         List<String> filteredData = testData;
         final List<Node<Character>> species = new ArrayList<>();
         List<Set<Character>> worldSet0 = new ArrayList<>();
         parser.speciesList(filteredData, species, worldSet0);
-        parser.fillNodes(root, species);
+        parser.fillNodes(estRoot, species);
         CharacterList<Character> worldSet = new CharacterList<>(worldSet0);
 
         EdgeContractor<Character> contractor = new EdgeContractor<>(worldSet);
-        Set<Node<Character>> trees = contractor.edgeContraction(root);
+        Set<Node<Character>> trees = contractor.edgeContraction(estRoot);
         for (Node<Character> tree : trees) {
             System.out.println(parser.toString(tree, false));
         }
