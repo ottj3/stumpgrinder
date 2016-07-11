@@ -4,8 +4,10 @@ import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -427,6 +429,49 @@ public class Parser {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public <S> void toAdjacencyMatrix(Node<S> root, File out) {
+        try {
+            FileWriter fw = new FileWriter(out);
+            BufferedWriter bw = new BufferedWriter(fw);
+            List<Node<S>> nodes = listFromTree(root);
+            int nodeCount = nodes.size();
+            bw.write(nodeCount + "\n");
+            for (int i = 0; i < nodeCount; i++) {
+                Node<S> node = nodes.get(i);
+                if (!node.labelled) {
+                    bw.write(i + "\n");
+                } else {
+                    bw.write(node.label + "\n");
+                }
+            }
+            for (int i = 0; i < nodeCount; i++) {
+                for (int j = 0; j < nodeCount; j++) {
+                    if (i == j) {
+                        bw.write("0");
+                    } else if (nodes.get(i).children.contains(nodes.get(j))) {
+                        bw.write("1");
+                    } else {
+                        bw.write("-1");
+                    }
+                    if (j + 1 < nodeCount) bw.write(" ");
+                }
+                if (i + 1 < nodeCount) bw.write("\n");
+            }
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private <S> List<Node<S>> listFromTree(Node<S> root) {
+        List<Node<S>> nodes = new ArrayList<>();
+        nodes.add(root);
+        for (Node<S> child : root.children) {
+            nodes.addAll(listFromTree(child));
+        }
+        return nodes;
     }
 
     public <S> void fillNodes(Node<S> root, List<Node<S>> species) {

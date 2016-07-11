@@ -76,7 +76,7 @@ public class StemmaticsTest {
             callables.add(new Callable<long[]>() {
                 @Override
                 public long[] call() throws Exception {
-                    Node.chars = species.get(0).root.size();
+                    Node.chars = species0.get(0).root.size();
                     return runCubic(species0, worldSet1, trialNum);
                 }
             });
@@ -89,60 +89,6 @@ public class StemmaticsTest {
             e.printStackTrace();
             return;
         }
-
-        /*System.out.println("n\tmixed time\tmixed stddev\tcubic time\tcubic stddev\t# compact mixed\t# mp cubic\t# compact\t# contractions");
-        long[][] totalResults = new long[treeSizes.length][7];
-        long[][][] deviation = new long[treeSizes.length][NUM_TRIALS][2];
-        for (int i = 0; i < futures.size(); i += 2) {
-            long[] res1;
-            long[] res2;
-            try {
-                res1 = futures.get(i).get(); //{n, mixed time, # compact mixed}
-                res2 = futures.get(i + 1).get(); //{cubic time, # mp cubic, # compact, # contractions}
-                int treeSize = (int) res1[0];
-                int index = treeSize - treeSizes[0];
-
-                //I'm so sorry.
-                totalResults[index][0] += treeSize; //n
-                totalResults[index][1] += res1[1]; //mixed time
-                deviation[index][(i / 2) % NUM_TRIALS][0] = res1[1];
-                totalResults[index][2] += res2[0]; //cubic time
-                deviation[index][(i / 2) % NUM_TRIALS][1] = res2[0];
-                totalResults[index][3] += res1[2]; //# compact mixed
-                totalResults[index][4] += res2[1]; //# mp cubic
-                totalResults[index][5] += res2[2]; //# compact
-                totalResults[index][6] += res2[3]; //# contractions
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        for (int i = 0; i < deviation.length; i++) {
-            long mixedDeviation = 0;
-            long cubicDeviation = 0;
-//            System.out.println("Size: " + (i+treeSizes[0]));
-            for (int j = 0; j < deviation[i].length; j++) {
-//                System.out.print(deviation[i][j][0] + " " + deviation[i][j][1] + "\n");
-                deviation[i][j][0] -= totalResults[i][1] / NUM_TRIALS;
-                mixedDeviation += Math.pow(deviation[i][j][0], 2);
-                deviation[i][j][1] -= totalResults[i][2] / NUM_TRIALS;
-                cubicDeviation += Math.pow(deviation[i][j][1], 2);
-            }
-            mixedDeviation /= NUM_TRIALS;
-            cubicDeviation /= NUM_TRIALS;
-            deviation[i][0][0] = (long) Math.sqrt(mixedDeviation);
-            deviation[i][0][1] = (long) Math.sqrt(cubicDeviation);
-        }
-        for (int i = 0; i < totalResults.length; i++) {
-            System.out.print(Math.round((float) totalResults[i][0] / NUM_TRIALS) + "\t");
-            for (int i1 = 1; i1 < 3; i1++) {
-                System.out.print(Math.round((float) totalResults[i][i1] / NUM_TRIALS) + "\t");
-                System.out.print(deviation[i][0][i1 - 1] + "\t");
-            }
-            for (int i1 = 3; i1 < totalResults[i].length; i1++) {
-                System.out.print(((float) totalResults[i][i1] / NUM_TRIALS) + "\t");
-            }
-            System.out.println();
-        }*/
     }
 
     public long[] runMixed(List<Node<Character>> species, CharacterList<Character> worldSet, int trialNum, int numUnlabelled) {
@@ -205,9 +151,13 @@ public class StemmaticsTest {
 //                + " cubic MP tree(s)");
 //        System.out.println("Parsimony score: " + parsimonyScore);
         long time = System.currentTimeMillis() - before;
-        for (Node<Character> tree : mostCompact) {
+        for (int i = 0; i < mostCompact.size(); i++) {
+            Node<Character> tree = mostCompact.get(i);
             String out = "Cubic #" + species.size() + " " + new Parser().toString(tree, false) + " " + Hartigan.bottomUp(tree, worldSet);
             System.out.println(out);
+            File outFile = new File("Cubic " + species.size() + "-" + i + ".txt");
+            Parser parser = new Parser();
+            parser.toAdjacencyMatrix(tree, outFile);
         }
 //        System.out.println("Took " + time + "ms for cubic trees with " + treeSize + " input species.");
 //        System.out.println("Cubic #" + species.size() + "-" + trialNum + "\t" + species.size() + "\t" + time + "\t" + mostParsimonious.size() +
@@ -302,6 +252,8 @@ public class StemmaticsTest {
         File file = new File(fName);
         Parser parser = new Parser();
         Node<Character> root = parser.fromAdjacencyMatrix(file);
+        File out = new File("maybeCorrect.txt");
+        parser.toAdjacencyMatrix(root, out);
 
         /*
         List<String> filteredData = testData;
