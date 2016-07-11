@@ -320,7 +320,7 @@ public class Parser {
             } catch (ClassCastException e) {
                 throw new IllegalArgumentException("Found non-matchable state types in sets: " + label);
             }
-        } else if (!label.isEmpty()){
+        } else if (!label.isEmpty()) {
             node.label = label;
             node.labelled = true;
         }
@@ -332,9 +332,9 @@ public class Parser {
      * Takes an input list of species and fills a list of nodes representing those species and a world set
      * for each character's possible states.
      *
-     * @param input list of a string for each species in the form "L:XYZ" where L is the name and each
-     *              X, Y, and Z is the state of the character at the given position
-     * @param species a list to be filled with nodes
+     * @param input    list of a string for each species in the form "L:XYZ" where L is the name and each
+     *                 X, Y, and Z is the state of the character at the given position
+     * @param species  a list to be filled with nodes
      * @param worldSet a {@link CharacterList} to be filled with all states for each character
      */
     public <S> void speciesList(List<String> input, List<Node<S>> species, List<Set<S>> worldSet) {
@@ -382,7 +382,7 @@ public class Parser {
             if (allMatch) {
                 for (int j = 0; j < data.size(); j++) {
                     String current = data.get(j);
-                    data.set(j, current.substring(0,i) + current.substring(i+1));
+                    data.set(j, current.substring(0, i) + current.substring(i + 1));
                 }
             }
         }
@@ -393,76 +393,64 @@ public class Parser {
 //        }
     }
 
-    public <S> Node<S> fromAdjacencyMatrix(File inp) {
-        try {
-            FileInputStream fis = new FileInputStream(inp);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-            int nodeCount = Integer.valueOf(br.readLine());
-            List<Node<S>> nodes = new ArrayList<>();
-            for (int i = 0; i < nodeCount; i++) {
-                nodes.add(new Node<S>(br.readLine()));
-            }
-            for (int i = 0; i < nodeCount; i++) {
-                String line = br.readLine();
-                String[] adjLine = line.split(" ");
-                for (int j = 0; j < adjLine.length; j++) {
-                    int link = Integer.valueOf(adjLine[j]);
-                    if (link == 0) {
-                        continue; // break;
-                    } else if (link == 1) {
-                        if (nodes.get(j).parent != null) {
-                            System.out.println("multiple parents!");
-                            System.out.println("child: " + nodes.get(j).label);
-                            System.out.println("old parent: " + nodes.get(j).parent.label);
-                            System.out.println("new parent: " + nodes.get(i).label);
-                        }
-                        nodes.get(i).children.add(nodes.get(j));
-                        nodes.get(j).parent = nodes.get(i);
-                    } else if (link == -1) {
-                        continue;
+    public <S> Node<S> fromAdjacencyMatrix(String inp) {
+        String[] lines = inp.split("\n");
+        int nodeCount = Integer.valueOf(lines[0]);
+        List<Node<S>> nodes = new ArrayList<>();
+        for (int i = 1; i <= nodeCount; i++) {
+            nodes.add(new Node<S>(lines[i]));
+        }
+        for (int i = 0; i < nodeCount; i++) {
+            String line = lines[i + nodeCount + 1];
+            String[] adjLine = line.split(" ");
+            for (int j = 0; j < adjLine.length; j++) {
+                int link = Integer.valueOf(adjLine[j]);
+                if (link == 0) {
+                    continue;
+                } else if (link == 1) {
+                    if (nodes.get(j).parent != null) {
+                        System.out.println("multiple parents!");
+                        System.out.println("child: " + nodes.get(j).label);
+                        System.out.println("old parent: " + nodes.get(j).parent.label);
+                        System.out.println("new parent: " + nodes.get(i).label);
                     }
+                    nodes.get(i).children.add(nodes.get(j));
+                    nodes.get(j).parent = nodes.get(i);
+                } else if (link == -1) {
+                    continue;
                 }
             }
-            br.close();
-            return nodes.get(0);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return null;
+        return nodes.get(0);
     }
 
-    public <S> void toAdjacencyMatrix(Node<S> root, File out) {
-        try {
-            FileWriter fw = new FileWriter(out);
-            BufferedWriter bw = new BufferedWriter(fw);
-            List<Node<S>> nodes = listFromTree(root);
-            int nodeCount = nodes.size();
-            bw.write(nodeCount + "\n");
-            for (int i = 0; i < nodeCount; i++) {
-                Node<S> node = nodes.get(i);
-                if (!node.labelled) {
-                    bw.write(i + "\n");
-                } else {
-                    bw.write(node.label + "\n");
-                }
+    public <S> String toAdjacencyMatrix(Node<S> root) {
+        String res = "";
+        List<Node<S>> nodes = listFromTree(root);
+        int nodeCount = nodes.size();
+        res += nodeCount + "\n";
+        for (int i = 0; i < nodeCount; i++) {
+            Node<S> node = nodes.get(i);
+            if (!node.labelled) {
+                res += i + "\n";
+            } else {
+                res += node.label + "\n";
             }
-            for (int i = 0; i < nodeCount; i++) {
-                for (int j = 0; j < nodeCount; j++) {
-                    if (i == j) {
-                        bw.write("0");
-                    } else if (nodes.get(i).children.contains(nodes.get(j))) {
-                        bw.write("1");
-                    } else {
-                        bw.write("-1");
-                    }
-                    if (j + 1 < nodeCount) bw.write(" ");
-                }
-                if (i + 1 < nodeCount) bw.write("\n");
-            }
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        for (int i = 0; i < nodeCount; i++) {
+            for (int j = 0; j < nodeCount; j++) {
+                if (i == j) {
+                    res += "0";
+                } else if (nodes.get(i).children.contains(nodes.get(j))) {
+                    res += "1";
+                } else {
+                    res += "-1";
+                }
+                if (j + 1 < nodeCount) res += " ";
+            }
+            if (i + 1 < nodeCount) res += "\n";
+        }
+        return res;
     }
 
     private <S> List<Node<S>> listFromTree(Node<S> root) {

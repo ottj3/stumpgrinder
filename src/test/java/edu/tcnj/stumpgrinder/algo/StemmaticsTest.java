@@ -3,11 +3,15 @@ package edu.tcnj.stumpgrinder.algo;
 import edu.tcnj.stumpgrinder.Parser;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
+import jep.Jep;
+import jep.JepException;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -155,9 +159,6 @@ public class StemmaticsTest {
             Node<Character> tree = mostCompact.get(i);
             String out = "Cubic #" + species.size() + " " + new Parser().toString(tree, false) + " " + Hartigan.bottomUp(tree, worldSet);
             System.out.println(out);
-            File outFile = new File("Cubic " + species.size() + "-" + i + ".txt");
-            Parser parser = new Parser();
-            parser.toAdjacencyMatrix(tree, outFile);
         }
 //        System.out.println("Took " + time + "ms for cubic trees with " + treeSize + " input species.");
 //        System.out.println("Cubic #" + species.size() + "-" + trialNum + "\t" + species.size() + "\t" + time + "\t" + mostParsimonious.size() +
@@ -217,7 +218,7 @@ public class StemmaticsTest {
         List<String> raws = new ArrayList<>();
         int chars = 0;
         for (int i = 1; i <= 16; i++) {
-            String fileName = "p" + i + ".txt";
+            String fileName = "parzival/p" + i + ".txt";
             File inputFile = new File(fileName);
             FileInputStream fis = new FileInputStream(inputFile);
             BufferedReader br = new BufferedReader(new InputStreamReader(fis));
@@ -247,13 +248,19 @@ public class StemmaticsTest {
     }
 
     @Test
-    public void getAdjMat() {
+    public void getAdjMat() throws IOException {
         String fName = "correct.txt";
         File file = new File(fName);
+        FileInputStream fis = new FileInputStream(file);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+        String input = "";
+        String line;
+        while ((line = br.readLine()) != null) {
+            input += line + "\n";
+        }
         Parser parser = new Parser();
-        Node<Character> root = parser.fromAdjacencyMatrix(file);
-        File out = new File("maybeCorrect.txt");
-        parser.toAdjacencyMatrix(root, out);
+        Node<Character> root = parser.fromAdjacencyMatrix(input);
+        System.out.println(parser.toAdjacencyMatrix(root));
 
         /*
         List<String> filteredData = testData;
@@ -266,15 +273,22 @@ public class StemmaticsTest {
         String newick = parser.toString(root, false);
         System.out.println(newick);
     }
-
     @Test
-    public void contractPaup() {
-        Parser parser = new Parser();
+    public void contractPaup() throws IOException {
         String originalParzival = "(((p3:0)p7:0,(p1:0,p4:0):0)p9:0,((p5:0,p10:0):0,p11:0,(p14:0,p6:0)p8:0):0,(p2:0,p16:0,p15:0,(p12:0)p13:0):0):0;";
-        Node<Character> origRoot = parser.fromString(originalParzival);
-        parser.toAdjacencyMatrix(origRoot, new File("correct.txt"));
         String tree3 = "(p1:0,((((p2:0,((p12:0,p13:0):0,(p15:0,p16:0):0):0):0,((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;";
+        String correctFileName = "parzivalCorrect.txt";
+
+        Parser parser = new Parser();
+
+        Node<Character> origRoot = parser.fromString(originalParzival);
+        String origAdjMat = parser.toAdjacencyMatrix(origRoot);
+        FileWriter fw = new FileWriter(new File(correctFileName));
+        fw.write(origAdjMat);
+        fw.close();
+
         Node<Character> estRoot = parser.fromString(tree3);
+
 
         List<String> filteredData = testData;
         final List<Node<Character>> species = new ArrayList<>();
@@ -285,8 +299,25 @@ public class StemmaticsTest {
 
         EdgeContractor<Character> contractor = new EdgeContractor<>(worldSet);
         Set<Node<Character>> trees = contractor.edgeContraction(estRoot);
-        for (Node<Character> tree : trees) {
-            System.out.println(parser.toString(tree, false));
+        try {
+            Jep jep;
+            jep = new Jep(false);
+            jep.runScript("tripled.py");
+            int i = 0;
+            for (Node<Character> tree : trees) {
+                String out = "Cubic #" + species.size() + " " + new Parser().toString(tree, false) + " " + Hartigan.bottomUp(tree, worldSet);
+                System.out.println(out);
+                String outFileName = "Cubic " + species.size() + "-" + i + ".txt";
+                String adjacencyMatrix = parser.toAdjacencyMatrix(tree);
+                fw = new FileWriter(new File(outFileName));
+                fw.write(adjacencyMatrix);
+                fw.close();
+                jep.invoke("findScore", correctFileName, outFileName, false);
+                i++;
+            }
+        } catch (JepException e) {
+            e.printStackTrace();
+            return;
         }
     }
 }
