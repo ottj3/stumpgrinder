@@ -29,6 +29,7 @@ public class StemmaticsTest {
     //Compare size to most compact of mixed
     public Parser parser = new Parser();
     static List<String> testData = new ArrayList<>();
+
     static {
         testData.add("p12:ABAAAA?AAAAAAAAAAAAAAAAACABAAAAAAAABAABAAAAAAABAAAAAAAABAAAAAAABAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABBABABCBABAAAAAAAAAAAAAAAAAAAAAAAAAAABAAACAAAAAABAAAABAAAAAAAAAA?AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?ABABBAAABBBAAAAAAAABBAACAAAABAAAAAAAAAAAAAAAAABAABAAAABCAAAAAABAAAAAAAAB?AAAAADAABACAAAAAAAAABAAABAAAAAAAAAAAAAAAAAAAA?AAAAAAAABBBBAABAAABABAAABAAABAAAABAAABBAAAAAABAAAAAAAAAAAABAAAAABAAAAAA?AB?AAAAAAAAABAAAAABAABAAAAAAAAAAAAAAAAAAAAAAABAAAABBAAAABAA?AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAABBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AAAAAB?AAAABAAAABAAAAAAAAAAAAAAAABBAABAAAABAAAAAAAAAAAABBBAC?AA?AAAAC?AAAAAABAC?AAAAAAAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAAACABACAAAABAAAAAAAAAAAAAAAAAAAAABBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAAAABBAAACAAABBAAAAAAAAAAAAACABACAAAABAAAAABAAAAAAAADCAAABAAABBBAAACAAAAAAAAAAABB");
         testData.add("p13:ABAAAA?AAAAAAAAAAABAAAAACABAAAAAAAABAABAAAAAAABAAAAAAAABAAAAAAABAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABBAAABCBABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAABAAAABAAAAAAAAAA?AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?AAABBAAABBBAAAAAAAABBAACAAAABAAAAAAAAAAAAAAAAABAABAAAABCAAAAAABAAAAAAAAB?AAAAADAABACAAAAABAAABAAAAAAAAAAAAAAAAAAAAAAAA?BAAAAAAABBBBAABAAABBAAAAAAAABAAAABAAABBAAAAAABAAAAAAAAABAABAAAAABAAAAAA?AB?AAAAAAAAABAAAAABAABAAAAAAAAAAAAAAAAAAAAAAABAAAABBAAAABAA?AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAAAAABBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AAAAAB?AAAABAAAABAAAAAAAAAAAAAAAACAAABAAAABAAAAAAAAAAAABBBAC?AA?AAAAC?AAAAAABAC?AAAC?AAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAAACABACAAAABAAAAAAAAAAAAAAAAAAAABBBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAAAABBAAACAAABAAAAAAAAAAAAAACABACAAAAAAAAAABAAAAAAAACCAAABAAABBBAAACAAAAAAAAAAABB");
@@ -49,7 +50,9 @@ public class StemmaticsTest {
         testData.add("p4:AAAAAB?AAABAAAABBABAAAAACABAAAAAAAABAAAAAAAAAABAAAAAAAABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAABADAABCBABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAABAAAABAAAAAAAAAA?ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?ABABBAAABBBAAAAAAAAABAABAABABAAAAAAAAAAAAAAAAABAAAAAAABBAAAAAABAAAAAAAAB?AAAAAAAAAACAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA?BAAAAAAABBBBAABAAABBAAAAAAAABAAAABAAABBAAAAAABAAAAAAAAAAAABAAAAABAAAAAA?AB?AAAAAAABABAAAAABABBAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAABAA?AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAABAAAAAAAAAABAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AAAAAB?AAAABAAAABAAAAAAAAAAAAAAAACAAABAAAABAAAAAAAAAAAABBBAC?AAAAAAABABAACAACBC?AAAC?AAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAAACABABAAAABAAAABAAAAAAAAAAAAAAABBBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAACABBAAABAAABAAAAAAAAAAAAAABABABAAAABAAACABAAAAAAAABAAAABAAABBAAAACAAAAAAAAAAABB");
         testData.add("p1:AAAAAB?AAABAAAABBABAAAAACAAAAAAAAAABAAAAAAAAAABAAAAAAAABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAABBDAABCBABAAAAAAAABAAAAAAAAAAAAAAAAAAAAAADAAAAAABAAAABAAAAAAAAAA?ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?ABABBAAABBBAAAAAAAABBAABAABABAAAAAAAAAAAAAAAAABAAAAAAABCAAAAAABAAAAAAAAB?AAAAAAAABACAAAAABAAABAAAAAAAAAAAAAAAAA??????????AAAAAABBBBAABAAABBAAAAAAAABAAAABAAABBAAAAAABAAAAAAAAAAAABAAAAABAAAAAA?AB?AAAAAAAAABAAAAABABBAAAAAAAAAAAAAAAAAAAAAAABAAAACAAAAABAA?AAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAABAAAAAAABAAAAAAAAAABAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAABBAAAABBAAAACD?AABAAB?AAAABAAAABABAAAAAAAAAAAAAACAAABAAAABAAAAAAAAAAAABBBAC?AAAAAAABABAACAACBC?AAAC?AAAAAAAAAAAAAA??????????BBAAAAAAAAAAAABAAAAAAAAABABAAAABAAAABAAAAAAAAAAAAAAABBBAAAAAAAAAAAAAAA?BAAAAABAAABAAAAABABAAABABBAAABAAABAAAAAAAAAAAAAACABACAAAABABACABAAAAAAAABCAAABAAABBAAAACAAAAAAAAAAABB");
     }
+
     static List<String> heinrichi = new ArrayList<>();
+
     static {
         heinrichi.add("A:ABBBA??????ACABCBACDHFAAECBEBAAAABAAAAAC?BABL????????????????????????????????????????????????????????????????????????????????BDCABBBBBBDDABABBC?C?BCBBCCADBDBFADCBFBKBBCBBBABBAAABAAB??????BBBCAECADAACCABGCAACA?ADCBBABBDCADBBDA?????????AABCBBCACCBBDABC???????AAACACCBBCBDCDIAB?BAAB?AACBABBB?CBBDCFGAABABBCD?AGBBAAABCABBH??B????GB??DACAA?ABBABHBBKDAFBBAAABBJCAAABAABABBAABBCAEEAC?CBACBF?BCDBDBBA?DCECBCCBCBAABBBCE?BA???DBAABAF?????????BABG???????BABBBACFBBDBAEE?CD?AABCEC?ICDHACDDCBBCAACAAABBBE?PBBBBBCAAABCBBJEAFACBDFEA?AH???????????????????????????????????????????????????????????????????????????????????BABDCACHBAACBA?DCBBCCBAAAEAA?AC?GB?BBBBC?FBBCDEBCEBDABBDDAADCFI?ACHECCBBAACCBGBAABABD?ECBABBAB?AAABBEDBBBBBBGBBFACDCBKCBD?FABABACBCDBDIBDCDCAAC?CBF?CAACAABB????BEBGCAFGCAAABGDBAEAB???????????BDEBABADDAABIBAAFCBBE??????ABCDABEDAABEAB?AAABB????????EB?????????????BABDB?CE???AADCCB?ECDC???CCDABEBBC?BADABCBBBDC?BCADFCBACEDDB?ADAD???BDBDBCCBB?EDAD?DBCBBBBAEBDCDCCABAAAAACBDABCAAECABABAABAAFAAABBCCCBBACE?AHAACAADCDCB???AABAAEACB?DCAAAACAECBBCBCBBAHBEADCCAABACCBBAEBCBBBB???AAADADBDCBABBCAAADACB?????????????BAC?CADBC?ABBEEDBDDBBEADDECACBAEBEECCDCDKBCFG?BCACDDAACCBDEBAECCDBCGABECECDFACB?EDCBBBHADCCCBKCBF?????");
         heinrichi.add("Ab:CBBBABEACABACABCBABDHFAAECBE???????????CCBCDEFBEADB?JACDDABBCCM?BCJ?IAC?ADAAAIEEDAD?????????????????????????BADBCCEFABE?BBBADBDCAABABAADDABABCBBCABCBBFACDAABFADCBDBFBACBCBABCAAAAAAC??????BBBCAEDADBACCAAGBAACA?AECCBABBDCADBBDB?????????AABCBBC?ACBBBAAABAABAAADAAAADCBECBDCDEAB?BAAC?ADDBABBB?CBBDCFGABBBBBCD?BNBBAAABCABAG??B????EB??DACAA?ABBABEBBEDDDBBAAABBICAAABACBABBAABBCAEEBC?CBACBB?BCDBDFBA?BCEDBACBCBAABBBAE?BAAAEDBAABAFBAEECBBBCBABG???????BABBBACCBBBBAEE?CB?AAB??C?GEEEACDDCBBCBACAAABCBC?ICBBBBCAAABDBBBDAEDECCDDB?CCAAABBBCABDBADCAED?AC?CCABACACBAACDADABADCBDADCCBGDAAAHACBCDAB?CBBEBBBCCAC?ACEACIBCBBABDDACHBAACBA?CCBBCCBAAACAA?BB?GB?BDBBC?ABBCDECCEBEABBDDAADCFD?ACHECCBBACCCBECAABABD?FCBBBBAB?AAABBEEGBBCBBDBBFACBEBKCBD?EAAABBCBCEBEFBDCDCBAC?CBD?FAACBABB?CCCAECEAAFBCCAABDCBAEBB???????????BDCCABCDD?CBIBAAFCBBFBBCBAEABCBABEDAABEAB??FABBDFC???BCEA?????????????BABDB?CECAAAADCCB?ECDF???CCDABECCC?BADABCABBDC?BCAECCBACEDDB?ADAD???DDBDBDCDB?EDAD?DBCBBBBAEBDCDCCABAAAAACBDABBBABCAB?BAABABEAAACBCCBBBACC?AHAACAAECDCABAGBABAAEACB?DCAAAACAECDBAACBBACAEAFECAABACCBBAFCFBBCB???AAADADBDDBABBCBABDACDAABABADACABBCBAC?AADBBAABBEEABDDABDADDDCACBAECDECEDCDJFCDF?FCACDDAACCBDEBBECCDBCGBBECECDAACB?CFCBBBDADCCBBGCBL?????");
@@ -207,7 +210,7 @@ public class StemmaticsTest {
     }
 
     @Test
-    public void testByDelimeter() throws Exception{
+    public void testByDelimeter() throws Exception {
         String[] nodes = {
 //                "p1:",
                 "p3:",
@@ -253,6 +256,7 @@ public class StemmaticsTest {
         worldSet1 = new CharacterList<>(worldSet2);
         runCubic(species0, worldSet1, 0);
     }
+
     public List<String> getNexusFromFiles(String delim) throws Exception {
         List<String> nexusData = new ArrayList<>();
         List<String> raws = new ArrayList<>();
@@ -272,7 +276,7 @@ public class StemmaticsTest {
             br.close();
         }
         chars = raws.get(0).split(delim).length;
-        List<Map<Character,String>> nexusInfo = new ArrayList<>(chars);
+        List<Map<Character, String>> nexusInfo = new ArrayList<>(chars);
         List<Character> nextChars = new ArrayList<>(chars);
         for (int i = 0; i < chars; i++) {
             nextChars.add((char) ('A' - 1));
@@ -318,19 +322,19 @@ public class StemmaticsTest {
     public void contractPaup() throws IOException, InterruptedException {
         String originalParzival = "(((p3:0)p7:0,(p1:0,p4:0):0)p9:0,((p5:0,p10:0):0,p11:0,(p14:0,p6:0)p8:0):0,(p2:0,p16:0,p15:0,(p12:0)p13:0):0):0;";
         String[] paupParzTrees = {
-            "(p1:0,(((p2:0,(((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0,((p12:0,p13:0):0,(p15:0,p16:0):0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;",
-            "(p1:0,((((((p2:0,p15:0):0,p16:0):0,(p12:0,p13:0):0):0,((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;",
-            "(p1:0,((((p2:0,((p12:0,p13:0):0,(p15:0,p16:0):0):0):0,((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;",
-            "(p1:0,((((p2:0,((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0):0,((p12:0,p13:0):0,(p15:0,p16:0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;",
-            "(p1:0,((((p2:0,(((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0,(p12:0,p13:0):0):0):0,(p15:0,p16:0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;"
+                "(p1:0,(((p2:0,(((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0,((p12:0,p13:0):0,(p15:0,p16:0):0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;",
+                "(p1:0,((((((p2:0,p15:0):0,p16:0):0,(p12:0,p13:0):0):0,((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;",
+                "(p1:0,((((p2:0,((p12:0,p13:0):0,(p15:0,p16:0):0):0):0,((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;",
+                "(p1:0,((((p2:0,((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0):0,((p12:0,p13:0):0,(p15:0,p16:0):0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;",
+                "(p1:0,((((p2:0,(((p5:0,p10:0):0,((p6:0,p14:0):0,(p8:0,p11:0):0):0):0,(p12:0,p13:0):0):0):0,(p15:0,p16:0):0):0,p9:0):0,(p3:0,p7:0):0):0,p4:0):0;"
         };
         String[] paupHeinTrees = {
-          "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,(O:0,P:0):0):0,Ba:0):0,(((Bb:0,Bd:0):0,F:0):0,(((C:0,(Cd:0,E:0):0):0,(H:0,X:0):0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
-          "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,(O:0,P:0):0):0,Ba:0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,(Cd:0,E:0):0):0,H:0):0,X:0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
-          "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,(O:0,P:0):0):0,Ba:0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,Cd:0):0,E:0):0,(H:0,X:0):0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
-          "(A:0,((((((Ab:0,(Ad:0,(((((Ae:0,(S:0,T:0):0):0,W:0):0,(Ba:0,(O:0,P:0):0):0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,(Cd:0,E:0):0):0,H:0):0,X:0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
-          "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,O:0):0,(Ba:0,P:0):0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,(Cd:0,E:0):0):0,H:0):0,X:0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
-          "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,(Ba:0,P:0):0):0,O:0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,(Cd:0,E:0):0):0,H:0):0,X:0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;"
+                "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,(O:0,P:0):0):0,Ba:0):0,(((Bb:0,Bd:0):0,F:0):0,(((C:0,(Cd:0,E:0):0):0,(H:0,X:0):0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
+                "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,(O:0,P:0):0):0,Ba:0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,(Cd:0,E:0):0):0,H:0):0,X:0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
+                "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,(O:0,P:0):0):0,Ba:0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,Cd:0):0,E:0):0,(H:0,X:0):0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
+                "(A:0,((((((Ab:0,(Ad:0,(((((Ae:0,(S:0,T:0):0):0,W:0):0,(Ba:0,(O:0,P:0):0):0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,(Cd:0,E:0):0):0,H:0):0,X:0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
+                "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,O:0):0,(Ba:0,P:0):0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,(Cd:0,E:0):0):0,H:0):0,X:0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;",
+                "(A:0,((((((Ab:0,(Ad:0,((((((Ae:0,(S:0,T:0):0):0,W:0):0,(Ba:0,P:0):0):0,O:0):0,(((Bb:0,Bd:0):0,F:0):0,((((C:0,(Cd:0,E:0):0):0,H:0):0,X:0):0,N:0):0):0):0,Z:0):0):0):0,G:0):0,(Cb:0,((Cc:0,(I:0,J:0):0):0,Ce:0):0):0):0,Ac:0):0,(Be:0,(Ca:0,(((Cf:0,R:0):0,Da:0):0,V:0):0):0):0):0,M:0):0,(B:0,(K:0,L:0):0):0):0;"
         };
         String correctFileName = "heinrichiCorrect.txt";
 
@@ -352,11 +356,31 @@ public class StemmaticsTest {
             parser.fillNodes(estRoot, species);
             CharacterList<Character> worldSet = new CharacterList<>(worldSet0);
 
+            Hartigan.bottomUp(estRoot, worldSet);
+            Hartigan.topDown(estRoot);
+
+            double totalEdgeCosts = 0;
+            Map<Integer, Integer> freqs = Hartigan.edgeDist(estRoot);
+            List<Integer> sortedFreqs = new ArrayList<>();
+            for (Map.Entry<Integer, Integer> entry : freqs.entrySet()) {
+                for (Integer i = 0; i < entry.getValue(); i++) {
+                    sortedFreqs.add(entry.getKey());
+                    totalEdgeCosts += entry.getKey();
+                }
+            }
+
+            Collections.sort(sortedFreqs);
+            int total = sortedFreqs.size();
+
+            int cutoffSize = sortedFreqs.get((int) (Math.log(totalEdgeCosts/total) + 0.5));
+            System.out.println("There were " + total + " edges total. Max error: " + cutoffSize);
             EdgeContractor<Character> contractor = new EdgeContractor<>(worldSet);
-            Set<Node<Character>> trees = contractor.edgeContraction(estRoot);
+            Map<Integer, Node<Character>> trees = contractor.errorContraction(estRoot, cutoffSize);
             List<Node<Character>> allTrees = new ArrayList<>();
             allTrees.add(estRoot);
-            allTrees.addAll(trees);
+            for (Map.Entry<Integer, Node<Character>> entry : trees.entrySet()) {
+                allTrees.add(entry.getValue());
+            }
             try {
                 Jep jep;
                 jep = new Jep(false);

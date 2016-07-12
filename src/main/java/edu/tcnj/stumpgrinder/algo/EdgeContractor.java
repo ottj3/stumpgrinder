@@ -4,8 +4,11 @@ import com.koloboke.collect.set.hash.HashObjSet;
 import edu.tcnj.stumpgrinder.data.CharacterList;
 import edu.tcnj.stumpgrinder.data.Node;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -13,6 +16,7 @@ import java.util.Set;
  * by removing any edges with a minimum cost of 0, and trying all
  * orderings of edge removal to get the smallest possible tree
  * with the same parsimony score as the parent.
+ *
  * @param <S> the data type used to represent each character state
  */
 public class EdgeContractor<S> {
@@ -20,6 +24,9 @@ public class EdgeContractor<S> {
     private int bestSize = Integer.MAX_VALUE;
     //The latest tree to be seen of the smallest size
     private Set<Node<S>> bestTree;
+
+    private int startSize = Integer.MAX_VALUE;
+    private Map<Integer, Node<S>> bestBySize = new HashMap<>();
     //(Used for Hartigan) the set of all possible character states
     private CharacterList<S> worldSet = new CharacterList<>();
 
@@ -75,6 +82,55 @@ public class EdgeContractor<S> {
         }
     }
 
+    public Map<Integer, Node<S>> errorContraction(Node<S> root, int maxError) {
+        bestBySize = new HashMap<>();
+        startSize = root.size();
+        Hartigan.bottomUp(root, worldSet);
+        for (int i = 0; i < maxError; i++) {
+            errorContractionRecursive(root.clone(), i);
+        }
+        return bestBySize;
+    }
+
+    private void errorContractionRecursive(Node<S> root, int error) {
+        //get list of zero-cost edges while also calculating the nodes' root sets
+        List<List<Node<S>>> edgeList = Hartigan.topDown(root, error);
+        //bound the method: if the tree can never become the most compact, break out of recursion
+//        if (root.size() - edgeList.size() > bestSize) {
+//            return;
+//        }
+//        if (edgeList.size() + 1 > oldSize) {
+//            System.out.println("Made more 0-cost edges than we had before.");
+//        }
+        //if there are no 0 cost edges, edge contraction is done
+        if (edgeList.size() == 0) {
+            int treeSize = root.size();
+            if (treeSize >= startSize) return;
+            if (bestBySize.containsKey(treeSize)) {
+                int bestScore = Hartigan.bottomUp(bestBySize.get(treeSize), worldSet);
+                int thisScore = Hartigan.bottomUp(root, worldSet);
+                if (thisScore < bestScore) {
+//                    if (thisScore < bestScore) {
+//                        bestBySize.get(treeSize).clear();
+//                    }
+//                    bestBySize.get(treeSize).add(root.clone());
+                    bestBySize.put(treeSize, root.clone());
+                }
+            } else {
+                bestBySize.put(treeSize, root.clone());
+            }
+        } else {
+            //else, for every edge in list, contract edge and then recurse
+            for (List<Node<S>> edge : edgeList) {
+                contractEdge(edge);
+
+                errorContractionRecursive(root, error);
+
+                //undo the contraction to try a different order
+                uncontractEdge(edge);
+            }
+        }
+    }
 
     private void contractEdge(List<Node<S>> edge) {
         //Given an edge (parent, child), contract the edge between them

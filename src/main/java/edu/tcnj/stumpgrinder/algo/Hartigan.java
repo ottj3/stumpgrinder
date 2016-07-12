@@ -127,13 +127,16 @@ public class Hartigan {
         return score;
     }
 
+    public static <S> List<List<Node<S>>> topDown(Node<S> current) {
+        return topDown(current, 0);
+    }
     /**
      * Performs top-down of Hartigan's algorithm. (See Theorem3 of Hartigan's paper.)
      *
      * @param current the current node being used in the recursive call
      * @return a list of all zero-cost edges
      */
-    public static <S> List<List<Node<S>>> topDown(Node<S> current) {
+    public static <S> List<List<Node<S>>> topDown(Node<S> current, int error) {
         //List of edges (inner list will always be a pair of nodes, to represent an edge)
         List<List<Node<S>>> edges = new ArrayList<>();
         if (current.parent == null) {
@@ -186,7 +189,7 @@ public class Hartigan {
                 // a 0-cost edge between two labelled nodes should never happen - unless your data set truncates dna
                 // sequences of two different species at the same 30 identical characters
                 // this check is specifically for that "edge" case...
-                if (cost <= 9 && !(current.labelled && child.labelled)) {
+                if (cost <= error && !(current.labelled && child.labelled)) {
                     List<Node<S>> newEdge = new ArrayList<>(2);
                     newEdge.add(current);
                     newEdge.add(child);
@@ -195,10 +198,42 @@ public class Hartigan {
                 }
 
                 //recursively perform top down algorithm to get all root sets and 0-min-cost edges
-                edges.addAll(topDown(child));
+                edges.addAll(topDown(child, error));
             }
         }
 
         return edges;
     }
+
+    public static <S> Map<Integer, Integer> edgeDist(Node<S> root) {
+        Map<Integer, Integer> edgeFreqList = new HashMap<>();
+        edgeDistRecursive(root, edgeFreqList);
+        return edgeFreqList;
+    }
+    private static <S> void edgeDistRecursive(Node<S> current, Map<Integer, Integer> edgeFreqList) {
+        for (Node<S> child : current.children) {
+            int cost = 0;
+            for (int i = 0; i < Node.chars; i++) {
+                Set<S> x, y;
+                x = new HashSet<>(child.root.get(i));
+                y = current.root.get(i);
+
+                //get intersection of current's and child's root sets
+                x.retainAll(y);
+
+                //The cost of this character is 1 if there is no commonality between the two root sets,
+                //and 0 otherwise
+                if (x.size() == 0) {
+                    cost += 1;
+                }
+            }
+
+            if (edgeFreqList.containsKey(cost)) edgeFreqList.put(cost, edgeFreqList.get(cost) + 1);
+            else edgeFreqList.put(cost, 1);
+
+            edgeDistRecursive(child, edgeFreqList);
+        }
+
+    }
+
 }
