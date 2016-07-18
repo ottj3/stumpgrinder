@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static org.junit.Assert.assertEquals;
+
 public class EdgeContractorTest {
 
     //Enumerate all mixed trees
@@ -25,7 +27,7 @@ public class EdgeContractorTest {
     public Parser parser = new Parser();
 
     @Test
-    public void testContraction() {
+    public void getTimingData() {
         int NUM_TRIALS = 1;
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Callable<long[]>> callables = new ArrayList<>();
@@ -105,15 +107,57 @@ public class EdgeContractorTest {
         }
     }
 
+    @Test
+    public void testContraction() {
+        final int NUM_TRIALS = 1;
+        int[] treeSizes = {4, 5, 6, 7/*, 8, 9/*, 10, 11, 12, 13, 14/*, 15*/};
+        for (final int treeSize : treeSizes) {
+            for (int i = 0; i < NUM_TRIALS; i++) {
+                List<String> lines = new ArrayList<>();
+                Collections.shuffle(TreeEnumeratorTest.testData);
+                for (int i1 = 0; i1 < treeSize; i1++) {
+                    lines.add(TreeEnumeratorTest.testData.get(i1));
+                }
+
+                final double[][] weights = {
+                        {0, 1, 1, 1},
+                        {1, 0, 1, 1},
+                        {1, 1, 0, 1},
+                        {1, 1, 1, 0}
+                };
+                final List<Node> species = parser.speciesList(lines);
+
+                CubicTreeEnumerator cubicTreeEnumerator = new CubicTreeEnumerator(species);
+                Set<Node> mostCompactCubic = compactCubic(cubicTreeEnumerator.sankoffEnumerate(), weights);
+                int cubicSize = mostCompactCubic.iterator().next().size();
+
+                MixedTreeEnumerator mixedTreeEnumerator = new MixedTreeEnumerator(species, weights);
+                Set<Node> mostCompactMixed = compactMixed(mixedTreeEnumerator.sankoffEnumerate());
+                int mixedSize = mostCompactMixed.iterator().next().size();
+                assertEquals(cubicSize, mixedSize);
+            }
+
+        }
+    }
+
     public long[] runMixed(List<Node> species, double[][] weights) {
         long before = System.currentTimeMillis();
         MixedTreeEnumerator treeEnumerator = new MixedTreeEnumerator(species, weights);
         Set<Node> mostParsimonious = treeEnumerator.sankoffEnumerate();
+        Set<Node> mostCompact = compactMixed(mostParsimonious);
+
+
+        long time = System.currentTimeMillis() - before;
+//        System.out.println("Took " + time + "ms for mixed trees with " + species.size() + " input species.");
+        return new long[]{species.size(), time, mostCompact.size()};
+    }
+
+    private Set<Node> compactMixed(Set<Node> mostParsimonious) {
         Set<Node> mostCompact = new HashSet<>();
-        int mostCompactSize = -1;
+        int mostCompactSize = Integer.MAX_VALUE;
         for (Node tree : mostParsimonious) {
             int thisSize = tree.size();
-            if (thisSize <= mostCompactSize || mostCompactSize == -1) {
+            if (thisSize <= mostCompactSize) {
                 if (tree.size() < mostCompactSize) {
                     mostCompact.clear();
                 }
@@ -121,20 +165,24 @@ public class EdgeContractorTest {
                 mostCompactSize = thisSize;
             }
         }
-
-        long time = System.currentTimeMillis() - before;
-//        System.out.println("Took " + time + "ms for mixed trees with " + species.size() + " input species.");
-        return new long[]{species.size(), time, mostCompact.size()};
+        return mostCompact;
     }
 
     public long[] runCubic(List<Node> species, double[][] weights) {
         long before = System.currentTimeMillis();
         CubicTreeEnumerator treeEnumerator = new CubicTreeEnumerator(species);
         Set<Node> mostParsimonious = treeEnumerator.sankoffEnumerate();
-        List<Node> mostCompact = new ArrayList<>();
-        int numContractions = 0;
-        int mostCompactSize = Integer.MAX_VALUE;
+        Set<Node> mostCompact = compactCubic(mostParsimonious, weights);
         int initialSize = mostParsimonious.iterator().next().size();
+        int numContractions = initialSize - mostCompact.iterator().next().size();
+        long time = System.currentTimeMillis() - before;
+//        System.out.println("Took " + time + "ms for cubic trees with " + species.size() + " input species.");
+        return new long[]{time, mostParsimonious.size(), mostCompact.size(), numContractions};
+    }
+
+    private Set<Node> compactCubic(Set<Node> mostParsimonious, double[][] weights) {
+        Set<Node> mostCompact = new HashSet<>();
+        int mostCompactSize = Integer.MAX_VALUE;
         for (Node tree : mostParsimonious) {
             EdgeContractor edgeContractor = new EdgeContractor(weights);
             Node compactTree = edgeContractor.edgeContraction(tree);
@@ -144,20 +192,9 @@ public class EdgeContractorTest {
                     mostCompact.clear();
                 }
                 mostCompact.add(compactTree);
-                numContractions = initialSize - compactTree.size();
                 mostCompactSize = thisSize;
             }
         }
-//        for (int i = 0; i < mostCompact.size(); i++) {
-//            System.out.println(parser.toString(mostCompact.get(i), false)+ " size: " + mostCompactSize +
-//                    " after " + numContractions + " contractions.");
-//        }
-//        int parsimonyScore = Hartigan.bottomUp(mostCompact.iterator().next(), worldSet);
-//        System.out.println("Found " + mostCompact.size() + " most compact tree(s) from " + mostParsimonious.size()
-//                + " cubic MP tree(s)");
-//        System.out.println("Parsimony score: " + parsimonyScore);
-        long time = System.currentTimeMillis() - before;
-//        System.out.println("Took " + time + "ms for cubic trees with " + species.size() + " input species.");
-        return new long[]{time, mostParsimonious.size(), mostCompact.size(), numContractions};
+        return mostCompact;
     }
 }
