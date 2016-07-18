@@ -38,7 +38,7 @@ public class EdgeContractor {
 
     private void edgeContractionRecursive(Node root) {
         //get list of zero-cost edges
-        List<List<Node>> edgeList = Sankoff.topDown(root);
+        List<List<Node>> edgeList = Sankoff.topDown(root, weights);
         //bound the method: if the tree can never become the most compact, break out of recursion
         if (root.size() - edgeList.size() >= bestSize) {
             return;

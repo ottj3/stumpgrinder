@@ -95,7 +95,7 @@ public class Sankoff {
      * @param current the current node being worked on
      * @return a list of zero-cost edges
      */
-    public static List<List<Node>> topDown(Node current) {
+    public static List<List<Node>> topDown(Node current, double[][] weights) {
         List<List<Node>> edges = new ArrayList<>();
         //Special case for the root: assign it any states that had the minimum cost
         if (current.parent == null) {
@@ -116,16 +116,26 @@ public class Sankoff {
         } else {
             //For everything but the root, assign it any states that lead to any of the parent's states
             int cost = 0;
+            current.data = Node.sets();
             for (int i = 0; i < Node.chars; i++) {
                 Set<DNABase> parentSet = current.parent.data.get(i);
                 for (DNABase dnaBase : parentSet) {
-                    current.data.set(i, current.parentFits.get(i)[dnaBase.value]);
+                    current.data.get(i).addAll(current.parentFits.get(i)[dnaBase.value]);
                 }
                 //Check for zero-cost edges: if the parent and child have some states in common for this character,
                 //then the edge could still be zero cost. Otherwise, increase the cost.
-                Set<DNABase> intersection = new HashSet<>(current.data.get(i));
-                intersection.retainAll(current.parent.data.get(i));
-                if (intersection.size() == 0) {
+                boolean hasPotentialZero = false;
+                for (DNABase currentBase : current.data.get(i)) {
+                    for (DNABase parentBase : current.parent.data.get(i)) {
+                        if (weights[currentBase.value][parentBase.value] == 0.0d) {
+                            hasPotentialZero = true;
+                            break;
+                        }
+                    }
+                    if (hasPotentialZero) break;
+                }
+
+                if (!hasPotentialZero) {
                     cost++;
                 }
             }
@@ -143,7 +153,7 @@ public class Sankoff {
         }
         //Recursively call the algorithm in a top-down (preorder) fashion
         for (Node child : current.children) {
-            edges.addAll(topDown(child));
+            edges.addAll(topDown(child, weights));
         }
         return edges;
     }

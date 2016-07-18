@@ -38,7 +38,7 @@ public class SankoffTest {
         };
 
         assertEquals("Wrong score", 6, Sankoff.bottomUp(root, weights), 0.01);
-        List<List<Node>> zeroCost = Sankoff.topDown(root);
+        List<List<Node>> zeroCost = Sankoff.topDown(root, weights);
         assertEquals("Wrong edge list", 8, zeroCost.size());
         EdgeContractor edgeContractor = new EdgeContractor(weights);
         Node compacted = edgeContractor.edgeContraction(root);
@@ -68,7 +68,7 @@ public class SankoffTest {
                 {9.0, 4.0, 4.0, 0.0}
         };
         assertEquals("Wrong score", 9, Sankoff.bottomUp(root, weights), 0.01);
-        List<List<Node>> zeroCost = Sankoff.topDown(root);
+        List<List<Node>> zeroCost = Sankoff.topDown(root, weights);
         assertEquals("Wrong edge list", 3, zeroCost.size());
         EdgeContractor edgeContractor = new EdgeContractor(weights);
         Node compacted = edgeContractor.edgeContraction(root);
