@@ -109,7 +109,7 @@ public class EdgeContractorTest {
 
     @Test
     public void testContraction() {
-        final int NUM_TRIALS = 1;
+        final int NUM_TRIALS = 10;
         int[] treeSizes = {4, 5, 6, 7/*, 8, 9/*, 10, 11, 12, 13, 14/*, 15*/};
         for (final int treeSize : treeSizes) {
             for (int i = 0; i < NUM_TRIALS; i++) {
@@ -120,21 +120,22 @@ public class EdgeContractorTest {
                 }
 
                 final double[][] weights = {
-                        {0, 1, 1, 1},
-                        {1, 0, 1, 1},
-                        {1, 1, 0, 1},
-                        {1, 1, 1, 0}
+                        {0, 1, 2, 3},
+                        {1, 0, 3, 2},
+                        {2, 3, 0, 1},
+                        {3, 2, 1, 0}
                 };
                 final List<Node> species = parser.speciesList(lines);
 
-                CubicTreeEnumerator cubicTreeEnumerator = new CubicTreeEnumerator(species);
+                CubicTreeEnumerator cubicTreeEnumerator = new CubicTreeEnumerator(species, weights);
                 Set<Node> mostCompactCubic = compactCubic(cubicTreeEnumerator.sankoffEnumerate(), weights);
                 int cubicSize = mostCompactCubic.iterator().next().size();
 
                 MixedTreeEnumerator mixedTreeEnumerator = new MixedTreeEnumerator(species, weights);
                 Set<Node> mostCompactMixed = compactMixed(mixedTreeEnumerator.sankoffEnumerate());
                 int mixedSize = mostCompactMixed.iterator().next().size();
-                assertEquals(cubicSize, mixedSize);
+                assertEquals("Cubic contracted to " + cubicSize + " while mixed were of size " + mixedSize,
+                        mixedSize, cubicSize);
             }
 
         }
